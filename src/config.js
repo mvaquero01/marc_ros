@@ -8,8 +8,8 @@ export const CONFIG = {
   instagram: "https://www.instagram.com/marcrosg_/",
   color: "#1B4F8A",
   semanasSinVisita: 5,
-  googleMapsEmbed: "",
-  googleMapsLink: "",
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!3m2!1ses!2ses!4v1782339821782!5m2!1ses!2ses!6m8!1m7!1sZ6DtZ1CUoB1T00PRJOZ6GQ!2m2!1d41.4398590043212!2d2.187358940372504!3f340.7568531476023!4f5.660866824636415!5f1.3366891976977597",
+  googleMapsLink: "https://maps.app.goo.gl/GLsufCZ68Yv8Eem8A",
 
   categorias: [
     { id: 1, nombre: "Corte", foto: "", emoji: "✂️", servicioIds: [1] }
