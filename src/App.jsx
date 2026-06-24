@@ -1594,7 +1594,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         {/* 3. BOTONES VOLVER ATRÁS (Fácil de modificar) */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: CONFIG_RESERVA.distanciaTituloCajas }}>
           {paso === 2 && (
-            <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(1)}>←</button>
+            <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
           )}
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>
             {paso === 2 && "✦ Elige día y hora"}

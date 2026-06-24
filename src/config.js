@@ -4,7 +4,7 @@ export const CONFIG = {
   direccion: "Carrer d'Arquímedes 38",
   telefono: "625 46 02 21",
   whatsapp: "34625460221",
-  email: "",
+  email: "marc.rosg.ia@gmail.com",
   instagram: "https://www.instagram.com/marcrosg_/",
   color: "#1B4F8A",
   semanasSinVisita: 5,
