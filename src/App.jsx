@@ -2069,9 +2069,11 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
   };
 
   const slotsManuales = useMemo(() => {
-    if (!form.peluqueroId || !form.fecha || !form.servicioId) return [];
+    if (!form.fecha) return [];
     if (festivosSet.has(form.fecha)) return [];
-    if(form.peluqueroId === "cualquiera"){
+    const peluqueroId = form.peluqueroId || String(CONFIG.peluqueros[0].id);
+    const servicioId = form.servicioId || String(CONFIG.serviciosDefault[0].id);
+    if(peluqueroId === "cualquiera"){
       const svc = servicios.find(s => s.id === Number(form.servicioId));
       if(!svc) return [];
       const slotsSet = new Set();
@@ -2087,18 +2089,18 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       if(form.fecha===HOY_ISO){ const ahora=new Date(); const m=ahora.getHours()*60+ahora.getMinutes()+15; arr=arr.filter(h=>toMin(h)>m); }
       return arr;
     }
-    const pel = CONFIG.peluqueros.find(p => p.id === Number(form.peluqueroId));
+    const pel = CONFIG.peluqueros.find(p => p.id === Number(peluqueroId));
     if (!pel || peluqueroEstaBloqueado(pel.id, form.fecha, bloqueos)) return [];
     const tramos = getTramosDia(pel.id, form.fecha, horariosEspeciales||[], horariosGenerales||[]);
     if (tramos.length===0) return [];
-    const svc = servicios.find(s => s.id === Number(form.servicioId));
+    const svc = servicios.find(s => s.id === Number(servicioId));
     if (!svc) return [];
     const todos = generarSlotsTramos(tramos, svc.duracionMin);
     const citasDelDia = citas.filter(c =>
       c.fecha === form.fecha &&
       c.peluqueroId === pel.id &&
       c.estado !== "no-show" &&
-      (!esEdicion || c.id !== citaInicial?.id)   // excluir la propia cita al editar
+      (!esEdicion || c.id !== citaInicial?.id)
     );
     const disponibles = filtrarSlotsOcupados(todos, svc.duracionMin, citasDelDia);
     if (form.fecha === HOY_ISO) {
@@ -2237,8 +2239,8 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
             onChange={e=>setForm(f=>({...f,hora:e.target.value}))}
             disabled={!slotsManuales.length && !esEdicion}>
             <option value="">
-              {(!form.servicioId || !form.peluqueroId || !form.fecha)
-                ? "Elige servicio, peluquero y fecha"
+              {!form.fecha
+                ? "Primero elige una fecha"
                 : slotsManuales.length === 0
                   ? "Sin huecos disponibles"
                   : "Elige hora"}
@@ -2293,7 +2295,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   useEffect(()=>{ window.scrollTo({top:0,behavior:"auto"}); },[tab]);
 
   // ★ subTab para Config elevado aquí para no perder el subtab al guardar
-  const [configSubTab,setConfigSubTab]=useState("servicios");
+  const [configSubTab,setConfigSubTab]=useState("valoraciones");
 
   const handleLogout=()=>{ sessionStorage.removeItem("authRole"); navigate("/"); };
 
@@ -2891,14 +2893,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {/* --- VISTA: CALENDARIO POR PELUQUERO --- */}
         {vistaCitas==="peluquero"&&(
           <div>
-            <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
-              {CONFIG.peluqueros.map(p=>(
-                <button key={p.id} style={{background:pelFiltroCitas===p.id?p.color:WH,color:pelFiltroCitas===p.id?WH:TX,border:`2px solid ${pelFiltroCitas===p.id?p.color:CR3}`,borderRadius:50,padding:"5px 14px 5px 5px",fontSize:12,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:8,transition:"all 0.2s ease"}} onClick={()=>setPelFiltroCitas(pelFiltroCitas===p.id?null:p.id)}>
-                  <img src={p.foto} alt={p.nombre} style={{width:28,height:28,borderRadius:"50%",objectFit:"cover",border:`2px solid ${pelFiltroCitas===p.id?"rgba(255,255,255,0.5)":CR3}`,flexShrink:0}}/>
-                  {p.nombre}
-                </button>
-              ))}
-            </div>
             <div style={{ background: WH, borderRadius: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", padding: "20px", width: "100%", boxSizing: "border-box", overflow: "visible" }}>
               <div style={{ position: "sticky", top: 130, zIndex: 10, background: WH, marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20, marginTop: -20, paddingTop: 20, paddingBottom: 12, borderRadius: "24px 24px 0 0" }}>
                 <NavSemana offset={weekOffsetCitas} onChange={setWeekOffsetCitas} weekDays={weekDays}/>
