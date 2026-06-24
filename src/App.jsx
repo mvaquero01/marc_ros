@@ -1481,7 +1481,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             {/* BLOQUE IZQUIERDO: TEXTOS */}
             <div style={{ flex: 1, textAlign: "left" }}>
               <p style={{ fontSize: 20, fontWeight: 900, marginBottom: 5, color: TX }}>{CONFIG.nombre}</p>
-              <p style={{ color: TX2, fontSize: 15, marginBottom: 25 }}>El detalle marca la diferencia</p>
+              <p style={{ color: TX2, fontSize: 15, marginBottom: 25 }}>{CONFIG.slogan}</p>
 
               <div style={{ marginBottom: 20 }}>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: TX, marginBottom: 8 }}>Contacto</h3>
