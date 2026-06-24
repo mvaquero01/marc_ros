@@ -1,6 +1,6 @@
 export const CONFIG = {
   nombre: "MARC ROS",
-  slogan: "Cortes en buena compañía",
+  slogan: "T'estimo UESA",
   direccion: "Carrer d'Arquímedes 38",
   telefono: "625 46 02 21",
   whatsapp: "34625460221",
