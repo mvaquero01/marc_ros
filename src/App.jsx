@@ -624,8 +624,8 @@ function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horari
           const iso=isoDate(d);
           const isPast=d<today, isDom=d.getDay()===0, isFest=festivosSet.has(iso);
           const noBloq=bloqueosPelId?peluqueroEstaBloqueado(bloqueosPelId,iso,bloqueos):false;
-          const noH = getTramosDia(1, iso, [], horariosGenerales||[]).length === 0;
-          const disabled = isPast||isDom||isFest||noBloq||noH;
+          const noH = false;
+          const disabled = isPast||isDom||isFest||noBloq;
           const sel=value===iso, isToday=iso===HOY_ISO;
           let cls="mini-cal-cell";
           if(sel) cls+=" selected";
