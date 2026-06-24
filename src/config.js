@@ -8,7 +8,7 @@ export const CONFIG = {
   instagram: "https://www.instagram.com/marcrosg_/",
   color: "#1B4F8A",
   semanasSinVisita: 5,
-  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11963.882505642716!2d2.187358940372504!3d41.4398590043212!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a4bcde2fdbb3b9%3A0x14b89a432b8ba178!2sCarrer%20d&#39;Arqu%C3%ADmedes%2C%2038%2C%20Sant%20Andreu%2C%2008030%20Barcelona!5e0!3m2!1ses!2ses!4v1782339992363!5m2!1ses!2ses",
+  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11963.882505642716!2d2.187358940372504!3d41.4398590043212!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a4bcde2fdbb3b9%3A0x14b89a432b8ba178!2sCarrer%20d'Arqu%C3%ADmedes%2C%2038%2C%20Sant%20Andreu%2C%2008030%20Barcelona!5e0!3m2!1ses!2ses!4v1782339992363!5m2!1ses!2ses",
   googleMapsLink: "https://maps.app.goo.gl/GyJAdjNP8ArBZHGj9",
 
   categorias: [
