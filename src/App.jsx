@@ -2852,9 +2852,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <th className="th-premium">Fecha</th>
                           <th className="th-premium">Hora</th>
                           <th className="th-premium">Cliente</th>
-                          <th className="th-premium">Servicio</th>
-                          <th className="th-premium">Profesional</th>
-                          <th className="th-premium" style={{textAlign:"center", fontSize:"10px"}}>Precio</th>
                           <th className="th-premium">Estado</th>
                           <th className="th-premium">Pago</th>
                           <th className="th-premium">Acc.</th>
@@ -2868,14 +2865,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{fontWeight:600, fontSize:"12px"}}>{c.clienteNombre}</div>
                             <div style={{fontSize:"9px",color:TX2}}>{c.clienteTel}</div>
                           </td>
-                          <td className="td-premium" style={{color:"#475569", fontSize:"12px"}}>{c.servicio}</td>
-                          <td className="td-premium">
-                            <div style={{display:"flex", alignItems:"center", justifyContent:"center", gap:"6px"}}>
-                              <img src={CONFIG.peluqueros.find(p=>p.id===c.peluqueroId)?.foto || FOTO_DEFAULT} alt={c.peluquero} style={{width:"24px", height:"24px", borderRadius:"50%", objectFit:"cover"}} />
-                              <span style={{fontSize:"12px", fontWeight:600, color:"#0A1F3D"}}>{c.peluquero}</span>
-                            </div>
-                          </td>
-                          <td className="td-premium" style={{fontWeight:700, textAlign:"center", fontSize:"12px"}}>{c.precio}€</td>
                           <td className="td-premium"><EstadoPremium estado={c.estado}/></td>
                           <td className="td-premium"><SelectorPago cita={c} /></td>
                           <AccionesCitaPremium c={c}/>
@@ -2895,12 +2884,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                         <tr>
                           <th className="th-premium">Hora</th>
                           <th className="th-premium">Cliente</th>
-                          <th className="th-premium">Servicio</th>
-                          <th className="th-premium">Profesional</th>
-                          <th className="th-premium" style={{textAlign:"center", fontSize:"10px"}}>Precio</th>
                           <th className="th-premium">Estado</th>
                           <th className="th-premium">Pago</th>
-                          <th className="th-premium">Nota</th>
                           <th className="th-premium">Acc.</th>
                         </tr>
                       </thead>
@@ -2911,14 +2896,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{fontWeight:600, fontSize:"13px"}}>{c.clienteNombre}</div>
                             <div style={{fontSize:"9px",color:TX2}}>{c.clienteTel}</div>
                           </td>
-                          <td className="td-premium" style={{color:"#475569", fontSize:"12px"}}>{c.servicio}</td>
-                          <td className="td-premium">
-                            <div style={{display:"flex", alignItems:"center", justifyContent:"center", gap:"6px"}}>
-                              <img src={CONFIG.peluqueros.find(p=>p.id===c.peluqueroId)?.foto || FOTO_DEFAULT} alt={c.peluquero} style={{width:"24px", height:"24px", borderRadius:"50%", objectFit:"cover"}} />
-                              <span style={{fontSize:"12px", fontWeight:600, color:"#0A1F3D"}}>{c.peluquero}</span>
-                            </div>
-                          </td>
-                          <td className="td-premium" style={{fontWeight:700, textAlign:"center", fontSize:"12px"}}>{c.precio}€</td>
                           <td className="td-premium"><EstadoPremium estado={c.estado}/></td>
                           <td className="td-premium"><SelectorPago cita={c} /></td>
                           <td className="td-premium">
@@ -4592,7 +4569,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     ["stats", "https://i.postimg.cc/vms5zJ9d/estadisticas.webp", "Estadísticas"],
     ["disponibilidad", "https://i.postimg.cc/jjjnZPvj/disponibilidad.png", "Disponibilidad"],
     ["config", "https://i.postimg.cc/0QYvSHmr/configuracion.jpg", "Configuración"],
-    ["comunicacion", "https://i.postimg.cc/0Ns7fTmg/whatsapp.jpg", "WhatsApp"]
   ];
 
   // --- PANEL DE CONTROL DE ESPACIOS DEL MENÚ ---
@@ -4744,7 +4720,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {tab==="stats"&&<TabStats/>}
         {tab==="disponibilidad"&&<TabDisponibilidad isMobile={isMobile} horariosEspeciales={horariosEspeciales} horariosGenerales={horariosGenerales}/>}
         {tab==="config"&&<TabConfig valoraciones={valoraciones} setValoraciones={setValoraciones} servicios={servicios} setServicios={setServicios} categorias={categorias} setCategorias={setCategorias} isMobile={isMobile} onValEliminada={(val)=>{ _valEliminadaTemp=val; setToastValVisible(true); if(toastValTimer)clearTimeout(toastValTimer); const t=setTimeout(()=>{setToastValVisible(false);_valEliminadaTemp=null;},6000); setToastValTimer(t); }} onSvcEliminado={(svc)=>{ _svcEliminadoTemp=svc; setToastSvcVisible(true); if(toastSvcTimer)clearTimeout(toastSvcTimer); const t=setTimeout(()=>{setToastSvcVisible(false);_svcEliminadoTemp=null;},6000); setToastSvcTimer(t); }} onCatEliminada={(cat)=>{ _catEliminadaTemp=cat; setToastCatVisible(true); if(toastCatTimer)clearTimeout(toastCatTimer); const t=setTimeout(()=>{setToastCatVisible(false);_catEliminadaTemp=null;},6000); setToastCatTimer(t); }}/>}
-        {tab==="comunicacion"&&<TabComunicacion/>}
       </div>
 
       {/* NOTIFICACIONES EMERGENTES (TOASTS) */}
