@@ -976,21 +976,19 @@ function ClientePage({ sharedProps, startPaso=0 }){
   };
 
   const [paso, setPaso] = useState(startPaso);
-  const [selServicio, setSelServicio] = useState(null);
-  const [selPeluquero, setSelPeluquero] = useState({ id: "cualquiera", nombre: "Cualquiera", foto: "https://i.postimg.cc/k44vVkYC/cualquiera.png" });
+  const [selServicio, setSelServicio] = useState(CONFIG.serviciosDefault[0]);
+  const [selPeluquero, setSelPeluquero] = useState(CONFIG.peluqueros[0]);
   const navigate = useNavigate();
-  const { serviceId } = useParams();
   const location = useLocation();
 
   // Resetear datos al volver al home con flecha del navegador
   useEffect(() => {
     if (location.pathname === '/') {
       window.scrollTo({ top: 0, behavior: "instant" });
-      setSelServicio(null);
-      setSelPeluquero(null);
+      setSelServicio(CONFIG.serviciosDefault[0]);
+      setSelPeluquero(CONFIG.peluqueros[0]);
       setSelHora(null);
-      setForm({nombre:"", telefono:""});
-      setCatAbiertaSync(null);
+      setForm({ nombre: "", telefono: "" });
       setTimeout(() => {
         document.querySelectorAll('.reveal').forEach(el => {
           el.classList.remove('visible');
@@ -998,88 +996,49 @@ function ClientePage({ sharedProps, startPaso=0 }){
           el.classList.add('visible');
         });
       }, 50);
-    } else if (location.pathname === '/reservar') {
-      setSelPeluquero(null);
-      setSelHora(null);
-      if(catAbiertaRef.current) setCatAbierta(catAbiertaRef.current);
     }
-  }, [location.pathname, categorias]);
+  }, [location.pathname]);
 
   // Escuchador de la URL + Motor de Animaciones
   useEffect(() => {
-    const sId = serviceId;
-
-    if (sId && servicios && servicios.length > 0) {
-      const encontrado = servicios.find(s => String(s.id) === String(sId));
-      if (encontrado) {
-        setSelServicio(encontrado);
-        setSelPeluquero({ id: "cualquiera", nombre: "Cualquiera", foto: "https://i.postimg.cc/k44vVkYC/cualquiera.png" });
-        setSelHora(null);
-        setSelDia(new Date());
-        setMesRef(new Date());
-        setCatAbierta(null);
-        setPaso(2);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    } else if (location.pathname === '/reservar') {
-      setCatAbierta(null);
-      setPaso(1);
+    if (location.pathname === '/reservar') {
+      setSelServicio(CONFIG.serviciosDefault[0]);
+      setSelPeluquero(CONFIG.peluqueros[0]);
+      setSelHora(null);
+      setSelDia(new Date());
+      setMesRef(new Date());
+      setPaso(2);
     } else if (location.pathname === '/') {
       setPaso(0);
     }
-  }, [servicios, location.pathname, serviceId]);
+  }, [location.pathname]);
   
   // Función para avanzar/retroceder
   const irAPaso = (n) => {
     setPaso(n);
 
-    if (n === 1) {
-      setSelPeluquero({ id: "cualquiera", nombre: "Cualquiera", foto: "https://i.postimg.cc/k44vVkYC/cualquiera.png" });
-      setSelHora(null);
-      setSelDia(new Date());
-      if (selServicio) {
-        const catDelSvc = categorias?.find(cat => (cat.servicioIds||[]).includes(selServicio.id));
-        if (catDelSvc) setCatAbiertaSync(catDelSvc.id);
-        else setCatAbiertaSync(null);
-      } else {
-        setCatAbiertaSync(null);
-      }
-    }
     if (n === 2) {
       setSelHora(null);
       setSelDia(new Date());
       setMesRef(new Date());
-      setSelPeluquero({ id: "cualquiera", nombre: "Cualquiera", foto: "https://i.postimg.cc/k44vVkYC/cualquiera.png" });
+      setSelPeluquero(CONFIG.peluqueros[0]);
+      setSelServicio(CONFIG.serviciosDefault[0]);
     }
     if (n === 0) {
-      setSelServicio(null);
-      setSelPeluquero(null);
+      setSelServicio(CONFIG.serviciosDefault[0]);
+      setSelPeluquero(CONFIG.peluqueros[0]);
       setSelHora(null);
-      setForm({nombre:"", telefono:""});
-      setCatAbierta(null);
+      setForm({ nombre: "", telefono: "" });
     }
-    
-    const params = new URLSearchParams();
-    // El servicio siempre se mantiene si existe
-    if (selServicio) params.set('serviceId', selServicio.id);
 
     if (n === 0) {
       navigate("/", { replace: false });
-    } else if (n === 1) {
-      // no navegamos, solo cambiamos estado
     } else if (n === 2) {
-      const svcId = selServicio?.id || params.get('serviceId');
-      navigate(`/reservar/${svcId}`, { replace: false });
-    } else {
-      const svcId = selServicio?.id || params.get('serviceId');
-      navigate(`/reservar/${svcId}`, { replace: false });
+      navigate("/reservar", { replace: false });
     }
-    
+
     window.scrollTo({ top: 0, behavior: "instant" });
   };
-  const [catAbierta,setCatAbierta]=useState(null);
-  const catAbiertaRef = useRef(null);
-  const setCatAbiertaSync = (id) => { catAbiertaRef.current = id; setCatAbierta(id); };
   const [selDia, setSelDia] = useState(new Date()); // Inicializa con hoy
   const [selHora,setSelHora]=useState(null);
   const [mesRef, setMesRef] = useState(new Date());
@@ -1308,7 +1267,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           <span style={{fontSize:17,fontWeight:700,color:TX}}>{CONFIG.nombre}</span>
         </div>
         <div className="hide-mobile" style={{position:"absolute",left:"50%",transform:"translateX(-50%)",display:"flex",gap:4}}>
-          {[["servicios","Servicios"],["equipo","Equipo"],["opiniones","Opiniones"],["ubicacion","Contacto"]].map(([id,label])=>(
+          {[["opiniones","Opiniones"],["ubicacion","Contacto"]].map(([id,label])=>(
             <button key={id} style={{background:"transparent",border:"none",color:TX2,cursor:"pointer",fontSize:12,fontWeight:600,padding:"10px 20px",borderRadius:8,transition:"background .15s"}} onClick={()=>scrollTo(id)}
               onMouseEnter={e=>e.target.style.background=CR2}
               onMouseLeave={e=>e.target.style.background="transparent"}>
@@ -1317,7 +1276,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           ))}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+          <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
           <button style={{background:"transparent",border:"none",color:CR3,cursor:"pointer",fontSize:13,padding:0}} onClick={()=>navigate("/login")}>⚙</button>
         </div>
       </div>
@@ -1346,7 +1305,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         <h1 className="hero-title" style={{fontSize:32,fontWeight:700,color:WH,marginBottom:6,letterSpacing:1}}>{CONFIG.nombre}</h1>
         <p className="hero-slogan" style={{fontSize:15,color:"#9ec3e8",marginBottom:4,fontStyle:"italic"}}>"{CONFIG.slogan}"</p>
         <p className="hero-dir" style={{fontSize:12,color:"#9ec3e8",marginBottom:20}}>📍 {CONFIG.direccion} · 📞 {CONFIG.telefono}</p>
-        <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+        <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
       </div>
       
       <div style={{ padding: "0 4% 0px 4%", marginTop: 20, marginBottom: "0px" }}>
@@ -1365,191 +1324,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
           </div>
         </div>
       </div>
-
-      
-      {/* --- SECCIÓN 2: SERVICIOS EN EL HOME --- */}
-      {(() => {
-        const margenSuperiorSeccion = "40px"; 
-        const separacionTituloFotos = "40px"; 
-        const margenHorizontal = "4%"; 
-        const separacionCajas = "20px"; 
-        
-        return (
-          <div id="servicios" style={{ paddingTop: margenSuperiorSeccion, paddingBottom: "0px", backgroundColor: "transparent", width: "100%" }}>
-            
-            <div style={{ ...cs.sTitle, marginBottom: separacionTituloFotos, display: "flex", justifyContent: "center", alignItems: "center" }}>
-              ✦ Servicios
-            </div>
-
-            <div style={{ 
-              display: "flex", 
-              flexWrap: "wrap", 
-              justifyContent: "center", 
-              gap: separacionCajas, 
-              width: "100%", 
-              padding: `0px ${margenHorizontal} 0px ${margenHorizontal}`
-            }}>
-              {[...(categorias||[])].sort((a,b) => (a.orden??a.id) - (b.orden??b.id)).map(cat => {
-                const svcs = (cat.servicioIds||[]).map(id => servicios.find(s => s.id === id)).filter(Boolean);
-                const abierta = catAbierta === cat.id;
-
-                if(esMovil) return (
-                  <div key={cat.id} style={{ width: "100%", borderRadius: "16px", overflow: "hidden", border: `1px solid ${CR3}`, background: WH, marginBottom: "8px" }}>
-                    <div onClick={() => setCatAbierta(abierta ? null : cat.id)} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "12px 16px", cursor: "pointer" }}>
-                      <img src={cat.foto} style={{ width: "56px", height: "56px", borderRadius: "12px", objectFit: "cover", flexShrink: 0 }} />
-                      <div style={{ flex: 1, fontWeight: 800, fontSize: "15px", color: TX, textTransform: "uppercase", letterSpacing: "0.5px" }}>{cat.nombre}</div>
-                      <div style={{ fontSize: "12px", color: TX2, transform: abierta ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }}>▼</div>
-                    </div>
-                    {abierta && (
-                      <div style={{ borderTop: `1px solid ${CR2}` }}>
-                        {svcs.map(s => (
-                          <div key={s.id} onClick={(e) => { e.stopPropagation(); window.scrollTo({ top: 0, behavior: "smooth" }); navigate(`/reservar/${s.id}`); }} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: `1px solid ${CR2}`, cursor: "pointer" }}>
-                              <div>
-                                <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-                                  <span style={{ fontSize: "13px", fontWeight: 700, color: TX }}>{s.nombre}</span>
-                                  <span style={{ fontSize: "11px", color: TX2 }}>⏱ {s.duracionMin}'</span>
-                                </div>
-                                {s.desc && <div style={{ fontSize: "11px", color: TX2, marginTop: "2px", textAlign: "left" }}>{s.desc}</div>}
-                              </div>
-                              <div style={{ fontWeight: 800, fontSize: "15px", color: A, flexShrink: 0, marginLeft: "10px" }}>{s.precio}€</div>
-                            </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-
-                return (
-                  <div 
-                    key={cat.id}
-                    onClick={() => setCatAbierta(abierta ? null : cat.id)}
-                    className="card-hover"
-                    style={{ 
-                      position: "relative", 
-                      flex: `0 1 ${CONFIG_RESERVA.anchoCajaPC}`,
-                      minWidth: "250px",
-                      aspectRatio: "1 / 1", 
-                      borderRadius: "20px", 
-                      overflow: "hidden", 
-                      cursor: "pointer", 
-                      backgroundImage: `url(${cat.foto})`, 
-                      backgroundSize: "cover", 
-                      backgroundPosition: "center", 
-                      transition: "all 0.4s cubic-bezier(0.25, 1, 0.5, 1)", 
-                      transform: abierta ? "scale(1.02)" : "scale(1)"
-                    }}
-                  >
-                    <div style={{ 
-                      position: "absolute", 
-                      top: 0, left: 0, right: 0, bottom: 0, 
-                      background: abierta ? "rgba(0,0,0,0.95)" : "linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.85) 100%)", 
-                      display: "flex", 
-                      flexDirection: "column", 
-                      justifyContent: abierta ? "center" : "flex-end", 
-                      alignItems: "center", 
-                      padding: abierta ? "15px" : "20px", 
-                      transition: "background 0.4s ease-out" 
-                    }}>
-                      <div style={{ textAlign: "center", marginBottom: abierta ? "15px" : "5px", width: "100%" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                          <h3 style={{ color: "#FFF", margin: 0, fontSize: "18px", fontWeight: "800", textTransform: "uppercase" }}>{cat.nombre}</h3>
-                          <div style={{ color: "#FFF", fontSize: "9px", transform: abierta ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.4s" }}>▼</div>
-                        </div>
-                      </div>
-                      <div style={{ 
-                        width: "100%", 
-                        maxHeight: abierta ? "400px" : "0", 
-                        opacity: abierta ? 1 : 0, 
-                        transform: abierta ? "translateY(0)" : "translateY(10px)", 
-                        overflowY: "auto", 
-                        transition: "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-                        scrollbarWidth: "none"
-                      }}>
-                        {svcs.map(s => (
-                          <div key={s.id} onClick={(e) => { e.stopPropagation(); window.scrollTo({ top: 0, behavior: "smooth" }); navigate(`/reservar/${s.id}`); }} style={{ padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}>
-                            <div style={{ textAlign: "left", flex: 1, paddingRight: "10px" }}>
-                              <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
-                                <span style={{ color: "#FFF", fontSize: "12px", fontWeight: "600" }}>{s.nombre}</span>
-                                <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "10px" }}>⏱ {s.duracionMin}'</span>
-                              </div>
-                              {s.desc && <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "10px", lineHeight: "1.1", marginTop: "3px" }}>{s.desc}</div>}
-                            </div>
-                            <div style={{ color: "#FFF", fontWeight: "800", fontSize: "14px" }}>{s.precio}€</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })()}
-
-      <hr id="equipo" style={{ 
-        border: "none", 
-        height: "1px", 
-        background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
-        margin: "40px auto 40px auto",
-        maxWidth: "100%"
-      }} />
-
-      {/* --- SECCIÓN EQUIPO (ESTRUCTURA DE CONTROL TOTAL) --- */}
-      <div className="reveal" style={{ width: "100%", background: WH, overflow: "hidden", padding: 0 }}>
-        <div style={{ display: "flex", flexDirection: esMovil ? "column" : "row", alignItems: "stretch", width: "100%" }}>
-          {!esMovil && (
-            <div style={{ flex: "0 0 40%", position: "relative" }}>
-              <img src="https://i.postimg.cc/Y0TygmSb/peluqueros.jpg" alt="Nuestro Equipo" style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }} />
-            </div>
-          )}
-          <div style={{ flex: "1", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0px 0", background: WH }}>
-            {(() => {
-              const tituloDistanciaIzquierda = "40px";
-              const tituloMargenInferior = "40px";
-              const separacionEntreCajas = esMovil ? "16px" : "40px";
-              const anchoCaja = "250px";
-              const altoCaja = "300px";
-              return (
-                <>
-                  <div style={{ ...cs.sTitle, textAlign: esMovil ? "center" : "left", paddingLeft: esMovil ? "0" : tituloDistanciaIzquierda, marginBottom: tituloMargenInferior }}>
-                    ✦ Profesionales
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: separacionEntreCajas, justifyContent: "center", width: "100%", paddingLeft: esMovil ? "20px" : "0%", paddingRight: esMovil ? "20px" : "0%" }}>
-                    {CONFIG.peluqueros.map(p => (
-                      <div key={p.id} className="card-hover" style={{
-                        width: esMovil ? "100%" : anchoCaja,
-                        flex: esMovil ? "0 0 100%" : `0 0 ${anchoCaja}`,
-                        minHeight: esMovil ? "auto" : altoCaja,
-                        display: "flex",
-                        flexDirection: esMovil ? "row" : "column",
-                        alignItems: "center",
-                        justifyContent: esMovil ? "flex-start" : "center",
-                        background: "#FFF",
-                        padding: esMovil ? "16px 20px" : "20px",
-                        borderRadius: esMovil ? "16px" : "24px",
-                        border: `1px solid ${CR3}`,
-                        boxShadow: "0 4px 15px rgba(0,0,0,0.04)",
-                        textAlign: esMovil ? "left" : "center",
-                        gap: esMovil ? "20px" : "0"
-                      }}>
-                        <div style={{ width: esMovil ? "80px" : "115px", height: esMovil ? "80px" : "115px", borderRadius: "50%", marginBottom: esMovil ? "0" : "18px", flexShrink: 0, overflow: "hidden", border: `3px solid ${A}15` }}>
-                          <img src={p.foto || "https://i.postimg.cc/4xxWbVq0/postepelu.webp"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 800, color: TX, fontSize: esMovil ? "17px" : "19px" }}>{p.nombre}</div>
-                          <div style={{ fontSize: esMovil ? "12px" : "12px", color: A, fontWeight: 700, textTransform: "uppercase", marginTop: esMovil ? "4px" : "6px", letterSpacing: "0.5px", lineHeight: "1.2" }}>{p.especialidad}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      </div>
-
 
       <hr id="opiniones" style={{ 
         border: "none", 
@@ -1731,7 +1505,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <div style={{ display: "flex", gap: "15px", alignItems: "center", marginTop: "30px" }}>
                 
                 {/* BOTÓN PEDIR CITA (ESTILO RESERVAR) */}
-                <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+                <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
 
                 {/* BOTÓN INSTAGRAM (SIN ERRORES VISUALES) */}
                 <a href={CONFIG.instagram} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "45px", height: "45px", background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", borderRadius: "8px", textDecoration: "none", flexShrink: 0, cursor: "pointer", transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility: "hidden", willChange: "transform", transform: "scale(1)", transformStyle: "preserve-3d" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
@@ -1773,14 +1547,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
   // ★ Botón CONTINUAR fijo en la parte inferior
   // --- LÓGICA DE BOTÓN CONTINUAR ---
   const formValido = form.nombre?.trim() !== '' && form.telefono?.trim() !== '';
-  const btnOk = paso === 1 ? !!selServicio : paso === 2 ? !!(selPeluquero && selDia && selHora && formValido) : false;
-  const btnLabel = paso === 2
-    ? (btnOk ? "CONFIRMAR RESERVA ✓" : "COMPLETA TODOS LOS CAMPOS")
-    : "CONTINUAR →";
+  const btnOk = paso === 2 ? !!(selDia && selHora && formValido) : false;
+  const btnLabel = btnOk ? "CONFIRMAR RESERVA ✓" : "COMPLETA TODOS LOS CAMPOS";
   const btnAction = () => {
     if (!btnOk) return;
-    if (paso === 1) irAPaso(2);
-    else if (paso === 2) confirmarReserva();
+    if (paso === 2) confirmarReserva();
   };
 
   // --- RETURN ÚNICO (Sustituye todo el flujo anterior) ---
@@ -1822,127 +1593,16 @@ function ClientePage({ sharedProps, startPaso=0 }){
         
         {/* 3. BOTONES VOLVER ATRÁS (Fácil de modificar) */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: CONFIG_RESERVA.distanciaTituloCajas }}>
-          {paso === 1 && (
-            <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
-          )}
           {paso === 2 && (
             <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(1)}>←</button>
           )}
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>
-            {paso === 1 && "✦ ¿Qué servicio necesitas?"}
-            {paso === 2 && "✦ Completa tu reserva"}
+            {paso === 2 && "✦ Elige día y hora"}
           </div>
         </div>
 
         {/* 5. CONTENIDO DE LOS PASOS */}
         <div className="slide-in" style={{ paddingBottom: "140px" }}>
-          
-          {paso === 1 && (
-            <div style={{ 
-              display: "flex", 
-              flexWrap: "wrap",        // Permite saltar a la siguiente fila
-              justifyContent: "center", 
-              gap: "20px", 
-              width: "100%",
-              paddingBottom: "50px" 
-            }}>
-              {[...(categorias||[])].sort((a,b) => (a.orden??a.id) - (b.orden??b.id)).map(cat => {
-                const svcs = (cat.servicioIds||[]).map(id => servicios.find(s => s.id === id)).filter(Boolean);
-                const abierta = catAbierta === cat.id;
-
-                if(esMovil) return (
-                  <div key={cat.id} style={{ width: "100%", borderRadius: "16px", overflow: "hidden", border: `1px solid ${CR3}`, background: WH, marginBottom: "8px" }}>
-                    <div onClick={() => setCatAbierta(abierta ? null : cat.id)} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "12px 16px", cursor: "pointer" }}>
-                      <img src={cat.foto} style={{ width: "56px", height: "56px", borderRadius: "12px", objectFit: "cover", flexShrink: 0 }} />
-                      <div style={{ flex: 1, fontWeight: 800, fontSize: "15px", color: TX, textTransform: "uppercase", letterSpacing: "0.5px" }}>{cat.nombre}</div>
-                      <div style={{ fontSize: "12px", color: TX2, transform: abierta ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }}>▼</div>
-                    </div>
-                    {abierta && (
-                      <div style={{ borderTop: `1px solid ${CR2}` }}>
-                        {svcs.map(s => {
-                          const esSeleccionado = selServicio?.id === s.id;
-                          return (
-                            <div key={s.id} onClick={(e) => { e.stopPropagation(); setSelServicio(s); }} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: `1px solid ${CR2}`, cursor: "pointer", background: esSeleccionado ? `${A}10` : WH }}>
-                              <div style={{ textAlign: "left" }}>
-                                <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-                                  <span style={{ fontSize: "13px", fontWeight: 700, color: TX }}>{s.nombre}</span>
-                                  <span style={{ fontSize: "11px", color: TX2 }}>⏱ {s.duracionMin}'</span>
-                                </div>
-                                {s.desc && <div style={{ fontSize: "11px", color: TX2, marginTop: "2px", textAlign: "left" }}>{s.desc}</div>}
-                              </div>
-                              <div style={{ fontWeight: 800, fontSize: "15px", color: A, flexShrink: 0, marginLeft: "10px" }}>{s.precio}€</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-
-                return (
-                  <div 
-                    key={cat.id}
-                    onClick={() => setCatAbierta(abierta ? null : cat.id)}
-                    className="card-hover"
-                    style={{ 
-                      position: "relative", 
-                      flex: `0 1 ${CONFIG_RESERVA.anchoCajaPC}`,
-                      minWidth: "250px",
-                      aspectRatio: "1 / 1",
-                      borderRadius: "20px", 
-                      overflow: "hidden", 
-                      cursor: "pointer", 
-                      backgroundImage: `url(${cat.foto})`, 
-                      backgroundSize: "cover", 
-                      backgroundPosition: "center", 
-                      transform: abierta ? "scale(1.02)" : "scale(1)",
-                      boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                      transition: "all 0.4s cubic-bezier(0.25, 1, 0.5, 1)"
-                    }}
-                  >
-                    <div style={{ 
-                      position: "absolute", 
-                      inset: 0, 
-                      background: abierta ? "rgba(0,0,0,0.95)" : "linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.85) 100%)", 
-                      display: "flex", 
-                      flexDirection: "column", 
-                      justifyContent: abierta ? "center" : "flex-end", 
-                      alignItems: "center", 
-                      padding: abierta ? "10px" : "20px",
-                      transition: "background 0.4s ease-out"
-                    }}>
-                      <div style={{ textAlign: "center", marginBottom: abierta ? "15px" : "5px", width: "100%" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                          <h3 style={{ color: "#FFF", margin: 0, fontSize: "18px", fontWeight: "800", textTransform: "uppercase" }}>{cat.nombre}</h3>
-                          <div style={{ color: "#FFF", fontSize: "9px", transform: abierta ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.4s" }}>▼</div>
-                        </div>
-                      </div>
-                      <div style={{ width: "100%", maxHeight: abierta ? "400px" : "0", opacity: abierta ? 1 : 0, transform: abierta ? "translateY(0)" : "translateY(10px)", overflowY: "auto", transition: catAbierta === cat.id && paso === 1 ? "none" : "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)", scrollbarWidth: "none" }}>
-                        {svcs.map((s, index) => {
-                          const esSeleccionado = selServicio?.id === s.id;
-                          return (
-                            <div key={s.id} style={{ width: "100%" }}>
-                              <div onClick={(e) => { e.stopPropagation(); setSelServicio(s); }} style={{ padding: "10px 0px", margin: "2px 0px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", borderRadius: "8px", background: esSeleccionado ? "rgba(27, 79, 138, 0.5)" : "transparent", transition: "background 0.2s ease" }}>
-                                <div style={{ textAlign: "left", flex: 1, paddingLeft: "10px" }}>
-                                  <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-                                    <span style={{ color: "#FFF", fontSize: "12px", fontWeight: "700" }}>{s.nombre}</span>
-                                    <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "9px" }}>⏱ {s.duracionMin}'</span>
-                                  </div>
-                                  {s.desc && <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "10px", lineHeight: "1.2", marginTop: "2px" }}>{s.desc}</div>}
-                                </div>
-                                <div style={{ color: "#FFF", fontWeight: "800", fontSize: "13px", textAlign: "right", paddingRight: "10px" }}>{s.precio}€</div>
-                              </div>
-                              {index < svcs.length - 1 && <div style={{ height: "1px", background: "rgba(255,255,255,0.1)", margin: "0" }} />}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
 
           {paso === 2 && (() => {
             const generarTodasLasHoras = () => {
@@ -1979,29 +1639,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               lbl: { fontSize: "10px", fontWeight: 800, color: "#A0AEC0", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
             };
 
-            // SELECTOR DE PELUQUERO
-            const pelOpciones = [{ id: CUALQUIERA_ID, nombre: "Cualquiera", foto: "https://i.postimg.cc/k44vVkYC/cualquiera.png" }, ...CONFIG.peluqueros];
-            const SelectorPeluquero = () => (
-              <div>
-                <div style={sty.lbl}>Profesional</div>
-                <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
-                  {pelOpciones.map((p, idx) => {
-                    const sel = selPeluquero?.id === p.id;
-                    return (
-                      <div key={p.id} style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                        {idx === 1 && (
-                          <div style={{ width: "1px", height: "52px", background: "#E2E8F0", flexShrink: 0, alignSelf: "flex-start", marginTop: "3px" }} />
-                        )}
-                        <div onClick={() => { setSelPeluquero(p); setSelHora(null); }} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                          <img src={p.foto} style={{ width: "52px", height: "52px", borderRadius: "50%", objectFit: "cover", border: `3px solid ${sel ? A : "#E2E8F0"}`, transition: "border 0.2s", boxShadow: sel ? `0 0 0 3px ${A}30` : "none" }} />
-                          <span style={{ fontSize: "11px", fontWeight: sel ? 800 : 600, color: sel ? A : "#64748B" }}>{p.nombre}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
+            const SelectorPeluquero = () => null;
 
             // CALENDARIO
 
@@ -2118,18 +1756,10 @@ function ClientePage({ sharedProps, startPaso=0 }){
             const Resumen = () => (
               <div style={sty.card}>
                 <div style={sty.lbl}>Resumen</div>
-                {/* Fila 1: servicio | tiempo + coste */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", paddingBottom: "12px", borderBottom: "1px solid #F1F5F9" }}>
-                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D" }}>{selServicio?.nombre || "—"}</span>
-                  <span style={{ fontSize: "12px", color: "#94A3B8", whiteSpace: "nowrap" }}>⏱ {selServicio?.duracionMin} min</span>
-                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D", whiteSpace: "nowrap" }}>{selServicio?.precio} €</span>
+                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D" }}>✂️ Corte</span>
+                  <span style={{ fontSize: "12px", color: "#94A3B8", whiteSpace: "nowrap" }}>⏱ 30 min</span>
                 </div>
-                {/* Fila 2: profesional centrado */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "14px 4px", borderBottom: "1px solid #F1F5F9" }}>
-                  {selPeluquero?.foto && <img src={selPeluquero.foto} style={{ width: "30px", height: "30px", borderRadius: "50%", objectFit: "cover" }} />}
-                  <span style={{ fontSize: "15px", fontWeight: 700, color: "#0A1F3D" }}>{selPeluquero?.nombre || "—"}</span>
-                </div>
-                {/* Fila 3: fecha centrada */}
                 <div style={{ textAlign: "center", padding: "14px 8px 0 8px" }}>
                   <span style={{ fontSize: "15px", fontWeight: 700, color: "#0A1F3D" }}>
                     {selDia ? textoDia : "—"}{selHora ? ` · ${selHora}` : ""}
@@ -2142,7 +1772,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <div style={{ width: "100%", animation: "fadeIn 0.5s ease", paddingBottom: "120px" }}>
                 {esMovil ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <SelectorPeluquero />
                     <Calendario />
                     <Horas />
                     <Resumen />
@@ -2167,7 +1796,6 @@ onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })
                     </div>
                     {/* Columna derecha */}
                     <div style={{ flex: "0.9", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <SelectorPeluquero />
                       <Resumen />
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
@@ -5246,7 +4874,6 @@ function AppData(){
       {/* Fíjate cómo ahora le pasamos sharedProps={sharedProps} pero sin BrowserRouter */}
       <Route path="/" element={<ClientePage sharedProps={sharedProps} />} />
       <Route path="/reservar" element={<ClientePage sharedProps={sharedProps} />} />
-      <Route path="/reservar/:serviceId" element={<ClientePage sharedProps={sharedProps} />} />
       <Route path="/admin" element={<AdminPage {...sharedProps} />} />
       <Route path="/login" element={<LoginPage />} />
     </Routes>
