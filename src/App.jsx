@@ -2048,15 +2048,15 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       setForm({
         nombre:      citaInicial.clienteNombre || "",
         telefono:    citaInicial.clienteTel    || "",
-        servicioId:  String(citaInicial.servicioId || ""),
-        peluqueroId: String(citaInicial.peluqueroId || ""),
+        servicioId:  String(CONFIG.serviciosDefault[0].id),
+        peluqueroId: String(CONFIG.peluqueros[0].id),
         fecha:       citaInicial.fecha         || "",
         hora:        citaInicial.hora          || "",
         nota:        citaInicial.nota          || "",
         estado:      citaInicial.estado        || "pendiente",
       });
     } else {
-      setForm({ nombre:"", telefono:"", servicioId:"", peluqueroId:"", fecha:"", hora:"", nota:"", estado:"pendiente" });
+      setForm({ nombre:"", telefono:"", servicioId:String(CONFIG.serviciosDefault[0].id), peluqueroId:String(CONFIG.peluqueros[0].id), fecha:"", hora:"", nota:"", estado:"pendiente" });
       setClienteRec(null);
     }
     setShowCal(false);
@@ -2207,50 +2207,6 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
             ✓ Cliente existente: {clienteRec.nombre} · {clienteRec.visitas} visitas · {clienteRec.gasto}€
           </div>
         )}
-
-        {/* Fila 2: Servicio + Peluquero */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:7}}>
-          <div>
-            <label style={lblS}>Servicio</label>
-            <select style={selS} value={form.servicioId}
-              onChange={e=>{
-                const nuevoSvcId = e.target.value;
-                const nuevoSvc = servicios.find(s=>s.id===Number(nuevoSvcId));
-                setForm(f=>{
-                  if(!f.hora || !nuevoSvc) return {...f, servicioId:nuevoSvcId, hora:""};
-                  // Comprobar si la hora actual cabe con el nuevo servicio
-                  const pel = CONFIG.peluqueros.find(p=>p.id===Number(f.peluqueroId));
-                  if(!pel) return {...f, servicioId:nuevoSvcId, hora:""};
-                  const fecha = new Date(f.fecha+"T12:00:00");
-                  const hp = pel.horario[fecha.getDay()];
-                  if(!hp) return {...f, servicioId:nuevoSvcId, hora:""};
-                  const finSlot = toMin(f.hora) + nuevoSvc.duracionMin;
-                  const finJornada = toMin(hp.salida);
-                  const cabeEnJornada = finSlot <= finJornada;
-                  // Comprobar que no choca con otras citas
-                  const citasDelDia = citas.filter(c=>c.fecha===f.fecha&&c.peluqueroId===pel.id&&c.estado!=="no-show"&&(!esEdicion||c.id!==citaInicial?.id));
-                  const noCruce = !citasDelDia.some(c=>{
-                    const cI=toMin(c.hora), cF=cI+(servicios.find(s=>s.id===c.servicioId)||{duracionMin:30}).duracionMin;
-                    const sI=toMin(f.hora), sF=sI+nuevoSvc.duracionMin;
-                    return sI<cF&&sF>cI;
-                  });
-                  return {...f, servicioId:nuevoSvcId, hora: cabeEnJornada&&noCruce ? f.hora : ""};
-                });
-              }}>
-              <option value="">Elige servicio</option>
-              {servicios.map(s=><option key={s.id} value={s.id}>{s.nombre} — €{s.precio}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={lblS}>Peluquero</label>
-            <select style={selS} value={form.peluqueroId}
-              onChange={e=>setForm(f=>({...f,peluqueroId:e.target.value,hora:"",fecha:""}))}>
-              <option value="">Elige peluquero</option>
-              <option value="cualquiera">🎲 Cualquiera (aleatorio)</option>
-              {CONFIG.peluqueros.map(p=><option key={p.id} value={p.id}>{p.emoji} {p.nombre}</option>)}
-            </select>
-          </div>
-        </div>
 
         {/* Fila 3: Fecha */}
         <div style={{marginBottom:7}}>
@@ -3365,36 +3321,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               />
             </div>
           </div>
-
-          {/* REPARTO POR PROFESIONAL (CON FOTOS) */}
-          <div style={{ ...as.card, marginBottom: 40 }}>
-            <div style={{ ...as.cardTitle, marginBottom: 20 }}>Facturación por Profesional</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
-              {CONFIG.peluqueros.map(p => {
-                const t = completadas.filter(c => c.peluqueroId === p.id).reduce((s, c) => s + c.precio, 0);
-                const nc = citasDia.filter(c => c.peluqueroId === p.id).length;
-                return (
-                  <div key={p.id} style={{ background: WH, padding: "16px 20px", borderRadius: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", border: `1px solid ${CR2}`, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-                    
-                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                      {/* FOTO CIRCULAR */}
-                      <img src={p.foto} alt={p.nombre} style={{ width: "44px", height: "44px", borderRadius: "50%", objectFit: "cover", border: `2px solid ${p.color || '#e2e8f0'}` }} />
-                      
-                      {/* NOMBRE Y CONTADOR DE SERVICIOS */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{ fontSize: 16, fontWeight: 800, color: TX }}>{p.nombre}</span>
-                        <span style={{ fontSize: 12, color: TX2, fontWeight: 600, background: CR, padding: "3px 8px", borderRadius: "20px" }}>{nc} servicios</span>
-                      </div>
-                    </div>
-
-                    {/* EUROS AL FINAL */}
-                    <span style={{ fontSize: 22, fontWeight: 900, color: A }}>{t} €</span>
-                    
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </div>
       </div>
     );
@@ -3835,86 +3761,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <div style={as.kpiLbl}>Tasa No-Show</div>
           </div>
         </div>
-
-        <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 15, color: TX }}>Rendimiento por Profesional</div>
-
-        {/* LISTADO DE PELUQUEROS */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
-          {CONFIG.peluqueros.map(p => {
-            const mc = citasPeriodo.filter(c => c.peluqueroId === p.id);
-            const comp = mc.filter(c => c.estado === "completada");
-            const ing = comp.reduce((s, c) => s + c.precio, 0);
-            const ns = mc.filter(c => c.estado === "no-show").length;
-            const tns = mc.length > 0 ? Math.round(ns / mc.length * 100) : 0;
-            
-            const sc = {}; mc.forEach(c => { sc[c.servicio] = (sc[c.servicio] || 0) + 1; });
-            const top = Object.entries(sc).sort((a, b) => b[1] - a[1])[0];
-
-            return (
-              <div key={p.id} style={{ ...as.card, borderTop: `5px solid ${p.color}`, position: "relative" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, textAlign: "left" }}>
-                  <img 
-                    src={p.foto || FOTO_DEFAULT} 
-                    alt={p.nombre} 
-                    style={{ 
-                      width: "54px", 
-                      height: "54px", 
-                      borderRadius: "50%", 
-                      objectFit: "cover",
-                      border: `3px solid ${p.color}15`,
-                      padding: "2px",
-                      background: WH
-                    }} 
-                  />
-                  <div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: TX }}>{p.nombre}</div>
-                    <div style={{ fontSize: 11, color: TX2, textTransform: "uppercase", letterSpacing: 1 }}>{p.especialidad}</div>
-                  </div>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  <div style={{ background: CR, padding: "12px", borderRadius: 10 }}>
-                    <div style={{ fontSize: 10, color: TX2, marginBottom: 4 }}>FACTURADO</div>
-                    <div style={{ fontSize: 18, fontWeight: 900, color: p.color }}>{ing} €</div>
-                  </div>
-                  <div style={{ background: CR, padding: "12px", borderRadius: 10 }}>
-                    <div style={{ fontSize: 10, color: TX2, marginBottom: 4 }}>NO-SHOWS</div>
-                    <div style={{ fontSize: 18, fontWeight: 900, color: tns > 15 ? ER : TX }}>{tns}%</div>
-                  </div>
-                </div>
-
-                {/* BLOQUE SERVICIO ESTRELLA ACTUALIZADO */}
-                <div style={{ 
-                  marginTop: 12, 
-                  padding: "12px", 
-                  background: "#F8FAFC", 
-                  borderRadius: 10, 
-                  border: "1px dashed #CBD5E1",
-                  textAlign: "center" // Centra el título y el contenido
-                }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: TX2, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                    Servicio más realizado
-                  </div>
-                  {top ? (
-                    <div style={{ fontSize: 13, fontWeight: 700, color: TX }}>
-                      {top[0]} 
-                      <span style={{ 
-                        color: p.color, 
-                        fontWeight: 400, // Menos grosor para la cantidad
-                        fontSize: "12px",
-                        marginLeft: "6px" 
-                      }}>
-                        x{top[1]}
-                      </span>
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 12, color: TX2, fontStyle: "italic" }}>Sin actividad</div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
     );
   };
@@ -4035,7 +3881,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         
         {/* NAVEGACIÓN DE PESTAÑAS */}
         <div style={{ display: "flex", gap: "10px", marginBottom: "24px", flexWrap: "wrap" }}>
-          {[["servicios", "Servicios"], ["categorias", "Categorías"], ["valoraciones", "Opiniones"], ["horarios", "Horarios"]].map(([v, l]) => (
+          {[["valoraciones", "Opiniones"], ["horarios", "Horarios"]].map(([v, l]) => (
             <button 
               key={v} 
               onClick={() => setConfigSubTab(v)}
@@ -4051,267 +3897,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           ))}
         </div>
 
-        {/* ───────────────────────────────────────────────────────── */}
-        {/* TAB 1: SERVICIOS */}
-        {configSubTab === "servicios" && (
-          <div className="anim">
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
-              <button style={btnBlue} onClick={() => setShowNew(v => !v)}>{showNew ? "Cancelar" : "+ Nuevo servicio"}</button>
-            </div>
-
-            {showNew && (
-              <div style={cardS}>
-                <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-                  <div><label style={labelS}>Nombre</label><input style={inputS} value={newSvc.nombre} onChange={e => setNewSvc(f => ({ ...f, nombre: e.target.value }))} placeholder="Ej: Corte clásico" /></div>
-                  <div><label style={labelS}>Duración (min)</label><input style={inputS} type="number" value={newSvc.duracionMin} onChange={e => setNewSvc(f => ({ ...f, duracionMin: e.target.value }))} /></div>
-                  <div><label style={labelS}>Precio (€)</label><input style={inputS} type="number" value={newSvc.precio} onChange={e => setNewSvc(f => ({ ...f, precio: e.target.value }))} /></div>
-                  <div style={{ gridColumn: "1 / -1" }}><label style={labelS}>Descripción (Opcional)</label><input style={inputS} value={newSvc.desc} onChange={e => setNewSvc(f => ({ ...f, desc: e.target.value }))} placeholder="Descripción breve del servicio" /></div>
-                </div>
-                <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                  <button style={btnCancel} onClick={() => setShowNew(false)}>Cancelar</button>
-                  <button style={{...btnGreen, opacity: newSvc.nombre ? 1 : 0.5}} disabled={!newSvc.nombre} onClick={addSvc}>Guardar Servicio</button>
-                </div>
-              </div>
-            )}
-
-            <div style={{ ...cardS, padding: 0, overflow: "hidden" }}>
-              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-              <table style={{ width: isMobile ? "600px" : "100%", borderCollapse: "collapse", textAlign: "left" }}>
-                <thead style={{ background: "#f8fafc" }}>
-                  <tr>
-                    <th style={thS}>Nombre</th>
-                    <th style={{ ...thS, textAlign: "center" }}>Duración</th>
-                    <th style={{ ...thS, textAlign: "center" }}>Precio</th>
-                    <th style={thS}>Descripción</th>
-                    <th style={{ ...thS, textAlign: "right" }}>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {servicios.map(s => (
-                    <tr key={s.id} style={{ transition: "0.2s" }}>
-                      {editSvc?.id === s.id ? (
-                        <td colSpan={5} style={{ ...tdS, padding: "16px", background: "#f8fafc" }}>
-                          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 2fr", gap: "10px", marginBottom: "12px" }}>
-                            <div>
-                              <label style={{ fontSize: "10px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "4px" }}>NOMBRE</label>
-                              <input style={{ ...inputS, padding: "8px 10px" }} value={editSvc.nombre} onChange={e => setEditSvc(f => ({ ...f, nombre: e.target.value }))} />
-                            </div>
-                            <div>
-                              <label style={{ fontSize: "10px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "4px" }}>DURACIÓN (min)</label>
-                              <input style={{ ...inputS, padding: "8px 10px" }} type="number" value={editSvc.duracionMin} onChange={e => setEditSvc(f => ({ ...f, duracionMin: Number(e.target.value) }))} />
-                            </div>
-                            <div>
-                              <label style={{ fontSize: "10px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "4px" }}>PRECIO (€)</label>
-                              <input style={{ ...inputS, padding: "8px 10px" }} type="number" value={editSvc.precio} onChange={e => setEditSvc(f => ({ ...f, precio: Number(e.target.value) }))} />
-                            </div>
-                            <div>
-                              <label style={{ fontSize: "10px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "4px" }}>DESCRIPCIÓN</label>
-                              <input style={{ ...inputS, padding: "8px 10px" }} value={editSvc.desc || ""} onChange={e => setEditSvc(f => ({ ...f, desc: e.target.value }))} placeholder="Descripción opcional..." />
-                            </div>
-                          </div>
-                          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                            <button style={{ background: "#f1f5f9", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "7px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} onClick={() => setEditSvc(null)}>Cancelar</button>
-                            <button style={{ background: "#10b981", color: "#fff", border: "none", borderRadius: "8px", padding: "7px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} onClick={guardarSvc}>Guardar</button>
-                          </div>
-                        </td>
-                      ) : (
-                        <>
-                          <td style={{ ...tdS, fontWeight: "700", color: "#1e293b" }}>{s.nombre}</td>
-                          <td style={{ ...tdS, color: "#64748b", textAlign: "center" }}>{s.duracionMin} min</td>
-                          <td style={{ ...tdS, fontWeight: "700", color: "#10b981", textAlign: "center" }}>{s.precio} €</td>
-                          <td style={{ ...tdS, color: "#94a3b8", fontSize: "11px" }}>{s.desc || "—"}</td>
-                          <td style={{ ...tdS, textAlign: "right" }}>
-                            <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                              <button style={btnSquareEdit} onClick={() => setEditSvc({ ...s })}>✏️</button>
-                              <button style={btnSquareDel} onClick={() => deleteSvc(s)}>🗑</button>
-                            </div>
-                          </td>
-                        </>
-                      )}
-                    </tr>
-                  ))}
-                  {servicios.length === 0 && <tr><td colSpan="5" style={{ padding: "30px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>No hay servicios registrados.</td></tr>}
-                </tbody>
-              </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-
-        {/* ───────────────────────────────────────────────────────── */}
-        {/* TAB: CATEGORÍAS */}
-        {configSubTab === "categorias" && (
-          <div>
-            <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginBottom: "16px" }}>
-              <button style={{ background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => setShowNewCat(v => !v)}>{showNewCat ? "Cancelar" : "+ Nueva categoría"}</button>
-            </div>
-
-            {showNewCat && (
-              <div style={{ background: "#fff", borderRadius: "12px", padding: "20px", marginBottom: "16px", border: "1px solid #93c5fd" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-                  <div>
-                    <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "6px", display: "block" }}>Nombre</label>
-                    <input style={{ width: "100%", padding: "10px 12px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "13px", boxSizing: "border-box" }} value={newCat.nombre} onChange={e => setNewCat(f => ({ ...f, nombre: e.target.value }))} placeholder="Ej: Coloración" />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "6px", display: "block" }}>URL de la foto</label>
-                    <input style={{ width: "100%", padding: "10px 12px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "13px", boxSizing: "border-box" }} value={newCat.foto} onChange={e => setNewCat(f => ({ ...f, foto: e.target.value }))} placeholder="https://..." />
-                  </div>
-                </div>
-                <div style={{ marginBottom: "12px" }}>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "8px", display: "block" }}>Servicios incluidos</label>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "flex-start" }}>
-                    {servicios.map(s => {
-                      const sel = newCat.servicioIds.includes(s.id);
-                      return (
-                        <button key={s.id} onClick={() => setNewCat(f => ({ ...f, servicioIds: sel ? f.servicioIds.filter(id => id !== s.id) : [...f.servicioIds, s.id] }))} style={{ padding: "6px 12px", borderRadius: "20px", border: `1px solid ${sel ? "#1e3a8a" : "#cbd5e1"}`, background: sel ? "#1e3a8a" : "#f8fafc", color: sel ? "#fff" : "#334155", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
-                          {s.nombre}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                  <button style={{ background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} onClick={() => setShowNewCat(false)}>Cancelar</button>
-                  <button style={{ background: "#10b981", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} onClick={async () => {
-                    if (!newCat.nombre) return;
-                    const cat = { ...newCat, id: Date.now(), orden: (categorias||[]).length };
-                    setCategorias(prev => [...prev, cat]);
-                    await guardarCategoriaFB(cat);
-                    setNewCat({ nombre: "", foto: "", servicioIds: [] });
-                    setShowNewCat(false);
-                  }}>Guardar categoría</button>
-                </div>
-              </div>
-            )}
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-              onDragOver={e => e.preventDefault()}
-            >
-              {[...(categorias||[])].sort((a,b) => (a.orden??a.id) - (b.orden??b.id)).map((cat, idx, arr) => (
-                <div
-                  key={cat.id}
-                  draggable={!editCat}
-                  onDragStart={e => { e.dataTransfer.setData("catId", String(cat.id)); }}
-                  onDrop={async e => {
-                    e.preventDefault();
-                    const origenId = Number(e.dataTransfer.getData("catId"));
-                    if (origenId === cat.id) return;
-                    const lista = [...arr];
-                    const desdeIdx = lista.findIndex(c => c.id === origenId);
-                    const hastaIdx = lista.findIndex(c => c.id === cat.id);
-                    const nuevaLista = [...lista];
-                    const [movido] = nuevaLista.splice(desdeIdx, 1);
-                    nuevaLista.splice(hastaIdx, 0, movido);
-                    await reordenarCategorias(nuevaLista);
-                  }}
-                  style={{ background: "#fff", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", cursor: editCat ? "default" : "grab" }}
-                >
-                  {editCat?.id === cat.id ? (
-                    <div style={{ padding: "20px" }}>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "6px", display: "block" }}>Nombre</label>
-                          <input style={{ width: "100%", padding: "10px 12px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "13px", boxSizing: "border-box" }} value={editCat.nombre} onChange={e => setEditCat(f => ({ ...f, nombre: e.target.value }))} />
-                        </div>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "6px", display: "block" }}>URL de la foto</label>
-                          <input style={{ width: "100%", padding: "10px 12px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "13px", boxSizing: "border-box" }} value={editCat.foto} onChange={e => setEditCat(f => ({ ...f, foto: e.target.value }))} />
-                        </div>
-                      </div>
-                      <div style={{ marginBottom: "12px" }}>
-                        <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "8px", display: "block" }}>Servicios incluidos (arrastra para reordenar)</label>
-                        <div
-                          style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px" }}
-                          onDragOver={e => e.preventDefault()}
-                        >
-                          {(editCat.servicioIds||[]).map((sid, sidx) => {
-                            const svc = servicios.find(s => s.id === sid);
-                            if (!svc) return null;
-                            return (
-                              <div
-                                key={sid}
-                                draggable
-                                onDragStart={e => e.dataTransfer.setData("svcId", String(sid))}
-                                onDrop={async e => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  const origenId = Number(e.dataTransfer.getData("svcId"));
-                                  if (origenId === sid) return;
-                                  const lista = [...(editCat.servicioIds||[])];
-                                  const desdeIdx = lista.indexOf(origenId);
-                                  const hastaIdx = lista.indexOf(sid);
-                                  const nueva = [...lista];
-                                  const [mov] = nueva.splice(desdeIdx, 1);
-                                  nueva.splice(hastaIdx, 0, mov);
-                                  setEditCat(f => ({...f, servicioIds: nueva}));
-                                }}
-                                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: "#f0f4ff", border: "1px solid #1e3a8a33", borderRadius: "8px", cursor: "grab" }}
-                              >
-                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                  <span style={{ color: "#94a3b8", fontSize: "14px" }}>⠿</span>
-                                  <span style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b" }}>{svc.nombre}</span>
-                                  <span style={{ fontSize: "11px", color: "#64748b" }}>{svc.duracionMin} min · {svc.precio} €</span>
-                                </div>
-                                <button onClick={() => setEditCat(f => ({...f, servicioIds: f.servicioIds.filter(id => id !== sid)}))} style={{ background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "6px", display: "block" }}>Añadir servicios</label>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                          {servicios.filter(s => !(editCat.servicioIds||[]).includes(s.id)).map(s => (
-                            <button key={s.id} onClick={() => setEditCat(f => ({ ...f, servicioIds: [...(f.servicioIds||[]), s.id] }))} style={{ padding: "6px 12px", borderRadius: "20px", border: "1px solid #cbd5e1", background: "#f8fafc", color: "#334155", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
-                              + {s.nombre}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                        <button style={{ background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} onClick={() => setEditCat(null)}>Cancelar</button>
-                        <button style={{ background: "#10b981", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} onClick={async () => {
-                          setCategorias(prev => prev.map(c => c.id === editCat.id ? editCat : c));
-                          await guardarCategoriaFB(editCat);
-                          setEditCat(null);
-                        }}>Guardar</button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                      <div style={{ 
-                        display: "flex", 
-                        alignItems: "center", 
-                        padding: "14px 20px",
-                        minWidth: isMobile ? "max-content" : "auto",
-                        gap: "0"
-                      }}>
-                        <span style={{ color: "#cbd5e1", fontSize: "18px", cursor: "grab", flexShrink: 0, marginRight: "10px" }}>⠿</span>
-                        {cat.foto && <img src={cat.foto} style={{ width: "50px", height: "50px", borderRadius: "10px", objectFit: "cover", flexShrink: 0, marginRight: "16px" }} />}
-                        <div style={{ flexShrink: 0, marginRight: "20px", width: isMobile ? "auto" : "160px" }}>
-                          <div style={{ fontSize: "14px", fontWeight: "800", color: "#1e293b", whiteSpace: "nowrap" }}>{cat.nombre}</div>
-                        </div>
-                        <div style={{ display: "flex", flexWrap: isMobile ? "nowrap" : "wrap", gap: "4px", flex: isMobile ? "none" : 1 }}>
-                          {(cat.servicioIds || []).map(sid => {
-                            const svc = servicios.find(s => s.id === sid);
-                            return svc ? <span key={sid} style={{ fontSize: "10px", background: "#f0f4ff", color: "#1e3a8a", padding: "2px 8px", borderRadius: "10px", fontWeight: "600", whiteSpace: "nowrap" }}>{svc.nombre}</span> : null;
-                          })}
-                        </div>
-                        <div style={{ display: "flex", gap: "8px", flexShrink: 0, marginLeft: "20px" }}>
-                          <button style={{ background: "#e0e7ff", color: "#4f46e5", border: "none", borderRadius: "6px", width: "32px", height: "32px", cursor: "pointer", fontSize: "15px" }} onClick={() => setEditCat({ ...cat })}>✏️</button>
-                          <button style={{ background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: "6px", width: "32px", height: "32px", cursor: "pointer", fontSize: "15px" }} onClick={() => setCatBorrar({...cat})}>🗑</button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-
-
+        
         {/* ───────────────────────────────────────────────────────── */}
         {/* TAB 2: VALORACIONES */}
         {configSubTab === "valoraciones" && (
