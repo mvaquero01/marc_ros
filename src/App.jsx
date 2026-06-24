@@ -316,44 +316,12 @@ function generarSlots(hp,durMin){
   return slots;
 }
 function getTramosDia(pelId, fechaISO, horariosEspeciales, horariosGenerales){
-  const fecha = new Date(fechaISO+"T12:00:00");
-  const diaSemana = fecha.getDay();
-  const pel = CONFIG.peluqueros.find(p => p.id === pelId);
-  if(!pel) return [];
-
-  // 1. Obtener tramos base del peluquero (especial o normal)
-  let tramosBase = [];
-  const especial = (horariosEspeciales||[]).find(h => Number(h.peluqueroId) === pelId && h.fecha === fechaISO);
-  if(especial){
-    if(especial.tramos && especial.tramos.length > 0) tramosBase = especial.tramos;
-    else if(especial.entrada && especial.salida) tramosBase = [{entrada: especial.entrada, salida: especial.salida}];
-    else return [];
-  } else {
-    const hp = pel.horario[diaSemana];
-    if(!hp) return [];
-    tramosBase = [hp];
-  }
-
-  // 2. Comprobar si hay horario general especial para este día
+  // 1. Buscar horario personalizado para este día en horariosGenerales
   const general = (horariosGenerales||[]).find(h => h.fecha === fechaISO);
-  if(!general || !general.tramos || general.tramos.length === 0) return tramosBase;
+  if(general && general.tramos && general.tramos.length > 0) return general.tramos;
 
-  // 3. Recortar tramos del peluquero según ventanas del horario general
-  const tramosRecortados = [];
-  for(const tramoBase of tramosBase){
-    const ini = toMin(tramoBase.entrada);
-    const fin = toMin(tramoBase.salida);
-    for(const ventana of general.tramos){
-      const vIni = toMin(ventana.entrada);
-      const vFin = toMin(ventana.salida);
-      const inicio = Math.max(ini, vIni);
-      const final = Math.min(fin, vFin);
-      if(inicio < final){
-        tramosRecortados.push({ entrada: toStr(inicio), salida: toStr(final), descanso: tramoBase.descanso || null });
-      }
-    }
-  }
-  return tramosRecortados;
+  // 2. Si no hay horario personalizado, el día está cerrado
+  return [];
 }
 function generarSlotsTramos(tramos, durMin){
   const slots = [];
@@ -656,9 +624,8 @@ function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horari
           const iso=isoDate(d);
           const isPast=d<today, isDom=d.getDay()===0, isFest=festivosSet.has(iso);
           const noBloq=bloqueosPelId?peluqueroEstaBloqueado(bloqueosPelId,iso,bloqueos):false;
-          const noH=!CONFIG.horarioGeneral[d.getDay()];
-          const noHP=bloqueosPelId?getTramosDia(bloqueosPelId,iso,horariosEspeciales||[],[]).length===0:false;
-          const disabled=isPast||isDom||isFest||noBloq||noH||noHP;
+          const noH = getTramosDia(1, iso, [], horariosGenerales||[]).length === 0;
+          const disabled = isPast||isDom||isFest||noBloq||noH;
           const sel=value===iso, isToday=iso===HOY_ISO;
           let cls="mini-cal-cell";
           if(sel) cls+=" selected";
@@ -1113,11 +1080,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     setPaso(5); scrollTop();
   };
   const waMsgCliente=`Hola ${form.nombre} 👋%0AReserva confirmada en *${CONFIG.nombre}*%0A%0A✂️ ${selServicio?.nombre}%0A💈 ${selPeluquero?.nombre}%0A📅 ${selDia?fmtLarga(selDia):""}%0A🕐 ${selHora}%0A💶 €${selServicio?.precio}%0A%0ATe esperamos 😊`;
-  const horarioResumido=()=>{
-    const g={};
-    Object.entries(CONFIG.horarioGeneral).forEach(([d,h])=>{const k=`${h.apertura}–${h.cierre}`;if(!g[k])g[k]=[];g[k].push(Number(d));});
-    return Object.entries(g).map(([h,ds])=>({horas:h,rango:ds.map(d=>DIAS_ES[d]).join(", ")}));
-  };
+  const horarioResumido=()=>[];
 
   const cs={
     header: {
@@ -1310,18 +1273,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
       
       <div style={{ padding: "0 4% 0px 4%", marginTop: 20, marginBottom: "0px" }}>
         <div style={{background:WH,border:`1px solid ${CR3}`,borderRadius:14,padding:"16px"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-            <span style={{fontSize:14,fontWeight:700,color:TX,letterSpacing:1,textTransform:"uppercase"}}>Horario</span>
-            <Bdg color={CONFIG.horarioGeneral[HOY.getDay()]?OK:ER}>{CONFIG.horarioGeneral[HOY.getDay()]?"Abierto hoy":"Cerrado hoy"}</Bdg>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <span style={{fontSize:14,fontWeight:700,color:TX,letterSpacing:1,textTransform:"uppercase"}}>Reservas</span>
+            <Bdg color={A}>Consulta disponibilidad</Bdg>
           </div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:20}}>
-            {horarioResumido().map(({rango,horas},i)=>(
-              <div key={i} style={{background:`${A}12`,border:`1px solid ${A}33`,borderRadius:20,padding:"5px 20px",fontSize:12}}>
-                <span style={{fontWeight:700,color:TX}}>{rango}</span><span style={{color:TX2,marginLeft:5}}>{horas}</span>
-              </div>
-            ))}
-            <div style={{background:CR2,border:`1px solid ${CR3}`,borderRadius:20,padding:"5px 20px",fontSize:12,color:TX2}}>Dom — Cerrado</div>
-          </div>
+          <div style={{fontSize:12,color:TX2,marginTop:8}}>El horario varía cada semana. Consulta los días y horas disponibles al reservar.</div>
         </div>
       </div>
 
@@ -3324,369 +3280,344 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   // TAB DISPONIBILIDAD (CIERRES Y AUSENCIAS)
   // ──────────────────────
   const TabDisponibilidad = ({ isMobile, horariosEspeciales, horariosGenerales }) => {
-    const [showFF, setShowFF] = useState(false);
-    const [showBF, setShowBF] = useState(false);
-    
-    const [festForm, setFestForm] = useState({ desde: "", hasta: "", motivo: "" });
-    const [bloqForm, setBloqForm] = useState({ peluqueroId: "", desde: "", hasta: "", motivo: "" });
-    
-    const [showFestCal, setShowFestCal] = useState(false);
-    const [showFestHastaCal, setShowFestHastaCal] = useState(false);
+    const [mesRef, setMesRef] = useState(new Date());
+    const [diaSeleccionado, setDiaSeleccionado] = useState(null);
+    const [tramos, setTramos] = useState([{ entrada: "", salida: "" }]);
+    const [showBloqForm, setShowBloqForm] = useState(false);
+    const [bloqForm, setBloqForm] = useState({ desde: "", hasta: "", motivo: "" });
     const [showBloqDesdeCal, setShowBloqDesdeCal] = useState(false);
     const [showBloqHastaCal, setShowBloqHastaCal] = useState(false);
-    
-    // Horario especial por peluquero
-    const [showHE, setShowHE] = useState(false);
-    const [showHECal, setShowHECal] = useState(false);
-    const [heForm, setHeForm] = useState({peluqueroId:"", fecha:"", tramos:[{entrada:"", salida:""}]});
-    
-    // Horario especial general
-    const [showHG, setShowHG] = useState(false);
-    const [showHGCal, setShowHGCal] = useState(false);
-    const [hgForm, setHgForm] = useState({fecha:"", tramos:[{entrada:"", salida:""}]});
+    const [bloqBorrar, setBloqBorrar] = useState(null);
+    const [horarioBorrar, setHorarioBorrar] = useState(null);
+    const [toastBloqVisible, setToastBloqVisible] = useState(false);
+    const [toastBloqTimer, setToastBloqTimer] = useState(null);
+    const [toastHorarioVisible, setToastHorarioVisible] = useState(false);
+    const [toastHorarioTimer, setToastHorarioTimer] = useState(null);
+    const [ultimoBloqEliminado, setUltimoBloqEliminado] = useState(null);
+    const [ultimoHorarioEliminado, setUltimoHorarioEliminado] = useState(null);
 
-    // FORMATOS DE FECHA
     const toDMY = (iso) => iso ? iso.split("-").reverse().join("/") : "";
     const toSafeDMY = (iso) => iso ? iso.split("-").reverse().join("-") : "";
 
-    // LÓGICA DE DÍAS
     const obtenerDiasEntre = (inicio, fin) => {
       const fechas = [];
-      let actual = new Date(inicio);
-      const final = new Date(fin || inicio);
+      let actual = new Date(inicio + "T12:00:00");
+      const final = new Date((fin || inicio) + "T12:00:00");
       while (actual <= final) {
-        fechas.push(actual.toISOString().split('T')[0]);
+        fechas.push(isoDate(actual));
         actual.setDate(actual.getDate() + 1);
       }
       return fechas;
     };
 
-    // FUNCIÓN ROBUSTA PARA SACAR EL MOTIVO DEL ID DEL DOCUMENTO
-    const getMotivo = (item, isBloqueo) => {
-      if (item.id) {
-        const partes = item.id.split(" - ");
-        if (isBloqueo && partes.length >= 3) return partes[1]; // Peluquero - Motivo - Fecha
-        if (!isBloqueo && partes.length >= 2) return partes[0]; // Motivo - Fecha
+    // Días del mes para el calendario
+    const startOfMonth = new Date(mesRef.getFullYear(), mesRef.getMonth(), 1);
+    const endOfMonth = new Date(mesRef.getFullYear(), mesRef.getMonth() + 1, 0);
+    let startCol = startOfMonth.getDay();
+    if (startCol === 0) startCol = 7;
+    const diasMes = [];
+    for (let i = 1; i < startCol; i++) diasMes.push(null);
+    for (let i = 1; i <= endOfMonth.getDate(); i++) {
+      diasMes.push(new Date(mesRef.getFullYear(), mesRef.getMonth(), i));
+    }
+
+    const navegar = (n) => setMesRef(new Date(mesRef.getFullYear(), mesRef.getMonth() + n, 1));
+
+    // Cargar tramos del día seleccionado
+    useEffect(() => {
+      if (!diaSeleccionado) return;
+      const iso = isoDate(diaSeleccionado);
+      const horario = (horariosGenerales || []).find(h => h.fecha === iso);
+      if (horario && horario.tramos && horario.tramos.length > 0) {
+        setTramos(horario.tramos);
+      } else {
+        setTramos([{ entrada: "", salida: "" }]);
       }
-      return item.motivo || (isBloqueo ? "Ausencia" : "Cierre");
+    }, [diaSeleccionado, horariosGenerales]);
+
+    const guardarHorarioDia = async () => {
+      if (!diaSeleccionado) return;
+      const iso = isoDate(diaSeleccionado);
+      const tramosValidos = tramos.filter(t => t.entrada && t.salida);
+      if (tramosValidos.length === 0) return;
+      const docId = `general-${iso}`;
+      await guardarHorarioGeneral(docId, { fecha: iso, tramos: tramosValidos });
+      setDiaSeleccionado(null);
     };
 
-    // AGRUPAR PARA LA VISTA ADMIN
-    const agruparItems = (items) => {
+    const confirmarBorradoHorario = async () => {
+      const iso = isoDate(horarioBorrar);
+      const horario = (horariosGenerales || []).find(h => h.fecha === iso);
+      setUltimoHorarioEliminado(horario);
+      const docId = `general-${iso}`;
+      await borrarHorarioGeneral(docId);
+      setHorarioBorrar(null);
+      setDiaSeleccionado(null);
+      setToastHorarioVisible(true);
+      if (toastHorarioTimer) clearTimeout(toastHorarioTimer);
+      const t = setTimeout(() => { setToastHorarioVisible(false); setUltimoHorarioEliminado(null); }, 6000);
+      setToastHorarioTimer(t);
+    };
+
+    const confirmarBorradoBloq = async () => {
+      setUltimoBloqEliminado({ ...bloqBorrar });
+      for (const id of bloqBorrar.ids) await borrarBloqueo(id);
+      setBloqBorrar(null);
+      setToastBloqVisible(true);
+      if (toastBloqTimer) clearTimeout(toastBloqTimer);
+      const t = setTimeout(() => { setToastBloqVisible(false); setUltimoBloqEliminado(null); }, 6000);
+      setToastBloqTimer(t);
+    };
+
+    // Agrupar bloqueos
+    const agruparBloqueos = (items) => {
       const agrupados = [];
       const procesados = new Set();
-      const ordenados = [...items].sort((a, b) => (a.fecha || a.desde).localeCompare(b.fecha || b.desde));
-
+      const ordenados = [...items].sort((a, b) => (a.desde || a.fecha || "").localeCompare(b.desde || b.fecha || ""));
       ordenados.forEach(item => {
         if (procesados.has(item.id)) return;
-        
-        const isBloqueo = !!item.peluqueroId;
-        const motivoVisual = getMotivo(item, isBloqueo);
-
         if (item.rangoId) {
           const hermanos = ordenados.filter(i => i.rangoId === item.rangoId);
           hermanos.forEach(h => procesados.add(h.id));
-          agrupados.push({
-            isGroup: true,
-            ids: hermanos.map(h => h.id),
-            motivo: motivoVisual,
-            peluqueroId: item.peluqueroId,
-            inicio: hermanos[0].fecha || hermanos[0].desde,
-            fin: hermanos[hermanos.length - 1].fecha || hermanos[hermanos.length - 1].desde,
-          });
+          agrupados.push({ ids: hermanos.map(h => h.id), motivo: item.motivo || "Bloqueado", inicio: hermanos[0].desde || hermanos[0].fecha, fin: hermanos[hermanos.length - 1].desde || hermanos[hermanos.length - 1].fecha });
         } else {
-          agrupados.push({
-            isGroup: false,
-            ids: [item.id],
-            motivo: motivoVisual,
-            peluqueroId: item.peluqueroId,
-            inicio: item.fecha || item.desde,
-            fin: item.fecha || item.desde
-          });
+          procesados.add(item.id);
+          agrupados.push({ ids: [item.id], motivo: item.motivo || "Bloqueado", inicio: item.desde || item.fecha, fin: item.desde || item.fecha });
         }
       });
       return agrupados;
     };
 
-    // --- ESTILOS DE DISTRIBUCIÓN ---
-    const containerStyle = {
-      display: "grid", 
-      gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", 
-      gap: isMobile ? "20px" : "10%",                   
-      maxWidth: "90%", margin: "20px auto", padding: "0 0px", alignItems: "start"
-    };
-    const colStyle = { background: "#f8fafc", padding: "16px", borderRadius: "12px", border: "1px solid #e2e8f0" };
-    const btnBlue = { background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 12px", fontSize: "11px", fontWeight: "700", cursor: "pointer" };
-    const inputS = { width: "100%", padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box", textAlign: "left" };
+    const bloqueosAgrupados = agruparBloqueos(bloqueos);
+    const festivosSet = useMemo(() => new Set(festivos.map(f => f.fecha)), [festivos]);
 
-    const tramoStyle = { display:"flex", gap:"8px", alignItems:"center", marginBottom:"6px" };
-    const timeInputS = { ...inputS, cursor:"text" };
-    const btnAddTramo = { background:"#e0f2fe", color:"#0369a1", border:"none", borderRadius:"6px", padding:"5px 10px", fontSize:"11px", fontWeight:700, cursor:"pointer" };
-    const btnDelTramo = { background:"#fee2e2", color:"#dc2626", border:"none", borderRadius:"6px", width:"24px", height:"24px", cursor:"pointer", fontSize:"13px", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 };
+    const colStyle = { background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0" };
+    const btnBlue = { background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 14px", fontSize: "11px", fontWeight: "700", cursor: "pointer" };
+    const inputS = { width: "100%", padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" };
+    const timeInputS = { ...inputS, cursor: "text" };
+    const btnAddTramo = { background: "#e0f2fe", color: "#0369a1", border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" };
+    const btnDelTramo = { background: "#fee2e2", color: "#dc2626", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 };
 
     return (
-      <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr 1fr", gap:"20px", maxWidth:"100%", margin:"20px auto", padding:"0", alignItems:"start" }}>
-        
-        {/* COLUMNA 1: CIERRES GLOBALES */}
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "24px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
+
+        {/* BLOQUE 1: DÍAS BLOQUEADOS */}
         <div style={colStyle}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"16px", alignItems:"center" }}>
-            <h4 style={{ margin:10, fontSize:"14px", fontWeight:"800", color:"#1e293b" }}>Cierres</h4>
-            <button onClick={() => setShowFF(!showFF)} style={btnBlue}>{showFF ? "Cancelar" : "+ Añadir"}</button>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px", alignItems: "center" }}>
+            <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#1e293b" }}>🔒 Días bloqueados</h4>
+            <button onClick={() => setShowBloqForm(!showBloqForm)} style={btnBlue}>{showBloqForm ? "Cancelar" : "+ Añadir"}</button>
           </div>
 
-          {showFF && (
-            <div className="anim" style={{ background:"#fff", padding:"12px", borderRadius:"10px", marginBottom:"12px", border:"1px solid #cbd5e1" }}>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"8px", marginBottom:"8px" }}>
-                <div style={{ position:"relative" }}>
-                  <label style={{fontSize:10, fontWeight:700, color:"#64748b"}}>Desde</label>
-                  <button style={inputS} onClick={() => setShowFestCal(!showFestCal)}>{festForm.desde ? toDMY(festForm.desde) : "..."}</button>
-                  {showFestCal && (
-                    <div style={{ position:"absolute", zIndex:200, marginTop:"4px" }}>
-                      <MiniCalPicker value={festForm.desde} onChange={d => { setFestForm({...festForm, desde:d}); setShowFestCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} />
-                    </div>
-                  )}
-                </div>
-                <div style={{ position:"relative" }}>
-                  <label style={{fontSize:10, fontWeight:700, color:"#64748b"}}>Hasta (Opcional)</label>
-                  <button style={inputS} onClick={() => setShowFestHastaCal(!showFestHastaCal)}>{festForm.hasta ? toDMY(festForm.hasta) : "..."}</button>
-                  {showFestHastaCal && (
-                    <div style={{ position:"absolute", zIndex:200, marginTop:"4px", right:0 }}>
-                      <MiniCalPicker value={festForm.hasta} onChange={d => { setFestForm({...festForm, hasta:d}); setShowFestHastaCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} />
-                    </div>
-                  )}
-                </div>
-              </div>
-              <input style={{...inputS, marginBottom:"12px", cursor:"text"}} placeholder="Motivo (Ej: Festivo local)" value={festForm.motivo} onChange={e=>setFestForm({...festForm, motivo:e.target.value})} />
-              <button style={{...btnBlue, width:"100%", padding:"10px", background:"#10b981", fontSize:"12px"}} onClick={async () => {
-                if(!festForm.desde || !festForm.motivo) return;
-                const dias = obtenerDiasEntre(festForm.desde, festForm.hasta || festForm.desde);
-                const rId = Date.now().toString();
-                for(const d of dias){
-                  const docName = `${festForm.motivo} - ${toSafeDMY(d)}`;
-                  await crearFestivo(docName, { fecha:d, rangoId:rId, todoElDia:true });
-                }
-                setFestForm({desde:"", hasta:"", motivo:""}); setShowFF(false);
-              }}>Guardar Cierre</button>
-            </div>
-          )}
-
-          {agruparItems(festivos).map((f, i) => (
-            <div key={i} style={{ background:"#fff", padding:"10px 14px", borderRadius:"8px", marginBottom:"8px", display:"flex", justifyContent:"space-between", alignItems:"flex-start", border:"1px solid #e2e8f0" }}>
-              <div style={{ display:"flex", flexDirection:"column", gap:"2px", alignItems:"flex-start", textAlign:"left" }}>
-                <span style={{ fontSize:"13px", fontWeight:"700", color:"#1e293b" }}>{f.motivo}</span>
-                <span style={{ fontSize:"11px", color:"#64748b" }}>{toDMY(f.inicio)}{f.inicio !== f.fin ? ` — ${toDMY(f.fin)}` : ""}</span>
-              </div>
-              <button style={{ color:"#ef4444", background:"none", border:"none", cursor:"pointer", fontSize:"15px", padding:"4px" }} onClick={async () => { for(const id of f.ids) await borrarFestivo(id); }}>✕</button>
-            </div>
-          ))}
-        </div>
-
-        {/* COLUMNA 2: AUSENCIAS POR PELUQUERO */}
-        <div style={colStyle}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"16px", alignItems:"center" }}>
-            <h4 style={{ margin:10, fontSize:"14px", fontWeight:"800", color:"#1e293b" }}>Ausencias</h4>
-            <button onClick={() => setShowBF(!showBF)} style={btnBlue}>{showBF ? "Cancelar" : "+ Añadir"}</button>
-          </div>
-
-          {showBF && (
-            <div className="anim" style={{ background:"#fff", padding:"12px", borderRadius:"10px", marginBottom:"12px", border:"1px solid #cbd5e1" }}>
-              <select style={{...inputS, marginBottom:"8px"}} value={bloqForm.peluqueroId} onChange={e=>setBloqForm({...bloqForm, peluqueroId:e.target.value})}>
-                <option value="">¿Peluquero?</option>
-                {CONFIG.peluqueros.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-              </select>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"8px", marginBottom:"8px" }}>
-                <div style={{ position:"relative" }}>
-                  <label style={{fontSize:10, fontWeight:700, color:"#64748b"}}>Desde</label>
-                  <button style={inputS} onClick={()=>setShowBloqDesdeCal(!showBloqDesdeCal)}>{bloqForm.desde ? toDMY(bloqForm.desde) : "..."}</button>
+          {showBloqForm && (
+            <div className="anim" style={{ background: "#fff", padding: "12px", borderRadius: "10px", marginBottom: "12px", border: "1px solid #cbd5e1" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+                <div style={{ position: "relative" }}>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Desde</label>
+                  <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqDesdeCal(v => !v)}>{bloqForm.desde ? toDMY(bloqForm.desde) : "Seleccionar..."}</button>
                   {showBloqDesdeCal && (
-                    <div style={{ position:"absolute", zIndex:200, marginTop:"4px" }}>
-                      <MiniCalPicker value={bloqForm.desde} onChange={d=>{setBloqForm({...bloqForm, desde:d});setShowBloqDesdeCal(false);}} festivosSet={festivosSet} bloqueosPelId={bloqForm.peluqueroId ? Number(bloqForm.peluqueroId) : null} bloqueos={bloqueos} />
+                    <div style={{ position: "absolute", zIndex: 200, marginTop: "4px" }}>
+                      <MiniCalPicker value={bloqForm.desde} onChange={d => { setBloqForm({ ...bloqForm, desde: d }); setShowBloqDesdeCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} horariosEspeciales={[]} />
                     </div>
                   )}
                 </div>
-                <div style={{ position:"relative" }}>
-                  <label style={{fontSize:10, fontWeight:700, color:"#64748b"}}>Hasta (Opcional)</label>
-                  <button style={inputS} onClick={()=>setShowBloqHastaCal(!showBloqHastaCal)}>{bloqForm.hasta ? toDMY(bloqForm.hasta) : "..."}</button>
+                <div style={{ position: "relative" }}>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Hasta (opcional)</label>
+                  <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqHastaCal(v => !v)}>{bloqForm.hasta ? toDMY(bloqForm.hasta) : "Seleccionar..."}</button>
                   {showBloqHastaCal && (
-                    <div style={{ position:"absolute", zIndex:200, marginTop:"4px", right:0 }}>
-                      <MiniCalPicker value={bloqForm.hasta} onChange={d=>{setBloqForm({...bloqForm, hasta:d});setShowBloqHastaCal(false);}} festivosSet={festivosSet} bloqueosPelId={bloqForm.peluqueroId ? Number(bloqForm.peluqueroId) : null} bloqueos={bloqueos} />
+                    <div style={{ position: "absolute", zIndex: 200, marginTop: "4px", right: 0 }}>
+                      <MiniCalPicker value={bloqForm.hasta} onChange={d => { setBloqForm({ ...bloqForm, hasta: d }); setShowBloqHastaCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} horariosEspeciales={[]} />
                     </div>
                   )}
                 </div>
               </div>
-              <input style={{...inputS, marginBottom:"12px", cursor:"text"}} placeholder="Motivo (Ej: Vacaciones)" value={bloqForm.motivo} onChange={e=>setBloqForm({...bloqForm, motivo:e.target.value})} />
-              <button style={{...btnBlue, width:"100%", padding:"10px", background:"#10b981", fontSize:"12px"}} onClick={async () => {
-                const pel = CONFIG.peluqueros.find(p => String(p.id) === String(bloqForm.peluqueroId));
-                if(!pel || !bloqForm.desde || !bloqForm.motivo) return;
+              <input style={{ ...inputS, marginBottom: "12px", cursor: "text" }} placeholder="Motivo (ej: Vacaciones)" value={bloqForm.motivo} onChange={e => setBloqForm({ ...bloqForm, motivo: e.target.value })} />
+              <button style={{ ...btnBlue, width: "100%", padding: "10px", background: "#10b981", fontSize: "12px" }} onClick={async () => {
+                if (!bloqForm.desde || !bloqForm.motivo) return;
                 const dias = obtenerDiasEntre(bloqForm.desde, bloqForm.hasta || bloqForm.desde);
                 const rId = Date.now().toString();
-                for(const d of dias){
-                  const docName = `${pel.nombre} - ${bloqForm.motivo} - ${toSafeDMY(d)}`;
-                  await crearBloqueo(docName, { desde:d, hasta:d, rangoId:rId, peluqueroId:pel.id, todoElDia:true });
+                for (const d of dias) {
+                  const docName = `bloq-${bloqForm.motivo}-${toSafeDMY(d)}`;
+                  await crearBloqueo(docName, { desde: d, hasta: d, rangoId: rId, peluqueroId: CONFIG.peluqueros[0].id, motivo: bloqForm.motivo, todoElDia: true });
                 }
-                setBloqForm({peluqueroId:"", desde:"", hasta:"", motivo:""}); setShowBF(false);
-              }}>Guardar Ausencia</button>
+                setBloqForm({ desde: "", hasta: "", motivo: "" });
+                setShowBloqForm(false);
+              }}>Guardar bloqueo</button>
             </div>
           )}
 
-          {agruparItems(bloqueos).map((b, i) => {
-            const pel = CONFIG.peluqueros.find(p => String(p.id) === String(b.peluqueroId));
-            return (
-              <div key={i} style={{ background:"#fff", padding:"8px 12px", borderRadius:"10px", marginBottom:"8px", display:"flex", alignItems:"center", justifyContent:"space-between", border:"1px solid #e2e8f0" }}>
-                <div style={{ display:"flex", alignItems:"flex-start", gap:"10px", flex:1 }}>
-                  <img src={pel?.foto} alt="" style={{ width:"28px", height:"28px", borderRadius:"50%", objectFit:"cover", flexShrink:0, marginTop:"1px" }} />
-                  <div style={{ display:"flex", flexDirection:"column", gap:"0px", alignItems:"flex-start" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
-                      <span style={{ fontSize:"13px", fontWeight:"800", color:"#1e293b" }}>{pel?.nombre}</span>
-                      <span style={{ fontSize:"12px", color:"#64748b" }}>{b.motivo}</span>
-                    </div>
-                    <span style={{ fontSize:"11px", color:"#94a3b8" }}>{toDMY(b.inicio)}{b.inicio !== b.fin ? ` — ${toDMY(b.fin)}` : ""}</span>
-                  </div>
-                </div>
-                <button style={{ color:"#ef4444", background:"none", border:"none", cursor:"pointer", fontSize:"15px", padding:"4px" }} onClick={async () => { for(const id of b.ids) await borrarBloqueo(id); }}>✕</button>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* COLUMNA 3: HORARIO ESPECIAL GENERAL */}
-        <div style={colStyle}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"16px", alignItems:"center" }}>
-            <h4 style={{ margin:10, fontSize:"14px", fontWeight:"800", color:"#1e293b" }}>Horario especial general</h4>
-            <button onClick={() => setShowHG(!showHG)} style={btnBlue}>{showHG ? "Cancelar" : "+ Añadir"}</button>
-          </div>
-
-          {showHG && (
-            <div className="anim" style={{ background:"#fff", padding:"12px", borderRadius:"10px", marginBottom:"12px", border:"1px solid #cbd5e1" }}>
-              <div style={{ position:"relative", marginBottom:"8px" }}>
-                <label style={{fontSize:10, fontWeight:700, color:"#64748b"}}>Fecha</label>
-                <button style={inputS} onClick={() => setShowHGCal(v => !v)}>{hgForm.fecha ? toDMY(hgForm.fecha) : "Seleccionar fecha..."}</button>
-                {showHGCal && (
-                  <div style={{ position:"absolute", zIndex:200, marginTop:"4px" }}>
-                    <MiniCalPicker value={hgForm.fecha} onChange={d => { setHgForm({...hgForm, fecha:d}); setShowHGCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} />
-                  </div>
-                )}
-              </div>
-              <label style={{fontSize:10, fontWeight:700, color:"#64748b", marginBottom:"4px", display:"block"}}>Tramos horarios</label>
-              {hgForm.tramos.map((t, idx) => (
-                <div key={idx} style={tramoStyle}>
-                  <input type="time" style={{...timeInputS, flex:1}} value={t.entrada} onChange={e => {
-                    const nuevos = [...hgForm.tramos];
-                    nuevos[idx] = {...nuevos[idx], entrada: e.target.value};
-                    setHgForm({...hgForm, tramos: nuevos});
-                  }} />
-                  <span style={{fontSize:11, color:"#64748b"}}>—</span>
-                  <input type="time" style={{...timeInputS, flex:1}} value={t.salida} onChange={e => {
-                    const nuevos = [...hgForm.tramos];
-                    nuevos[idx] = {...nuevos[idx], salida: e.target.value};
-                    setHgForm({...hgForm, tramos: nuevos});
-                  }} />
-                  {hgForm.tramos.length > 1 && (
-                    <button style={btnDelTramo} onClick={() => setHgForm({...hgForm, tramos: hgForm.tramos.filter((_,i) => i !== idx)})}>✕</button>
-                  )}
-                </div>
-              ))}
-              <button style={btnAddTramo} onClick={() => setHgForm({...hgForm, tramos: [...hgForm.tramos, {entrada:"", salida:""}]})}>+ Añadir tramo</button>
-              <button style={{...btnBlue, width:"100%", padding:"10px", background:"#10b981", fontSize:"12px", marginTop:"10px"}} onClick={async () => {
-                if(!hgForm.fecha || hgForm.tramos.some(t => !t.entrada || !t.salida)) return;
-                const docId = `general-${hgForm.fecha}`;
-                await guardarHorarioGeneral(docId, { fecha: hgForm.fecha, tramos: hgForm.tramos });
-                setHgForm({fecha:"", tramos:[{entrada:"", salida:""}]});
-                setTimeout(() => setShowHG(false), 300);
-              }}>Guardar horario general</button>
-            </div>
+          {bloqueosAgrupados.length === 0 && (
+            <div style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic", textAlign: "center", padding: "20px 0" }}>No hay días bloqueados</div>
           )}
 
-          {[...(horariosGenerales||[])].sort((a,b) => a.fecha.localeCompare(b.fecha)).map((h, i) => (
-            <div key={i} style={{ background:"#fff", padding:"8px 12px", borderRadius:"10px", marginBottom:"8px", border:"1px solid #e2e8f0" }}>
-              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                <div style={{ display:"flex", flexDirection:"column", gap:"0px", alignItems:"flex-start" }}>
-                  <span style={{ fontSize:"13px", fontWeight:"800", color:"#1e293b" }}>{toDMY(h.fecha)}</span>
-                  <span style={{ fontSize:"11px", color:"#64748b" }}>
-                    {(h.tramos||[]).map((t, ti) => `${t.entrada} - ${t.salida}`).reduce((acc, cur, i) => i === 0 ? [cur] : [...acc, <span key={i} style={{ margin:"0 8px", color:"#cbd5e1" }}>|</span>, cur], [])}
-                  </span>
-                </div>
-                <button style={{ color:"#ef4444", background:"none", border:"none", cursor:"pointer", fontSize:"15px", padding:"4px" }} onClick={async () => await borrarHorarioGeneral(h.id)}>✕</button>
+          {bloqueosAgrupados.map((b, i) => (
+            <div key={i} style={{ background: "#fff", padding: "10px 14px", borderRadius: "8px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid #fee2e2" }}>
+              <div>
+                <div style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b" }}>{b.motivo}</div>
+                <div style={{ fontSize: "11px", color: "#64748b" }}>{toDMY(b.inicio)}{b.inicio !== b.fin ? ` — ${toDMY(b.fin)}` : ""}</div>
               </div>
+              <button style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", fontSize: "18px" }} onClick={() => setBloqBorrar(b)}>✕</button>
             </div>
           ))}
         </div>
 
-        {/* COLUMNA 4: HORARIO ESPECIAL POR PELUQUERO */}
+        {/* BLOQUE 2: HORARIO POR DÍA */}
         <div style={colStyle}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"16px", alignItems:"center" }}>
-            <h4 style={{ margin:10, fontSize:"14px", fontWeight:"800", color:"#1e293b" }}>Horario especial peluquero</h4>
-            <button onClick={() => setShowHE(!showHE)} style={btnBlue}>{showHE ? "Cancelar" : "+ Añadir"}</button>
+          <h4 style={{ margin: "0 0 16px 0", fontSize: "14px", fontWeight: "800", color: "#1e293b" }}>📅 Horario por día</h4>
+
+          {/* NAVEGACIÓN MES */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+            <button onClick={() => navegar(-1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#64748b" }}>‹</button>
+            <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>{mesRef.toLocaleString("es-ES", { month: "long", year: "numeric" })}</span>
+            <button onClick={() => navegar(1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#64748b" }}>›</button>
           </div>
 
-          {showHE && (
-            <div className="anim" style={{ background:"#fff", padding:"12px", borderRadius:"10px", marginBottom:"12px", border:"1px solid #cbd5e1" }}>
-              <select style={{...inputS, marginBottom:"8px"}} value={heForm.peluqueroId} onChange={e => setHeForm({...heForm, peluqueroId:e.target.value})}>
-                <option value="">¿Peluquero?</option>
-                {CONFIG.peluqueros.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-              </select>
-              <div style={{ position:"relative", marginBottom:"8px" }}>
-                <label style={{fontSize:10, fontWeight:700, color:"#64748b"}}>Fecha</label>
-                <button style={inputS} onClick={() => setShowHECal(v => !v)}>{heForm.fecha ? toDMY(heForm.fecha) : "Seleccionar fecha..."}</button>
-                {showHECal && (
-                  <div style={{ position:"absolute", zIndex:200, marginTop:"4px" }}>
-                    <MiniCalPicker value={heForm.fecha} onChange={d => { setHeForm({...heForm, fecha:d}); setShowHECal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} />
-                  </div>
+          {/* CABECERA DÍAS */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: "6px" }}>
+            {["L", "M", "X", "J", "V", "S", "D"].map(d => (
+              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#94a3b8" }}>{d}</div>
+            ))}
+          </div>
+
+          {/* DÍAS */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "4px", marginBottom: "16px" }}>
+            {diasMes.map((d, i) => {
+              if (!d) return <div key={i} />;
+              const iso = isoDate(d);
+              const isPast = d < HOY;
+              const isBloqueado = bloqueos.some(b => iso >= (b.desde || b.fecha) && iso <= (b.hasta || b.fecha));
+              const horario = (horariosGenerales || []).find(h => h.fecha === iso);
+              const tieneHorario = !!(horario && horario.tramos && horario.tramos.length > 0);
+              const isSeleccionado = diaSeleccionado && isoDate(diaSeleccionado) === iso;
+              const isHoy = iso === HOY_ISO;
+
+              let bg = "#f8fafc";
+              let color = isPast ? "#cbd5e1" : "#1e293b";
+              let border = "1px solid transparent";
+
+              if (isBloqueado) { bg = "#fee2e2"; color = "#ef4444"; }
+              else if (tieneHorario) { bg = "#dbeafe"; color = "#1d4ed8"; }
+              else if (isHoy) { border = "2px solid #1B4F8A"; }
+              if (isSeleccionado) { border = "2px solid #1B4F8A"; bg = "#1B4F8A"; color = "#fff"; }
+
+              return (
+                <div
+                  key={i}
+                  onClick={() => { if (!isPast && !isBloqueado) setDiaSeleccionado(d); }}
+                  style={{ borderRadius: "8px", border, background: bg, color, fontWeight: tieneHorario || isSeleccionado ? 800 : 500, cursor: isPast || isBloqueado ? "default" : "pointer", fontSize: "12px", padding: "6px 0", textAlign: "center", transition: "all 0.15s" }}
+                >
+                  {d.getDate()}
+                  {tieneHorario && !isSeleccionado && (
+                    <div style={{ fontSize: "7px", color: "#1d4ed8", fontWeight: 700, lineHeight: 1, marginTop: "1px" }}>
+                      {horario.tramos.length} tramo{horario.tramos.length > 1 ? "s" : ""}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* LEYENDA */}
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dbeafe" }} />Con horario</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloqueado</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sin horario (cerrado)</div>
+          </div>
+
+          {/* PANEL EDICIÓN DÍA SELECCIONADO */}
+          {diaSeleccionado && (
+            <div className="anim" style={{ background: "#fff", borderRadius: "10px", padding: "14px", border: "1px solid #cbd5e1" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
+                  {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
+                </span>
+                {(horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) && (
+                  <button style={{ background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Borrar día</button>
                 )}
               </div>
-              <label style={{fontSize:10, fontWeight:700, color:"#64748b", marginBottom:"4px", display:"block"}}>Tramos horarios</label>
-              {heForm.tramos.map((t, idx) => (
-                <div key={idx} style={tramoStyle}>
-                  <input type="time" style={{...timeInputS, flex:1}} value={t.entrada} onChange={e => {
-                    const nuevos = [...heForm.tramos];
-                    nuevos[idx] = {...nuevos[idx], entrada: e.target.value};
-                    setHeForm({...heForm, tramos: nuevos});
-                  }} />
-                  <span style={{fontSize:11, color:"#64748b"}}>—</span>
-                  <input type="time" style={{...timeInputS, flex:1}} value={t.salida} onChange={e => {
-                    const nuevos = [...heForm.tramos];
-                    nuevos[idx] = {...nuevos[idx], salida: e.target.value};
-                    setHeForm({...heForm, tramos: nuevos});
-                  }} />
-                  {heForm.tramos.length > 1 && (
-                    <button style={btnDelTramo} onClick={() => setHeForm({...heForm, tramos: heForm.tramos.filter((_,i) => i !== idx)})}>✕</button>
+
+              {tramos.map((t, idx) => (
+                <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "6px" }}>
+                  <input type="time" style={{ ...timeInputS, flex: 1 }} value={t.entrada} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], entrada: e.target.value }; setTramos(n); }} />
+                  <span style={{ fontSize: 11, color: "#64748b" }}>—</span>
+                  <input type="time" style={{ ...timeInputS, flex: 1 }} value={t.salida} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], salida: e.target.value }; setTramos(n); }} />
+                  {tramos.length > 1 && (
+                    <button style={btnDelTramo} onClick={() => setTramos(tramos.filter((_, i) => i !== idx))}>✕</button>
                   )}
                 </div>
               ))}
-              <button style={btnAddTramo} onClick={() => setHeForm({...heForm, tramos: [...heForm.tramos, {entrada:"", salida:""}]})}>+ Añadir tramo</button>
-              <button style={{...btnBlue, width:"100%", padding:"10px", background:"#10b981", fontSize:"12px", marginTop:"10px"}} onClick={async () => {
-                const pel = CONFIG.peluqueros.find(p => String(p.id) === String(heForm.peluqueroId));
-                if(!pel || !heForm.fecha || heForm.tramos.some(t => !t.entrada || !t.salida)) return;
-                const docId = `${pel.nombre}-${heForm.fecha}`;
-                await guardarHorarioEspecial(docId, { peluqueroId: pel.id, fecha: heForm.fecha, tramos: heForm.tramos });
-                setHeForm({peluqueroId:"", fecha:"", tramos:[{entrada:"", salida:""}]});
-                setTimeout(() => setShowHE(false), 300);
-              }}>Guardar horario peluquero</button>
+
+              <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+                <button style={btnAddTramo} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tramo</button>
+                <button style={{ ...btnBlue, flex: 1, padding: "8px", background: "#10b981", fontSize: "12px" }} onClick={guardarHorarioDia}>Guardar</button>
+              </div>
             </div>
           )}
-
-          {[...(horariosEspeciales||[])].sort((a,b) => a.fecha.localeCompare(b.fecha)).map((h, i) => {
-            const pel = CONFIG.peluqueros.find(p => String(p.id) === String(h.peluqueroId));
-            return (
-              <div key={i} style={{ background:"#fff", padding:"8px 12px", borderRadius:"10px", marginBottom:"8px", border:"1px solid #e2e8f0" }}>
-                <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between" }}>
-                  <div style={{ display:"flex", flexDirection:"column", gap:"0px", alignItems:"flex-start" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
-                      <img src={pel?.foto} alt="" style={{ width:"28px", height:"28px", borderRadius:"50%", objectFit:"cover", flexShrink:0, marginTop:"1px" }} />
-                      <span style={{ fontSize:"13px", fontWeight:"800", color:"#1e293b" }}>{pel?.nombre}</span>
-                    </div>
-                    <span style={{ fontSize:"13px", fontWeight:"800", color:"#1e293b", marginTop:"8px" }}>{toDMY(h.fecha)}</span>
-                    <span style={{ fontSize:"11px", color:"#64748b", marginTop:"0px" }}>
-                      {(h.tramos||[]).map((t, ti) => `${t.entrada} - ${t.salida}`).reduce((acc, cur, i) => i === 0 ? [cur] : [...acc, <span key={i} style={{ margin:"0 8px", color:"#cbd5e1" }}>|</span>, cur], [])}
-                    </span>
-                  </div>
-                  <button style={{ color:"#ef4444", background:"none", border:"none", cursor:"pointer", fontSize:"15px", padding:"4px" }} onClick={async () => await borrarHorarioEspecial(h.id)}>✕</button>
-                </div>
-              </div>
-            );
-          })}
         </div>
 
+        {/* MODAL CONFIRMAR BORRADO BLOQUEO */}
+        {bloqBorrar && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+            <div style={{ background: WH, borderRadius: 18, padding: "32px", width: "100%", maxWidth: 400, boxShadow: "0 20px 60px rgba(0,0,0,.3)", textAlign: "center" }}>
+              <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>¿Eliminar este bloqueo?</h3>
+              <p style={{ fontSize: 13, color: TX2, marginBottom: 6, fontWeight: 700 }}>{bloqBorrar.motivo}</p>
+              <p style={{ fontSize: 12, color: TX2, marginBottom: 24 }}>{toDMY(bloqBorrar.inicio)}{bloqBorrar.inicio !== bloqBorrar.fin ? ` — ${toDMY(bloqBorrar.fin)}` : ""}</p>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Btn ok={false} style={{ flex: 1 }} onClick={() => setBloqBorrar(null)}>Cancelar</Btn>
+                <button style={{ flex: 1, background: `linear-gradient(135deg,${ER},#b91c1c)`, color: WH, border: "none", borderRadius: 11, padding: "12px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }} onClick={confirmarBorradoBloq}>Eliminar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL CONFIRMAR BORRADO HORARIO */}
+        {horarioBorrar && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+            <div style={{ background: WH, borderRadius: 18, padding: "32px", width: "100%", maxWidth: 400, boxShadow: "0 20px 60px rgba(0,0,0,.3)", textAlign: "center" }}>
+              <div style={{ fontSize: 40, marginBottom: 16 }}>📅</div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>¿Borrar el horario de este día?</h3>
+              <p style={{ fontSize: 13, color: TX2, marginBottom: 24 }}>{horarioBorrar.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</p>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Btn ok={false} style={{ flex: 1 }} onClick={() => setHorarioBorrar(null)}>Cancelar</Btn>
+                <button style={{ flex: 1, background: `linear-gradient(135deg,${ER},#b91c1c)`, color: WH, border: "none", borderRadius: 11, padding: "12px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }} onClick={confirmarBorradoHorario}>Borrar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TOAST DESHACER BLOQUEO */}
+        {toastBloqVisible && (
+          <div style={{ position: "fixed", bottom: 30, left: "50%", transform: "translateX(-50%)", background: "#1e293b", color: WH, borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, boxShadow: "0 8px 24px rgba(0,0,0,.3)", zIndex: 200, fontSize: 13, whiteSpace: "nowrap" }}>
+            <span>🔒 Bloqueo eliminado</span>
+            <button style={{ background: A, color: WH, border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }} onClick={async () => {
+              if (!ultimoBloqEliminado) return;
+              const dias = obtenerDiasEntre(ultimoBloqEliminado.inicio, ultimoBloqEliminado.fin);
+              const rId = Date.now().toString();
+              for (const d of dias) {
+                const docName = `bloq-${ultimoBloqEliminado.motivo}-${toSafeDMY(d)}`;
+                await crearBloqueo(docName, { desde: d, hasta: d, rangoId: rId, peluqueroId: CONFIG.peluqueros[0].id, motivo: ultimoBloqEliminado.motivo, todoElDia: true });
+              }
+              setToastBloqVisible(false);
+              if (toastBloqTimer) clearTimeout(toastBloqTimer);
+              setUltimoBloqEliminado(null);
+            }}>Deshacer</button>
+          </div>
+        )}
+
+        {/* TOAST DESHACER HORARIO */}
+        {toastHorarioVisible && (
+          <div style={{ position: "fixed", bottom: 30, left: "50%", transform: "translateX(-50%)", background: "#1e293b", color: WH, borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, boxShadow: "0 8px 24px rgba(0,0,0,.3)", zIndex: 200, fontSize: 13, whiteSpace: "nowrap" }}>
+            <span>📅 Horario eliminado</span>
+            <button style={{ background: A, color: WH, border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }} onClick={async () => {
+              if (!ultimoHorarioEliminado) return;
+              const docId = `general-${ultimoHorarioEliminado.fecha}`;
+              await guardarHorarioGeneral(docId, ultimoHorarioEliminado);
+              setToastHorarioVisible(false);
+              if (toastHorarioTimer) clearTimeout(toastHorarioTimer);
+              setUltimoHorarioEliminado(null);
+            }}>Deshacer</button>
+          </div>
+        )}
       </div>
     );
   };
