@@ -3446,14 +3446,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           </div>
 
           {/* CABECERA DÍAS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,38px)", gap: "1px", marginBottom: "6px", justifyContent: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "4px", marginBottom: "6px" }}>
             {["L", "M", "X", "J", "V", "S", "D"].map(d => (
-              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#94a3b8", width: "38px" }}>{d}</div>
+              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#94a3b8" }}>{d}</div>
             ))}
           </div>
 
           {/* DÍAS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,38px)", gap: "1px", marginBottom: "16px", justifyContent: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "4px", marginBottom: "16px" }}>
             {diasMes.map((d, i) => {
               if (!d) return <div key={i} />;
               const iso = isoDate(d);
