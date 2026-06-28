@@ -624,8 +624,7 @@ function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horari
           const iso=isoDate(d);
           const isPast=d<today, isDom=d.getDay()===0, isFest=festivosSet.has(iso);
           const noBloq=bloqueosPelId?peluqueroEstaBloqueado(bloqueosPelId,iso,bloqueos):false;
-          const noH = false;
-          const disabled = isPast||isDom||isFest||noBloq;
+          const disabled = isPast||isFest||noBloq;
           const sel=value===iso, isToday=iso===HOY_ISO;
           let cls="mini-cal-cell";
           if(sel) cls+=" selected";
@@ -1016,7 +1015,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const slots=useMemo(()=>{
     if(!selPeluquero||!selDia||!selServicio) return [];
     if(festivosSet.has(isoDate(selDia))) return [];
-    if(!CONFIG.horarioGeneral[selDia.getDay()]) return [];
     if(selPeluquero.id===CUALQUIERA_ID){
       // Unión de todos los slots disponibles de todos los peluqueros
       const slotsSet = new Set();
@@ -3444,6 +3442,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               const iso = isoDate(d);
               const isPast = d < HOY;
               const isBloqueado = bloqueos.some(b => iso >= (b.desde || b.fecha) && iso <= (b.hasta || b.fecha));
+              const fontWeight = tieneHorario || isSeleccionado ? 800 : 500;
               const horario = (horariosGenerales || []).find(h => h.fecha === iso);
               const tieneHorario = !!(horario && horario.tramos && horario.tramos.length > 0);
               const isSeleccionado = diaSeleccionado && isoDate(diaSeleccionado) === iso;
@@ -3455,7 +3454,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
               if (isBloqueado) { bg = "#fee2e2"; color = "#ef4444"; }
               else if (tieneHorario) { bg = "#dcfce7"; color = "#16a34a"; }
-              else if (isHoy) { border = "2px solid #1B4F8A"; }
+              else if (isHoy) { border = "2.5px solid #1B4F8A"; fontWeight = 800; }
               if (isSeleccionado) { bg = "#1B4F8A"; color = "#fff"; }
 
               return (

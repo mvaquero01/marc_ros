@@ -15,14 +15,7 @@ export const CONFIG = {
     { id: 1, nombre: "Corte", foto: "", emoji: "✂️", servicioIds: [1] }
   ],
 
-  horarioGeneral: {
-    1: { apertura: "10:00", cierre: "20:00" },
-    2: { apertura: "10:00", cierre: "20:00" },
-    3: { apertura: "10:00", cierre: "20:00" },
-    4: { apertura: "10:00", cierre: "20:00" },
-    5: { apertura: "10:00", cierre: "20:00" },
-    6: { apertura: "10:00", cierre: "15:00" },
-  },
+  horarioGeneral: {},
 
   serviciosDefault: [
     { id: 1, nombre: "Corte", desc: "", duracionMin: 30, precio: 0, emoji: "✂️" }
