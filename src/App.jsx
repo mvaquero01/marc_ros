@@ -3214,39 +3214,33 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             </div>
           </div>
 
-          {/* CUADRE Y NOTAS */}
+          {/* RESUMEN Y NOTA */}
           <div className="admin-two-col" style={{ ...as.twoCol, marginBottom: 25 }}>
             <div style={as.card}>
-              <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 16, color: TX }}>🧮 Cuadre Físico</div>
+              <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 16, color: TX }}>💵 Resumen del día</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 12, color: TX2, fontWeight: 700 }}>FONDO INICIAL</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <Inp type="number" value={fondoCaja} onChange={e => setFondoCaja(e.target.value)} style={{ width: 70, textAlign: "right", margin: 0, fontWeight: 700 }} />
-                    <span style={{ fontWeight: 700 }}>€</span>
-                  </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "#DEF7EC", borderRadius: 10 }}>
+                  <span style={{ fontSize: 13, color: "#03543F", fontWeight: 700 }}>💵 Efectivo</span>
+                  <span style={{ fontSize: 20, fontWeight: 900, color: "#059669" }}>{efec} €</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: 12, color: TX2, fontWeight: 700 }}>INGRESOS EFECTIVO</span>
-                  <span style={{ fontWeight: 700, color: "#059669" }}>+ {efec} €</span>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "#FCE8F3", borderRadius: 10 }}>
+                  <span style={{ fontSize: 13, color: "#99154B", fontWeight: 700 }}>📱 Bizum</span>
+                  <span style={{ fontSize: 20, fontWeight: 900, color: "#BE185D" }}>{biz} €</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 12, color: TX2, fontWeight: 700 }}>GASTOS / SALIDAS</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                    <Inp type="number" value={gastosCaja} onChange={e => setGastosCaja(e.target.value)} style={{ width: 70, textAlign: "right", margin: 0, color: ER, fontWeight: 700 }} />
-                    <span style={{ fontWeight: 700, color: ER }}>€</span>
-                  </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "#E1EFFE", borderRadius: 10 }}>
+                  <span style={{ fontSize: 13, color: "#1E429F", fontWeight: 700 }}>💳 Tarjeta</span>
+                  <span style={{ fontSize: 20, fontWeight: 900, color: "#1D4ED8" }}>{tarj} €</span>
                 </div>
-                <div style={{ marginTop: 10, paddingTop: 15, borderTop: `2px solid ${CR2}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 14, fontWeight: 800 }}>HABER EN CAJA</span>
-                  <span style={{ fontSize: 26, fontWeight: 900, color: A }}>{dineroFisicoEsperado} €</span>
+                <div style={{ marginTop: 6, paddingTop: 14, borderTop: `2px solid ${CR2}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 14, fontWeight: 800 }}>TOTAL</span>
+                  <span style={{ fontSize: 26, fontWeight: 900, color: A }}>{facturadoDia} €</span>
                 </div>
               </div>
             </div>
 
             <div style={as.card}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: TX }}>📝 Nota de Cierre</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: TX }}>📝 Nota — {fmtFechaES(fechaCaja)}</div>
                 <button
                   onClick={handleGuardarCierre}
                   style={{
@@ -3257,7 +3251,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     transition: "background 0.4s ease"
                   }}
                 >
-                  {guardando ? "GUARDANDO..." : (hayCambios ? "GUARDAR CAJA" : "GUARDADO")}
+                  {guardando ? "GUARDANDO..." : (hayCambios ? "GUARDAR" : "GUARDADO")}
                 </button>
               </div>
               <textarea
