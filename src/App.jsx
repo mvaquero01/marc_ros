@@ -3390,7 +3390,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqDesdeCal(v => !v)}>{bloqForm.desde ? toDMY(bloqForm.desde) : "Seleccionar..."}</button>
                   {showBloqDesdeCal && (
                     <div style={{ position: "absolute", zIndex: 200, marginTop: "4px" }}>
-                      <MiniCalPicker value={bloqForm.desde} onChange={d => { setBloqForm({ ...bloqForm, desde: d }); setShowBloqDesdeCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} horariosEspeciales={[]} horariosGenerales={horariosGenerales} />
+                      <MiniCalPicker value={bloqForm.desde} onChange={d => { setBloqForm({ ...bloqForm, desde: d }); setShowBloqDesdeCal(false); }} festivosSet={festivosSet} bloqueosPelId={CONFIG.peluqueros[0].id} bloqueos={bloqueos} horariosEspeciales={[]} horariosGenerales={horariosGenerales} />
                     </div>
                   )}
                 </div>
@@ -3399,7 +3399,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqHastaCal(v => !v)}>{bloqForm.hasta ? toDMY(bloqForm.hasta) : "Seleccionar..."}</button>
                   {showBloqHastaCal && (
                     <div style={{ position: "absolute", zIndex: 200, marginTop: "4px", right: 0 }}>
-                      <MiniCalPicker value={bloqForm.hasta} onChange={d => { setBloqForm({ ...bloqForm, hasta: d }); setShowBloqHastaCal(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} horariosEspeciales={[]} horariosGenerales={horariosGenerales} />
+                      <MiniCalPicker value={bloqForm.hasta} onChange={d => { setBloqForm({ ...bloqForm, hasta: d }); setShowBloqHastaCal(false); }} festivosSet={festivosSet} bloqueosPelId={CONFIG.peluqueros[0].id} bloqueos={bloqueos} horariosEspeciales={[]} horariosGenerales={horariosGenerales} />
                     </div>
                   )}
                 </div>
