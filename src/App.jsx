@@ -2567,15 +2567,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           >
             <img src={LINK_EFECTIVO} alt="Efectivo" style={{width:"16px", height:"16px", objectFit:"contain", opacity: esCompletada ? 1 : 0.3}} />
           </button>
-          
-          <button 
-            title={esCompletada ? "Pago con Tarjeta" : "Confirma primero la cita"}  
-            style={st(p==='tarjeta', '#E1EFFE', '#1E429F')} 
-            onClick={()=>handleSelect('tarjeta')}
-            disabled={!esCompletada}
-          >
-            <img src={LINK_TARJETA} alt="Tarjeta" style={{width:"16px", height:"16px", objectFit:"contain", opacity: esCompletada ? 1 : 0.3}} />
-          </button>
 
           <button 
             title={esCompletada ? "Pago por Bizum" : "Confirma primero la cita"}    
@@ -3204,40 +3195,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
               <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
             </div>
-            <div style={{ ...as.kpi, background: "#E1EFFE" }}>
-              <div style={{ ...as.kpiVal, color: "#1D4ED8" }}>{tarj} €</div>
-              <div style={{ ...as.kpiLbl, color: "#1E429F" }}>💳 Tarjeta</div>
-            </div>
             <div style={{ ...as.kpi, background: "#FCE8F3" }}>
               <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
               <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
             </div>
           </div>
 
-          {/* RESUMEN Y NOTA */}
-          <div className="admin-two-col" style={{ ...as.twoCol, marginBottom: 25 }}>
-            <div style={as.card}>
-              <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 16, color: TX }}>💵 Resumen del día</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "#DEF7EC", borderRadius: 10 }}>
-                  <span style={{ fontSize: 13, color: "#03543F", fontWeight: 700 }}>💵 Efectivo</span>
-                  <span style={{ fontSize: 20, fontWeight: 900, color: "#059669" }}>{efec} €</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "#FCE8F3", borderRadius: 10 }}>
-                  <span style={{ fontSize: 13, color: "#99154B", fontWeight: 700 }}>📱 Bizum</span>
-                  <span style={{ fontSize: 20, fontWeight: 900, color: "#BE185D" }}>{biz} €</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "#E1EFFE", borderRadius: 10 }}>
-                  <span style={{ fontSize: 13, color: "#1E429F", fontWeight: 700 }}>💳 Tarjeta</span>
-                  <span style={{ fontSize: 20, fontWeight: 900, color: "#1D4ED8" }}>{tarj} €</span>
-                </div>
-                <div style={{ marginTop: 6, paddingTop: 14, borderTop: `2px solid ${CR2}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 14, fontWeight: 800 }}>TOTAL</span>
-                  <span style={{ fontSize: 26, fontWeight: 900, color: A }}>{facturadoDia} €</span>
-                </div>
-              </div>
-            </div>
-
+          {/* NOTA */}
+          <div style={{ marginBottom: 25 }}>
             <div style={as.card}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <div style={{ fontWeight: 800, fontSize: 14, color: TX }}>📝 Nota — {fmtFechaES(fechaCaja)}</div>
