@@ -1648,20 +1648,21 @@ function ClientePage({ sharedProps, startPaso=0 }){
                       const isHoy = iso === HOY_ISO;
                       const festivo = festivosSet.has(iso);
                       const bloq = selPeluquero ? peluqueroEstaBloqueado(selPeluquero.id, iso, bloqueos) : false;
-                      const disp = d >= HOY && d.getDay() !== 0 && !festivo && !bloq;
+                      const disp = d >= HOY && !festivo && !bloq;
                       return (
                         <button key={di} onClick={() => { if (disp) { setSelDia(d); setSelHora(null); } }} style={{
                           border: "none",
                           background: "transparent",
                           cursor: disp ? "pointer" : "default",
                           fontSize: "12px",
-                          padding: "4px 0",
+                          padding: "2px 0",
                           position: "relative",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
                           justifyContent: "center",
-                          gap: "3px",
+                          gap: "2px",
+                          width: "100%",
                         }}>
                           <div style={{
                             width: "28px",
@@ -3372,7 +3373,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const btnDelTramo = { background: "#fee2e2", color: "#dc2626", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 };
 
     return (
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "24px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr 320px", gap: "16px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
 
         {/* BLOQUE 1: DÍAS BLOQUEADOS */}
         <div style={colStyle}>
@@ -3452,7 +3453,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           </div>
 
           {/* DÍAS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "4px", marginBottom: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "2px", marginBottom: "16px" }}>
             {diasMes.map((d, i) => {
               if (!d) return <div key={i} />;
               const iso = isoDate(d);
@@ -3509,9 +3510,12 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sin horario (cerrado)</div>
           </div>
 
-          {/* PANEL EDICIÓN DÍA SELECCIONADO */}
-          {diaSeleccionado && (
-            <div className="anim" style={{ background: "#fff", borderRadius: "10px", padding: "14px", border: "1px solid #cbd5e1" }}>
+          </div>
+
+        {/* COLUMNA 3: PANEL EDICIÓN DÍA */}
+        <div style={colStyle}>
+          {diaSeleccionado ? (
+            <div className="anim">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
                   {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
@@ -3523,19 +3527,23 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
               {tramos.map((t, idx) => (
                 <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "6px" }}>
-                  <input type="time" style={{ ...timeInputS, flex: 1 }} value={t.entrada} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], entrada: e.target.value }; setTramos(n); }} />
+                  <input type="time" style={{ flex: 1, padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" }} value={t.entrada} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], entrada: e.target.value }; setTramos(n); }} />
                   <span style={{ fontSize: 11, color: "#64748b" }}>—</span>
-                  <input type="time" style={{ ...timeInputS, flex: 1 }} value={t.salida} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], salida: e.target.value }; setTramos(n); }} />
+                  <input type="time" style={{ flex: 1, padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" }} value={t.salida} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], salida: e.target.value }; setTramos(n); }} />
                   {tramos.length > 1 && (
-                    <button style={btnDelTramo} onClick={() => setTramos(tramos.filter((_, i) => i !== idx))}>✕</button>
+                    <button style={{ background: "#fee2e2", color: "#dc2626", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} onClick={() => setTramos(tramos.filter((_, i) => i !== idx))}>✕</button>
                   )}
                 </div>
               ))}
 
               <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
-                <button style={btnAddTramo} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tramo</button>
-                <button style={{ ...btnBlue, flex: 1, padding: "8px", background: "#10b981", fontSize: "12px" }} onClick={guardarHorarioDia}>Guardar</button>
+                <button style={{ background: "#e0f2fe", color: "#0369a1", border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tramo</button>
+                <button style={{ flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: "6px", padding: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }} onClick={guardarHorarioDia}>Guardar</button>
               </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "150px", color: "#94a3b8", fontSize: "13px", fontStyle: "italic", textAlign: "center" }}>
+              Selecciona un día del calendario para configurar su horario
             </div>
           )}
         </div>
