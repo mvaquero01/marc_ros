@@ -3461,7 +3461,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               return (
                 <div
                   key={i}
-                  onClick={() => { if (!isPast && !isBloqueado) setDiaSeleccionado(d); }}
+                  onClick={() => { if (!isPast && !isBloqueado) setDiaSeleccionado(diaSeleccionado && isoDate(diaSeleccionado) === iso ? null : d); }}
                   style={{ borderRadius: "8px", border, background: bg, color, fontWeight: tieneHorario || isSeleccionado ? 800 : 500, cursor: isPast || isBloqueado ? "default" : "pointer", fontSize: "12px", padding: "6px 0", textAlign: "center", transition: "all 0.15s" }}
                 >
                   {d.getDate()}
