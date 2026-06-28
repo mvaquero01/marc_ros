@@ -650,7 +650,7 @@ const TOTAL_MIN=HORA_CIE-HORA_APE;
 const GRID_H=TOTAL_MIN*PX_MIN;
 const HORA_LABELS=Array.from({length:12},(_,i)=>i+9);
 
-function CalendarioGrid({ dias, citas, peluqueroFiltroId }) {
+function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
   const scrollRef = useRef(null);
 
   // Sincroniza el scroll horizontal de cabecera y cuerpo
@@ -2848,7 +2848,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 </div>
                 <LeyendaPeluqueros/>
                 <div style={{ marginTop: "16px" }}>
-                  <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={null}/>
+                  <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={null} horariosGenerales={horariosGenerales}/>
                 </div>
               </div>
             </div>
@@ -2862,7 +2862,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <NavSemana offset={weekOffsetCitas} onChange={setWeekOffsetCitas} weekDays={weekDays}/>
               </div>
               <div style={{ marginTop: "16px" }}>
-                <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={pelFiltroCitas}/>
+                <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={pelFiltroCitas} horariosGenerales={horariosGenerales}/>
               </div>
             </div>
           </div>
