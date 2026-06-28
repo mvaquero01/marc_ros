@@ -3442,7 +3442,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               const iso = isoDate(d);
               const isPast = d < HOY;
               const isBloqueado = bloqueos.some(b => iso >= (b.desde || b.fecha) && iso <= (b.hasta || b.fecha));
-              const fontWeight = tieneHorario || isSeleccionado ? 800 : 500;
+              let fontWeight = tieneHorario || isSeleccionado ? 800 : 500;
               const horario = (horariosGenerales || []).find(h => h.fecha === iso);
               const tieneHorario = !!(horario && horario.tramos && horario.tramos.length > 0);
               const isSeleccionado = diaSeleccionado && isoDate(diaSeleccionado) === iso;
