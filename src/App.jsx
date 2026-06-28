@@ -3299,7 +3299,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       const iso = isoDate(diaSeleccionado);
       const tramosValidos = tramos.filter(t => t.entrada && t.salida);
       if (tramosValidos.length === 0) return;
-      const docId = `general-${iso}`;
+      const docId = `general-${toDMY(iso).replace(/\//g, "-")}`;
       await guardarHorarioGeneral(docId, { fecha: iso, tramos: tramosValidos });
       setDiaSeleccionado(null);
     };
@@ -3308,7 +3308,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       const iso = isoDate(horarioBorrar);
       const horario = (horariosGenerales || []).find(h => h.fecha === iso);
       setUltimoHorarioEliminado(horario);
-      const docId = `general-${iso}`;
+      const docId = `general-${toDMY(iso).replace(/\//g, "-")}`;
       await borrarHorarioGeneral(docId);
       setHorarioBorrar(null);
       setDiaSeleccionado(null);
@@ -3465,11 +3465,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   style={{ borderRadius: "8px", border, background: bg, color, fontWeight: tieneHorario || isSeleccionado ? 800 : 500, cursor: isPast || isBloqueado ? "default" : "pointer", fontSize: "12px", padding: "6px 0", textAlign: "center", transition: "all 0.15s" }}
                 >
                   {d.getDate()}
-                  {tieneHorario && !isSeleccionado && (
-                    <div style={{ fontSize: "7px", color: "#1d4ed8", fontWeight: 700, lineHeight: 1, marginTop: "1px" }}>
-                      {horario.tramos.length} tramo{horario.tramos.length > 1 ? "s" : ""}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -3569,7 +3564,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <span>📅 Horario eliminado</span>
             <button style={{ background: A, color: WH, border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }} onClick={async () => {
               if (!ultimoHorarioEliminado) return;
-              const docId = `general-${ultimoHorarioEliminado.fecha}`;
+              const docId = `general-${toDMY(ultimoHorarioEliminado.fecha).replace(/\//g, "-")}`;
               await guardarHorarioGeneral(docId, ultimoHorarioEliminado);
               setToastHorarioVisible(false);
               if (toastHorarioTimer) clearTimeout(toastHorarioTimer);
