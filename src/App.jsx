@@ -3454,9 +3454,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               let border = "1px solid transparent";
 
               if (isBloqueado) { bg = "#fee2e2"; color = "#ef4444"; }
-              else if (tieneHorario) { bg = "#dbeafe"; color = "#1d4ed8"; }
+              else if (tieneHorario) { bg = "#dcfce7"; color = "#16a34a"; }
               else if (isHoy) { border = "2px solid #1B4F8A"; }
-              if (isSeleccionado) { border = "2px solid #1B4F8A"; bg = "#1B4F8A"; color = "#fff"; }
+              if (isSeleccionado) { bg = "#1B4F8A"; color = "#fff"; }
 
               return (
                 <div
@@ -3477,14 +3477,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {/* LEYENDA */}
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dbeafe" }} />Con horario</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dcfce7" }} />Con horario</div>
             <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloqueado</div>
             <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sin horario (cerrado)</div>
           </div>
 
           {/* PANEL EDICIÓN DÍA SELECCIONADO */}
           {diaSeleccionado && (
-            <div style={{ background: "#fff", borderRadius: "10px", padding: "14px", border: "1px solid #cbd5e1" }}>
+            <div className="anim" style={{ background: "#fff", borderRadius: "10px", padding: "14px", border: "1px solid #cbd5e1" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
                   {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
