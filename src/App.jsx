@@ -3373,7 +3373,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const btnDelTramo = { background: "#fee2e2", color: "#dc2626", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 };
 
     return (
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "320px 1fr 320px", gap: "16px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "300px 1fr 300px", gap: "16px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
 
         {/* BLOQUE 1: DÍAS BLOQUEADOS */}
         <div style={colStyle}>
@@ -3446,9 +3446,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           </div>
 
           {/* CABECERA DÍAS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: "6px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,28px)", gap: "1px", marginBottom: "6px", justifyContent: "center" }}>
             {["L", "M", "X", "J", "V", "S", "D"].map(d => (
-              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#94a3b8" }}>{d}</div>
+              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#94a3b8", width: "28px" }}>{d}</div>
             ))}
           </div>
 
