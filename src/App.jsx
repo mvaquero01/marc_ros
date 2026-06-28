@@ -3373,7 +3373,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const btnDelTramo = { background: "#fee2e2", color: "#dc2626", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 };
 
     return (
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr 320px", gap: "16px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "320px 1fr 320px", gap: "16px", maxWidth: "100%", margin: "0 auto", alignItems: "start" }}>
 
         {/* BLOQUE 1: DÍAS BLOQUEADOS */}
         <div style={colStyle}>
@@ -3453,7 +3453,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           </div>
 
           {/* DÍAS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "2px", marginBottom: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7,28px)", gap: "1px", marginBottom: "16px", justifyContent: "center" }}>
             {diasMes.map((d, i) => {
               if (!d) return <div key={i} />;
               const iso = isoDate(d);
@@ -3516,13 +3516,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         <div style={colStyle}>
           {diaSeleccionado ? (
             <div className="anim">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", minHeight: "28px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
                   {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
                 </span>
-                {(horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) && (
-                  <button style={{ background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Borrar día</button>
-                )}
+                <button style={{ background: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#fee2e2" : "transparent", color: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#ef4444" : "transparent", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "pointer" : "default", pointerEvents: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "auto" : "none" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Borrar día</button>
               </div>
 
               {tramos.map((t, idx) => (
