@@ -622,13 +622,13 @@ function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horari
         {cells.map((d,i)=>{
           if(!d) return <div key={i}/>;
           const iso=isoDate(d);
-          const isPast=d<today, isDom=d.getDay()===0, isFest=festivosSet.has(iso);
+          const isPast=d<today, isFest=festivosSet.has(iso);
           const noBloq=bloqueosPelId?peluqueroEstaBloqueado(bloqueosPelId,iso,bloqueos):false;
           const disabled = isPast||isFest||noBloq;
           const sel=value===iso, isToday=iso===HOY_ISO;
           let cls="mini-cal-cell";
           if(sel) cls+=" selected";
-          else if(isFest||isDom) cls+=" festivo";
+          else if(isFest) cls+=" festivo";
           else if(isToday) cls+=" today";
           return(
             <div key={i} className={cls} style={{color:disabled&&!sel?"#aaa":undefined,background:disabled&&!sel?"transparent":undefined}} onClick={()=>!disabled&&onChange(iso)}>
@@ -1650,21 +1650,37 @@ function ClientePage({ sharedProps, startPaso=0 }){
                       const bloq = selPeluquero ? peluqueroEstaBloqueado(selPeluquero.id, iso, bloqueos) : false;
                       const disp = d >= HOY && d.getDay() !== 0 && !festivo && !bloq;
                       return (
-                        <button key={di} onClick={() => { if (disp) { setSelDia(d); setSelHora(null); } }} style={{ borderRadius: "8px", border: isSel ? "2px solid #1B4F8A" : "1px solid transparent", background: "#F7FAFC",
-                          color: disp ? "#0A1F3D" : "#CBD5E0",
-                          fontWeight: disp || isSel || isHoy ? 800 : 500,
+                        <button key={di} onClick={() => { if (disp) { setSelDia(d); setSelHora(null); } }} style={{
+                          border: "none",
+                          background: "transparent",
                           cursor: disp ? "pointer" : "default",
                           fontSize: "12px",
-                          padding: "7px 0",
+                          padding: "4px 0",
                           position: "relative",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
+                          justifyContent: "center",
                           gap: "3px",
-                          border: isHoy ? "1.5px solid #1B4F8A" : "1px solid transparent",
-                          outline: isSel ? "2.5px solid #1B4F8A" : "none",
-                          outlineOffset: "-1px",}}>
-                          {d.getDate()}
+                        }}>
+                          <div style={{
+                            width: "28px",
+                            height: "28px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "12px",
+                            fontWeight: isSel || isHoy ? 800 : 500,
+                            background: isSel ? "#1B4F8A" : "transparent",
+                            color: isSel ? "#fff" : d < HOY ? "#CBD5E0" : !disp && !isSel ? "#CBD5E0" : "#0A1F3D",
+                            outline: isHoy && !isSel ? "1.5px solid #1B4F8A" : "none",
+                            outlineOffset: "0px",
+                            textDecoration: d < HOY ? "line-through" : "none",
+                            textDecorationColor: "#CBD5E0",
+                          }}>
+                            {d.getDate()}
+                          </div>
                           {(() => {
                             if(d < HOY) return null;
                             const disp2 = getDisponibilidadDia(d);
@@ -3461,9 +3477,26 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <div
                   key={i}
                   onClick={() => { if (!isPast && !isBloqueado) setDiaSeleccionado(diaSeleccionado && isoDate(diaSeleccionado) === iso ? null : d); }}
-                  style={{ borderRadius: "8px", border, background: bg, color, fontWeight: tieneHorario || isSeleccionado ? 800 : 500, cursor: isPast || isBloqueado ? "default" : "pointer", fontSize: "12px", padding: "6px 0", textAlign: "center", transition: "all 0.15s" }}
+                  style={{ background: "transparent", border: "none", cursor: isPast || isBloqueado ? "default" : "pointer", fontSize: "12px", padding: "4px 0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
                 >
-                  {d.getDate()}
+                  <div style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "12px",
+                    fontWeight: tieneHorario || isSeleccionado || isHoy ? 800 : 500,
+                    background: isSeleccionado ? "#1B4F8A" : isBloqueado ? "#fee2e2" : tieneHorario ? "#dcfce7" : "transparent",
+                    color: isSeleccionado ? "#fff" : isBloqueado ? "#ef4444" : tieneHorario ? "#16a34a" : isPast ? "#CBD5E0" : "#0A1F3D",
+                    outline: isHoy && !isSeleccionado ? "1.5px solid #1B4F8A" : "none",
+                    outlineOffset: "0px",
+                    textDecoration: isPast ? "line-through" : "none",
+                    textDecorationColor: "#CBD5E0",
+                  }}>
+                    {d.getDate()}
+                  </div>
                 </div>
               );
             })}
