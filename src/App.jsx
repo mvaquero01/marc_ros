@@ -3484,7 +3484,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {/* PANEL EDICIÓN DÍA SELECCIONADO */}
           {diaSeleccionado && (
-            <div className="anim" style={{ background: "#fff", borderRadius: "10px", padding: "14px", border: "1px solid #cbd5e1" }}>
+            <div style={{ background: "#fff", borderRadius: "10px", padding: "14px", border: "1px solid #cbd5e1" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
                   {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
