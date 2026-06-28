@@ -311,7 +311,7 @@ function generarSlots(hp,durMin){
   while(cur<=fin){
     const finSlot=cur+durMin;
     if(hp.descanso){ const dI=toMin(hp.descanso.inicio),dF=toMin(hp.descanso.fin); if(cur<dF&&finSlot>dI){cur=dF;continue;} }
-    slots.push(toStr(cur)); cur+=15;
+    slots.push(toStr(cur)); cur+=30;
   }
   return slots;
 }
