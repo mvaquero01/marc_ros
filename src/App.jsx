@@ -348,7 +348,7 @@ function getWeekDays(offset=0){
   const hoy=new Date(); hoy.setHours(0,0,0,0);
   const dow=hoy.getDay();
   const mon=new Date(hoy); mon.setDate(hoy.getDate()-(dow===0?6:dow-1)+offset*7);
-  return Array.from({length:6},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d;});
+  return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d;});
 }
 function getCalendarWeeks(){
   const hoy=new Date(); hoy.setHours(0,0,0,0);
@@ -753,9 +753,11 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId }) {
                 {HORA_LABELS.map((h) => (
                   <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, borderTop: `1px solid ${h % 2 === 0 ? "#CED9E8" : "#E0E8F2"}`, zIndex: 0 }} />
                 ))}
-                {!hGen && (
-                  <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
-                )}
+                {(() => {
+                  const tramosDelDia = getTramosDia(1, iso, [], horariosGenerales||[]);
+                  if(tramosDelDia.length > 0) return null;
+                  return <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />;
+                })()}
                 {hGen && (peluqueroFiltroId
                   ? CONFIG.peluqueros.filter(p => p.id === peluqueroFiltroId)
                   : pelEnEsteDia
@@ -1551,7 +1553,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
           )}
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>
-            {paso === 2 && "✦ Elige día y hora"}
+            {paso === 2 && "✦ Reserva"}
           </div>
         </div>
 
@@ -3312,7 +3314,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const guardarHorarioDia = async () => {
       if (!diaSeleccionado) return;
       const iso = isoDate(diaSeleccionado);
-      const tramosValidos = tramos.filter(t => t.entrada && t.salida);
+      const tramosValidos = tramos.filter(t => t.entrada && t.salida).sort((a, b) => toMin(a.entrada) - toMin(b.entrada));
       if (tramosValidos.length === 0) return;
       const docId = `general-${toDMY(iso).replace(/\//g, "-")}`;
       await guardarHorarioGeneral(docId, { fecha: iso, tramos: tramosValidos });
