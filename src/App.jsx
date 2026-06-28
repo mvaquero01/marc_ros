@@ -145,8 +145,8 @@ STYLE.textContent = `
   }
   .mini-cal-cell:hover:not([disabled]) { background:#E0E8F2; }
   .mini-cal-cell[disabled] { opacity:.3; cursor:default; }
-  .mini-cal-cell.selected { background:linear-gradient(135deg,#1B4F8A,#133A6A) !important; color:#fff !important; font-weight:700; }
-  .mini-cal-cell.today { outline:2px solid #1B4F8A; outline-offset:-2px; }
+  .mini-cal-cell.selected { background:#1B4F8A !important; color:#fff !important; font-weight:700; border-radius:8px; }
+  .mini-cal-cell.today { background:#E8EEF6; font-weight:700; }
   .mini-cal-cell.festivo { color:#dc2626; opacity:.4; cursor:default; }
 
   /* ── WhatsApp FAB ── */
@@ -3408,7 +3408,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {bloqueosAgrupados.map((b, i) => (
             <div key={i} style={{ background: "#fff", padding: "10px 14px", borderRadius: "8px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid #fee2e2" }}>
-              <div>
+              <div style={{ textAlign: "left" }}>
                 <div style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b" }}>{b.motivo}</div>
                 <div style={{ fontSize: "11px", color: "#64748b" }}>{toDMY(b.inicio)}{b.inicio !== b.fin ? ` — ${toDMY(b.fin)}` : ""}</div>
               </div>
@@ -3454,7 +3454,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
               if (isBloqueado) { bg = "#fee2e2"; color = "#ef4444"; }
               else if (tieneHorario) { bg = "#dcfce7"; color = "#16a34a"; }
-              else if (isHoy) { border = "2.5px solid #1B4F8A"; fontWeight = 800; }
+              else if (isHoy) { border = "1.5px solid #1B4F8A"; }
               if (isSeleccionado) { bg = "#1B4F8A"; color = "#fff"; }
 
               return (
