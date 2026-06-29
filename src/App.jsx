@@ -764,7 +764,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
                     const inicioRallado2 = toMin(t.salida);
                     const finRallado2 = HORA_CIE;
                     return (
-                      <React.Fragment key={ti}>
+                      <div key={ti}>
                         {ti === 0 && finRallado1 > inicioRallado1 && (
                           <div style={{ position: "absolute", left: 0, right: 0, top: (inicioRallado1 - HORA_APE) * PX_MIN, height: (finRallado1 - inicioRallado1) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
                         )}
@@ -779,7 +779,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
                             <div style={{ position: "absolute", left: 0, right: 0, top: (ini - HORA_APE) * PX_MIN, height: (fin - ini) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
                           ) : null;
                         })()}
-                      </React.Fragment>
+                      </div>
                     );
                   });
                 })()}
