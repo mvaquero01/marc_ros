@@ -645,10 +645,10 @@ function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horari
 // CALENDARIO GRID — con cabeceras STICKY
 // ─────────────────────────────────────────────
 const PX_MIN=1.8;
-const HORA_APE=8*60+45,HORA_CIE=20*60+30;
+const HORA_APE=8*60+45,HORA_CIE=22*60+15;
 const TOTAL_MIN=HORA_CIE-HORA_APE;
 const GRID_H=TOTAL_MIN*PX_MIN;
-const HORA_LABELS=Array.from({length:12},(_,i)=>i+9);
+const HORA_LABELS=Array.from({length:14},(_,i)=>i+9);
 
 function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
   const scrollRef = useRef(null);
@@ -755,8 +755,33 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
                 ))}
                 {(() => {
                   const tramosDelDia = getTramosDia(1, iso, [], horariosGenerales||[]);
-                  if(tramosDelDia.length > 0) return null;
-                  return <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />;
+                  if(tramosDelDia.length === 0) return (
+                    <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                  );
+                  return tramosDelDia.map((t, ti) => {
+                    const inicioRallado1 = HORA_APE;
+                    const finRallado1 = toMin(t.entrada);
+                    const inicioRallado2 = toMin(t.salida);
+                    const finRallado2 = HORA_CIE;
+                    return (
+                      <React.Fragment key={ti}>
+                        {ti === 0 && finRallado1 > inicioRallado1 && (
+                          <div style={{ position: "absolute", left: 0, right: 0, top: (inicioRallado1 - HORA_APE) * PX_MIN, height: (finRallado1 - inicioRallado1) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                        )}
+                        {ti === tramosDelDia.length - 1 && finRallado2 > inicioRallado2 && (
+                          <div style={{ position: "absolute", left: 0, right: 0, top: (inicioRallado2 - HORA_APE) * PX_MIN, height: (finRallado2 - inicioRallado2) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                        )}
+                        {ti < tramosDelDia.length - 1 && (() => {
+                          const sig = tramosDelDia[ti + 1];
+                          const ini = toMin(t.salida);
+                          const fin = toMin(sig.entrada);
+                          return fin > ini ? (
+                            <div style={{ position: "absolute", left: 0, right: 0, top: (ini - HORA_APE) * PX_MIN, height: (fin - ini) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                          ) : null;
+                        })()}
+                      </React.Fragment>
+                    );
+                  });
                 })()}
                 {hGen && (peluqueroFiltroId
                   ? CONFIG.peluqueros.filter(p => p.id === peluqueroFiltroId)
@@ -2064,7 +2089,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
     }
     const pel = CONFIG.peluqueros.find(p => p.id === Number(peluqueroId));
     if (!pel || peluqueroEstaBloqueado(pel.id, form.fecha, bloqueos)) return [];
-    const tramos = getTramosDia(pel.id, form.fecha, horariosEspeciales||[], horariosGenerales||[]);
+    const tramos = getTramosDia(pel.id, form.fecha, [], horariosGenerales||[]);
     if (tramos.length===0) return [];
     const svc = servicios.find(s => s.id === Number(servicioId));
     if (!svc) return [];
