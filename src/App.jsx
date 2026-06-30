@@ -758,30 +758,24 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
                   if(tramosDelDia.length === 0) return (
                     <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
                   );
-                  return tramosDelDia.map((t, ti) => {
-                    const inicioRallado1 = HORA_APE;
-                    const finRallado1 = toMin(t.entrada);
-                    const inicioRallado2 = toMin(t.salida);
-                    const finRallado2 = HORA_CIE;
-                    return (
-                      <div key={ti}>
-                        {ti === 0 && finRallado1 > inicioRallado1 && (
-                          <div style={{ position: "absolute", left: 0, right: 0, top: (inicioRallado1 - HORA_APE) * PX_MIN, height: (finRallado1 - inicioRallado1) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
-                        )}
-                        {ti === tramosDelDia.length - 1 && finRallado2 > inicioRallado2 && (
-                          <div style={{ position: "absolute", left: 0, right: 0, top: (inicioRallado2 - HORA_APE) * PX_MIN, height: (finRallado2 - inicioRallado2) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
-                        )}
-                        {ti < tramosDelDia.length - 1 && (() => {
-                          const sig = tramosDelDia[ti + 1];
-                          const ini = toMin(t.salida);
-                          const fin = toMin(sig.entrada);
-                          return fin > ini ? (
-                            <div style={{ position: "absolute", left: 0, right: 0, top: (ini - HORA_APE) * PX_MIN, height: (fin - ini) * PX_MIN, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
-                          ) : null;
-                        })()}
-                      </div>
-                    );
-                  });
+                  const zonas = [];
+                  // Zona antes del primer tramo
+                  const antesInicio = HORA_APE;
+                  const antesFin = toMin(tramosDelDia[0].entrada);
+                  if(antesFin > antesInicio) zonas.push({top: (antesInicio - HORA_APE) * PX_MIN, height: (antesFin - antesInicio) * PX_MIN});
+                  // Zonas entre tramos
+                  for(let ti = 0; ti < tramosDelDia.length - 1; ti++){
+                    const ini = toMin(tramosDelDia[ti].salida);
+                    const fin = toMin(tramosDelDia[ti+1].entrada);
+                    if(fin > ini) zonas.push({top: (ini - HORA_APE) * PX_MIN, height: (fin - ini) * PX_MIN});
+                  }
+                  // Zona después del último tramo
+                  const despuesInicio = toMin(tramosDelDia[tramosDelDia.length-1].salida);
+                  const despuesFin = HORA_CIE;
+                  if(despuesFin > despuesInicio) zonas.push({top: (despuesInicio - HORA_APE) * PX_MIN, height: (despuesFin - despuesInicio) * PX_MIN});
+                  return zonas.map((z, zi) => (
+                    <div key={zi} style={{ position: "absolute", left: 0, right: 0, top: z.top, height: z.height, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                  ));
                 })()}
                 {hGen && (peluqueroFiltroId
                   ? CONFIG.peluqueros.filter(p => p.id === peluqueroFiltroId)
@@ -2223,8 +2217,10 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
                   value={form.fecha}
                   onChange={iso=>{ setForm(f=>({...f,fecha:iso,hora:""})); setShowCal(false); }}
                   festivosSet={festivosSet}
-                  bloqueosPelId={form.peluqueroId ? Number(form.peluqueroId) : null}
-                  bloqueos={bloqueos}/>
+                  bloqueosPelId={CONFIG.peluqueros[0].id}
+                  bloqueos={bloqueos}
+                  horariosEspeciales={[]}
+                  horariosGenerales={horariosGenerales}/>
               </div>
             )}
           </div>
@@ -2235,7 +2231,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
           <label style={lblS}>Hora</label>
           <select style={selS} value={form.hora}
             onChange={e=>setForm(f=>({...f,hora:e.target.value}))}
-            disabled={!slotsManuales.length && !esEdicion}>
+            disabled={false}>
             <option value="">
               {!form.fecha
                 ? "Primero elige una fecha"
