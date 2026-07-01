@@ -2236,7 +2236,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
                   {form.hora} (hora actual)
                 </div>
               )}
-              <div style={{display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"4px"}}>
+              <div style={{display:"flex", flexWrap:"wrap", gap:"4px"}}>
                 {slotsManuales.map(h=>(
                   <div key={h} onClick={()=>setForm(f=>({...f, hora:h, _showHoras:false}))} style={{padding:"7px 4px", fontSize:12, textAlign:"center", color: form.hora===h ? "#fff" : "#0D1F35", background: form.hora===h ? "#1B4F8A" : "#F0F4F9", cursor:"pointer", borderRadius:"6px", fontWeight: form.hora===h ? 700 : 400, transition:"background 0.15s"}}>
                     {h}
