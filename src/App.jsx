@@ -2149,8 +2149,8 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
   const formValido = !!(form.nombre && form.servicioId && form.peluqueroId && form.fecha && form.hora);
 
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:10000,display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"140px 16px 16px"}}>
-      <div style={{background:"#F8FBFF",borderRadius:18,padding:"16px",width:"100%",maxWidth:440,maxHeight:"calc(100vh - 160px)",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,.3)"}}>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:10000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
+      <div style={{background:"#F8FBFF",borderRadius:18,padding:"16px",width:"100%",maxWidth:440,boxShadow:"0 20px 60px rgba(0,0,0,.3)",overflow:"visible"}}>
 
         {/* Cabecera */}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
@@ -2193,7 +2193,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
               <span>📅</span>
             </button>
             {showCal && (
-              <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,zIndex:200}}>
+              <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,zIndex:9999}}>
                 <MiniCalPicker
                   value={form.fecha}
                   onChange={iso=>{ setForm(f=>({...f,fecha:iso,hora:""})); setShowCal(false); }}
@@ -2220,7 +2220,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         {/* Fila 4: Hora */}
         <div style={{marginBottom:7}}>
           <label style={lblS}>Hora</label>
-          <select style={selS} value={form.hora}
+          <select style={{...selS, direction:"ltr"}} value={form.hora}
             onChange={e=>setForm(f=>({...f,hora:e.target.value}))}
             disabled={false}>
             <option value="">
