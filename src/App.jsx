@@ -743,7 +743,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         {/* Columnas por día */}
         {dias.map((d, i) => {
           const iso = isoDate(d);
-          const hGen = CONFIG.horarioGeneral[d.getDay()];
+          const tramosDelDiaCol = getTramosDia(1, iso, [], horariosGenerales||[]);
           const citasDia = citas.filter((c) => c.fecha === iso && (!peluqueroFiltroId || c.peluqueroId === peluqueroFiltroId)).sort((a, b) => a.hora.localeCompare(b.hora));
           const pelEnEsteDia = CONFIG.peluqueros.filter((p) => !!p.horario[d.getDay()]);
 
@@ -754,7 +754,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
                   <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, borderTop: `1px solid ${h % 2 === 0 ? "#CED9E8" : "#E0E8F2"}`, zIndex: 0 }} />
                 ))}
                 {(() => {
-                  const tramosDelDia = getTramosDia(1, iso, [], horariosGenerales||[]);
+                  const tramosDelDia = tramosDelDiaCol;
                   if(tramosDelDia.length === 0) return (
                     <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
                   );
@@ -1048,7 +1048,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         const disponibles=filtrarSlotsOcupados(todos,selServicio.duracionMin,citasDelDia);
         disponibles.forEach(h=>slotsSet.add(h));
       });
-      let arr=[...slotsSet].sort();
+      let arr=[...slotsSet].sort((a,b) => toMin(a) - toMin(b));
       if(isoDate(selDia)===HOY_ISO){
         const ahora=new Date(); const minAhora=ahora.getHours()*60+ahora.getMinutes()+15;
         arr=arr.filter(h=>toMin(h)>minAhora);
@@ -2100,8 +2100,8 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       const m = ahora.getHours() * 60 + ahora.getMinutes() + 15;
       return disponibles.filter(h => toMin(h) > m);
     }
-    return disponibles;
-  }, [form.peluqueroId, form.fecha, form.servicioId, citas, bloqueos, festivosSet, horariosEspeciales]);
+    return [...disponibles].sort((a,b) => toMin(a) - toMin(b));
+  }, [form.peluqueroId, form.fecha, form.servicioId, citas, bloqueos, festivosSet, horariosGenerales]);
 
   const confirmar = async () => {
     if (!form.nombre || !form.servicioId || !form.peluqueroId || !form.fecha || !form.hora) return;
@@ -3326,7 +3326,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       const iso = isoDate(diaSeleccionado);
       const horario = (horariosGenerales || []).find(h => h.fecha === iso);
       if (horario && horario.tramos && horario.tramos.length > 0) {
-        setTramos(horario.tramos);
+        setTramos([...horario.tramos].sort((a,b) => toMin(a.entrada) - toMin(b.entrada)));
       } else {
         setTramos([{ entrada: "", salida: "" }]);
       }
