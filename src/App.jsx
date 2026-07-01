@@ -2062,15 +2062,12 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
 
   const slotsManuales = useMemo(() => {
     if (!form.fecha) return [];
-    if (festivosSet && festivosSet.has && festivosSet.has(form.fecha)) return [];
-    const peluqueroId = form.peluqueroId || String(CONFIG.peluqueros[0].id);
-    const servicioId = form.servicioId || String(CONFIG.serviciosDefault[0].id);
-    const pel = CONFIG.peluqueros.find(p => p.id === Number(peluqueroId));
-    if (!pel || peluqueroEstaBloqueado(pel.id, form.fecha, bloqueos)) return [];
+    const pel = CONFIG.peluqueros[0];
+    const svc = CONFIG.serviciosDefault[0];
+    if (festivosSet.has(form.fecha)) return [];
+    if (peluqueroEstaBloqueado(pel.id, form.fecha, bloqueos)) return [];
     const tramos = getTramosDia(pel.id, form.fecha, [], horariosGenerales||[]);
-    if (tramos.length===0) return [];
-    const svc = servicios.find(s => s.id === Number(servicioId));
-    if (!svc) return [];
+    if (tramos.length === 0) return [];
     const todos = generarSlotsTramos(tramos, svc.duracionMin);
     const citasDelDia = citas.filter(c =>
       c.fecha === form.fecha &&
@@ -2085,7 +2082,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       return disponibles.filter(h => toMin(h) > m);
     }
     return [...disponibles].sort((a,b) => toMin(a) - toMin(b));
-  }, [form.peluqueroId, form.fecha, form.servicioId, citas, bloqueos, festivosSet, horariosGenerales]);
+  }, [form.fecha, citas, bloqueos, festivosSet, horariosGenerales]);
 
   const confirmar = async () => {
     if (!form.nombre || !form.servicioId || !form.peluqueroId || !form.fecha || !form.hora) return;
