@@ -2062,27 +2062,9 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
 
   const slotsManuales = useMemo(() => {
     if (!form.fecha) return [];
-    console.log("fecha:", form.fecha, "tramos:", getTramosDia(CONFIG.peluqueros[0].id, form.fecha, [], horariosGenerales||[]));
-    console.log("peluqueroId raw:", peluqueroId, "es cualquiera:", peluqueroId === "cualquiera");
     if (festivosSet && festivosSet.has && festivosSet.has(form.fecha)) return [];
     const peluqueroId = form.peluqueroId || String(CONFIG.peluqueros[0].id);
     const servicioId = form.servicioId || String(CONFIG.serviciosDefault[0].id);
-    if(peluqueroId === "cualquiera"){
-      const svc = servicios.find(s => s.id === Number(form.servicioId));
-      if(!svc) return [];
-      const slotsSet = new Set();
-      CONFIG.peluqueros.forEach(p=>{
-        if(peluqueroEstaBloqueado(p.id,form.fecha,bloqueos)) return;
-        const tramos = getTramosDia(p.id, form.fecha, horariosEspeciales||[]);
-        if(tramos.length===0) return;
-        const todos=generarSlotsTramos(tramos,svc.duracionMin);
-        const citasDelDia=citas.filter(c=>c.fecha===form.fecha&&c.peluqueroId===p.id&&c.estado!=="no-show"&&(!esEdicion||c.id!==citaInicial?.id));
-        filtrarSlotsOcupados(todos,svc.duracionMin,citasDelDia).forEach(h=>slotsSet.add(h));
-      });
-      let arr=[...slotsSet].sort();
-      if(form.fecha===HOY_ISO){ const ahora=new Date(); const m=ahora.getHours()*60+ahora.getMinutes()+15; arr=arr.filter(h=>toMin(h)>m); }
-      return arr;
-    }
     const pel = CONFIG.peluqueros.find(p => p.id === Number(peluqueroId));
     if (!pel || peluqueroEstaBloqueado(pel.id, form.fecha, bloqueos)) return [];
     const tramos = getTramosDia(pel.id, form.fecha, [], horariosGenerales||[]);
@@ -2090,8 +2072,6 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
     const svc = servicios.find(s => s.id === Number(servicioId));
     if (!svc) return [];
     const todos = generarSlotsTramos(tramos, svc.duracionMin);
-    console.log("todos:", todos, "svc:", svc, "citasDelDia:", citasDelDia);
-    console.log("peluqueroId:", peluqueroId, "servicioId:", servicioId, "svc:", servicios.find(s => s.id === Number(servicioId)));
     const citasDelDia = citas.filter(c =>
       c.fecha === form.fecha &&
       c.peluqueroId === pel.id &&
