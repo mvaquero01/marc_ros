@@ -777,7 +777,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
                     <div key={zi} style={{ position: "absolute", left: 0, right: 0, top: z.top, height: z.height, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
                   ));
                 })()}
-                {hGen && (peluqueroFiltroId
+                {tramosDelDiaCol.length > 0 && (peluqueroFiltroId
                   ? CONFIG.peluqueros.filter(p => p.id === peluqueroFiltroId)
                   : pelEnEsteDia
                 ).map((p) => {
@@ -2208,7 +2208,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
           <div style={{position:"relative"}}>
             <button style={{...inputS,textAlign:"left",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}
               onClick={()=>setShowCal(v=>!v)}>
-              <span style={{color:form.fecha?"#0D1F35":"#4A6080"}}>{form.fecha||"Seleccionar fecha..."}</span>
+              <span style={{color:form.fecha?"#0D1F35":"#4A6080"}}>{form.fecha ? fmtFechaES(form.fecha) : "Seleccionar fecha..."}</span>
               <span>📅</span>
             </button>
             {showCal && (
@@ -2216,7 +2216,17 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
                 <MiniCalPicker
                   value={form.fecha}
                   onChange={iso=>{ setForm(f=>({...f,fecha:iso,hora:""})); setShowCal(false); }}
-                  festivosSet={festivosSet}
+                  festivosSet={new Set([...festivosSet, ...(() => {
+                    const diasSinSlots = [];
+                    const hoy = new Date(); hoy.setHours(0,0,0,0);
+                    for(let i=0; i<60; i++){
+                      const d = new Date(hoy); d.setDate(hoy.getDate()+i);
+                      const iso = isoDate(d);
+                      const tramos = getTramosDia(CONFIG.peluqueros[0].id, iso, [], horariosGenerales||[]);
+                      if(tramos.length === 0) diasSinSlots.push(iso);
+                    }
+                    return diasSinSlots;
+                  })()])}
                   bloqueosPelId={CONFIG.peluqueros[0].id}
                   bloqueos={bloqueos}
                   horariosEspeciales={[]}
@@ -2670,7 +2680,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           festivosSet={festivosSet}
           citaInicial={null}
           onGuardada={()=>setShowManual(false)}
-          hhorariosEspeciales={horariosEspeciales}
+          horariosEspeciales={horariosEspeciales}
           horariosGenerales={horariosGenerales}
         />
 
