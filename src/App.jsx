@@ -2063,6 +2063,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
   const slotsManuales = useMemo(() => {
     if (!form.fecha) return [];
     console.log("fecha:", form.fecha, "tramos:", getTramosDia(CONFIG.peluqueros[0].id, form.fecha, [], horariosGenerales||[]));
+    console.log("peluqueroId raw:", peluqueroId, "es cualquiera:", peluqueroId === "cualquiera");
     if (festivosSet && festivosSet.has && festivosSet.has(form.fecha)) return [];
     const peluqueroId = form.peluqueroId || String(CONFIG.peluqueros[0].id);
     const servicioId = form.servicioId || String(CONFIG.serviciosDefault[0].id);
