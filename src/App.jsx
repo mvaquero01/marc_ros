@@ -2218,24 +2218,31 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         </div>
 
         {/* Fila 4: Hora */}
-        <div style={{marginBottom:7}}>
+        <div style={{marginBottom:7, position:"relative"}}>
           <label style={lblS}>Hora</label>
-          <select style={{...selS, direction:"ltr"}} value={form.hora}
-            onChange={e=>setForm(f=>({...f,hora:e.target.value}))}
-            disabled={false}>
-            <option value="">
-              {!form.fecha
-                ? "Primero elige una fecha"
-                : slotsManuales.length === 0
-                  ? "Sin huecos disponibles"
-                  : "Elige hora"}
-            </option>
-            {/* En edición, añadimos la hora actual si no está en los slots */}
-            {esEdicion && form.hora && !slotsManuales.includes(form.hora) && (
-              <option value={form.hora}>{form.hora} (hora actual)</option>
-            )}
-            {slotsManuales.map(h=><option key={h} value={h}>{h}</option>)}
-          </select>
+          <div
+            style={{...selS, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center"}}
+            onClick={()=>slotsManuales.length > 0 && setForm(f=>({...f, _showHoras: !f._showHoras}))}
+          >
+            <span style={{color: form.hora ? "#0D1F35" : "#4A6080"}}>
+              {!form.fecha ? "Primero elige una fecha" : slotsManuales.length === 0 ? "Sin huecos disponibles" : form.hora || "Elige hora"}
+            </span>
+            <span style={{fontSize:10, color:"#4A6080"}}>▼</span>
+          </div>
+          {form._showHoras && slotsManuales.length > 0 && (
+            <div style={{position:"absolute", top:"calc(100% + 4px)", left:0, right:0, background:"#fff", border:"1px solid #CED9E8", borderRadius:9, zIndex:9999, maxHeight:200, overflowY:"auto", boxShadow:"0 8px 24px rgba(0,0,0,.1)"}}>
+              {esEdicion && form.hora && !slotsManuales.includes(form.hora) && (
+                <div style={{padding:"9px 13px", fontSize:13, color:"#0D1F35", cursor:"pointer", borderBottom:"1px solid #E0E8F2"}} onClick={()=>setForm(f=>({...f, _showHoras:false}))}>
+                  {form.hora} (hora actual)
+                </div>
+              )}
+              {slotsManuales.map(h=>(
+                <div key={h} onClick={()=>setForm(f=>({...f, hora:h, _showHoras:false}))} style={{padding:"9px 13px", fontSize:13, color: form.hora===h ? "#fff" : "#0D1F35", background: form.hora===h ? "#1B4F8A" : "transparent", cursor:"pointer", borderBottom:"1px solid #E0E8F2", transition:"background 0.15s"}}>
+                  {h}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Fila 6: Nota */}
