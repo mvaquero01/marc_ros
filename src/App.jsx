@@ -2090,6 +2090,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
     if (!svc) return [];
     const todos = generarSlotsTramos(tramos, svc.duracionMin);
     console.log("todos:", todos, "svc:", svc, "citasDelDia:", citasDelDia);
+    console.log("peluqueroId:", peluqueroId, "servicioId:", servicioId, "svc:", servicios.find(s => s.id === Number(servicioId)));
     const citasDelDia = citas.filter(c =>
       c.fecha === form.fecha &&
       c.peluqueroId === pel.id &&
