@@ -670,7 +670,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
         style={{
           position: "sticky",
           top: navOffset + "px",
-          zIndex: 6,
+          zIndex: 8,
           background: "#F8FBFF",
           display: "flex",
           overflowX: "hidden",
@@ -720,8 +720,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
         style={{
           display: "flex",
           overflowX: "auto",
-          overflowY: "auto",
-          maxHeight: "600px",
+          overflowY: "visible",
           background: "#F8FBFF",
           border: "1px solid #CED9E8",
           borderTop: "none",
@@ -731,7 +730,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
         }}
       >
         {/* Eje de horas */}
-        <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
+        <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6", alignSelf: "stretch" }}>
           <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
             {HORA_LABELS.map((h) => (
               <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#4A6080", fontWeight: 700, transform: "translateY(-50%)" }}>
