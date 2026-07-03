@@ -669,8 +669,8 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         id="cal-header-row"
         style={{
           position: "sticky",
-          top: "270px",
-          zIndex: 2,
+          top: "213px",
+          zIndex: 6,
           background: "#F8FBFF",
           display: "flex",
           overflowX: "hidden",
@@ -680,7 +680,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         }}
       >
         {/* Hueco del eje de horas */}
-        <div style={{ width: 52, flexShrink: 0, background: "#E8EEF6", borderRight: "1px solid #CED9E8", height: 52, zIndex: 0 }} />
+        <div style={{ width: 52, flexShrink: 0, background: "#E8EEF6", borderRight: "1px solid #CED9E8", height: 52, zIndex: 6, position: "sticky", left: 0 }} />
         {/* Cabeceras de días */}
         {dias.map((d, i) => {
           const iso = isoDate(d);
@@ -730,7 +730,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         }}
       >
         {/* Eje de horas */}
-        <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
+        <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6", alignSelf: "flex-start" }}>
           <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
             {HORA_LABELS.map((h) => (
               <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#4A6080", fontWeight: 700, transform: "translateY(-50%)" }}>
@@ -3512,8 +3512,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     justifyContent: "center",
                     fontSize: "12px",
                     fontWeight: tieneHorario || isSeleccionado || isHoy ? 800 : 500,
-                    background: isSeleccionado ? "#1B4F8A" : isBloqueado ? "#fee2e2" : tieneHorario ? "#dcfce7" : "transparent",
-                    color: isSeleccionado ? "#fff" : isBloqueado ? "#ef4444" : isPast && tieneHorario ? "#16a34a" : isPast ? "#CBD5E0" : tieneHorario ? "#16a34a" : "#0A1F3D",
+                    color: isSeleccionado ? "#fff" : isPast && isBloqueado ? "#fca5a5" : isPast && tieneHorario ? "#86efac" : isPast ? "#CBD5E0" : isBloqueado ? "#ef4444" : tieneHorario ? "#16a34a" : "#0A1F3D",
+                    background: isSeleccionado ? "#1B4F8A" : isPast ? "transparent" : isBloqueado ? "#fee2e2" : tieneHorario ? "#dcfce7" : "transparent",
                     outline: isHoy && !isSeleccionado ? "1.5px solid #1B4F8A" : "none",
                     outlineOffset: "0px",
                     textDecoration: isPast ? "line-through" : "none",
