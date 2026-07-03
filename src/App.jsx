@@ -669,8 +669,8 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         id="cal-header-row"
         style={{
           position: "sticky",
-          top: "213px",
-          zIndex: 5,
+          top: "270px",
+          zIndex: 2,
           background: "#F8FBFF",
           display: "flex",
           overflowX: "hidden",
@@ -730,7 +730,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         }}
       >
         {/* Eje de horas */}
-        <div style={{ width: 52, flexShrink: 0, position: "relative", borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
+        <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
           <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
             {HORA_LABELS.map((h) => (
               <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#4A6080", fontWeight: 700, transform: "translateY(-50%)" }}>
@@ -841,7 +841,7 @@ function NavSemana({offset,onChange,weekDays}){
       </div>
       {offset!==0&&(
         <div style={{display:"flex",justifyContent:"center"}}>
-          <button style={{...btnS,background:A,color:WH,border:`2px solid ${A}`}} onClick={()=>onChange(0)}>Volver a hoy</button>
+          <button style={{...btnS,background:A,color:WH,border:`2px solid ${A}`,position:"relative",zIndex:0}} onClick={()=>onChange(0)}>Volver a hoy</button>
         </div>
       )}
     </div>
@@ -2879,7 +2879,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {vistaCitas==="peluquero"&&(
           <div>
             <div style={{ background: WH, borderRadius: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", padding: "20px", width: "100%", boxSizing: "border-box", overflow: "visible" }}>
-              <div style={{ position: "sticky", top: 130, zIndex: 10, background: WH, marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20, marginTop: -20, paddingTop: 20, paddingBottom: 12, borderRadius: "24px 24px 0 0" }}>
+              <div style={{ position: "sticky", top: 130, zIndex: 3, background: WH, marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20, marginTop: -20, paddingTop: 20, paddingBottom: 12, borderRadius: "24px 24px 0 0" }}>
                 <NavSemana offset={weekOffsetCitas} onChange={setWeekOffsetCitas} weekDays={weekDays}/>
               </div>
               <div style={{ marginTop: "16px" }}>
@@ -3513,7 +3513,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     fontSize: "12px",
                     fontWeight: tieneHorario || isSeleccionado || isHoy ? 800 : 500,
                     background: isSeleccionado ? "#1B4F8A" : isBloqueado ? "#fee2e2" : tieneHorario ? "#dcfce7" : "transparent",
-                    color: isSeleccionado ? "#fff" : isBloqueado ? "#ef4444" : tieneHorario ? "#16a34a" : isPast ? "#CBD5E0" : "#0A1F3D",
+                    color: isSeleccionado ? "#fff" : isBloqueado ? "#ef4444" : isPast && tieneHorario ? "#16a34a" : isPast ? "#CBD5E0" : tieneHorario ? "#16a34a" : "#0A1F3D",
                     outline: isHoy && !isSeleccionado ? "1.5px solid #1B4F8A" : "none",
                     outlineOffset: "0px",
                     textDecoration: isPast ? "line-through" : "none",
