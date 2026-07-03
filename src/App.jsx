@@ -669,7 +669,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
         id="cal-header-row"
         style={{
           position: "sticky",
-          top: "213px",
+          top: navOffset + "px",
           zIndex: 6,
           background: "#F8FBFF",
           display: "flex",
@@ -2869,7 +2869,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 </div>
                 <LeyendaPeluqueros/>
                 <div style={{ marginTop: "16px" }}>
-                  <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={null} horariosGenerales={horariosGenerales}/>
+                  <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={null} horariosGenerales={horariosGenerales} navOffset={weekOffsetCitas !== 0 ? 260 : 213}/>
                 </div>
               </div>
             </div>
@@ -2879,11 +2879,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {vistaCitas==="peluquero"&&(
           <div>
             <div style={{ background: WH, borderRadius: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", padding: "20px", width: "100%", boxSizing: "border-box", overflow: "visible" }}>
-              <div style={{ position: "sticky", top: 130, zIndex: 3, background: WH, marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20, marginTop: -20, paddingTop: 20, paddingBottom: 12, borderRadius: "24px 24px 0 0" }}>
+              <div id="navsemana-wrap" style={{ position: "sticky", top: 130, zIndex: 3, background: WH, marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20, marginTop: -20, paddingTop: 20, paddingBottom: 12, borderRadius: "24px 24px 0 0" }}>
                 <NavSemana offset={weekOffsetCitas} onChange={setWeekOffsetCitas} weekDays={weekDays}/>
               </div>
               <div style={{ marginTop: "16px" }}>
-                <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={pelFiltroCitas} horariosGenerales={horariosGenerales}/>
+                <CalendarioGrid dias={weekDays} citas={citas} peluqueroFiltroId={pelFiltroCitas} horariosGenerales={horariosGenerales} navOffset={weekOffsetCitas !== 0 ? 260 : 213}/>
               </div>
             </div>
           </div>
@@ -3517,7 +3517,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     outline: isHoy && !isSeleccionado ? "1.5px solid #1B4F8A" : "none",
                     outlineOffset: "0px",
                     textDecoration: isPast ? "line-through" : "none",
-                    textDecorationColor: "#CBD5E0",
                   }}>
                     {d.getDate()}
                   </div>
