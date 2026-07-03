@@ -650,7 +650,7 @@ const TOTAL_MIN=HORA_CIE-HORA_APE;
 const GRID_H=TOTAL_MIN*PX_MIN;
 const HORA_LABELS=Array.from({length:14},(_,i)=>i+9);
 
-function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales }) {
+function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, navOffset=213 }) {
   const scrollRef = useRef(null);
 
   // Sincroniza el scroll horizontal de cabecera y cuerpo
