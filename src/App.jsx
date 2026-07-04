@@ -2052,12 +2052,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
   const confirmar = async () => {
     if (!form.nombre || !form.servicioId || !form.peluqueroId || !form.fecha || !form.hora) return;
     const svc = servicios.find(s => s.id === Number(form.servicioId));
-    let pel = CONFIG.peluqueros.find(p => p.id === Number(form.peluqueroId));
-    if(form.peluqueroId === "cualquiera"){
-      const festivosSetLocal = new Set(festivos ? festivos.map(f=>f.fecha) : []);
-      pel = asignarPeluqueroAleatorio(svc.id, form.fecha, form.hora, citas, bloqueos, festivosSetLocal, servicios, horariosEspeciales, horariosGenerales);
-      if(!pel) return;
-    }
+    const pel = CONFIG.peluqueros[0];
 
     if (esEdicion) {
       const datos = {
