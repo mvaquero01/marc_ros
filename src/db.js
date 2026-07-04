@@ -12,7 +12,10 @@ export const suscribirCitas = (callback) => {
   });
 };
 
-export const crearCita = (cita) => addDoc(collection(db, "citas"), cita);
+export const crearCita = (cita) => {
+  const docId = `${(cita.clienteTel||"").replace(/\D/g,'')}--${cita.fecha}--${cita.hora.replace(":","")}`;
+  return setDoc(doc(db, "citas", docId), cita);
+};
 
 export const actualizarCita = (id, datos) =>
   updateDoc(doc(db, "citas", id), datos);

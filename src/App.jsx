@@ -2780,6 +2780,19 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                 const val = Number(e.target.value);
                                 setCitas(prev => prev.map(x => x.id===c.id ? {...x, precio:val} : x));
                                 await actualizarCita(c.id, {precio:val});
+                                if(c.estado === "completada" && c.clienteTel){
+                                  const docId = c.clienteTel.replace(/\D/g,'');
+                                  const ref = doc(db,"clientes",docId);
+                                  const snap = await getDoc(ref);
+                                  if(snap.exists()){
+                                    const cl = snap.data();
+                                    const historialActualizado = (cl.historial||[]).map(h => 
+                                      h.fecha === c.fecha ? {...h, precio: val} : h
+                                    );
+                                    const gastoTotal = historialActualizado.reduce((s,h) => s + (h.precio||0), 0);
+                                    await updateDoc(ref, {historial: historialActualizado, gasto: gastoTotal});
+                                  }
+                                }
                               }}
                               style={{width:"52px", textAlign:"center", background:"#F0F4F9", border:"1px solid #CED9E8", borderRadius:6, padding:"4px 6px", fontSize:12, fontWeight:700, color:TX}}
                             />
@@ -2825,6 +2838,19 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                 const val = Number(e.target.value);
                                 setCitas(prev => prev.map(x => x.id===c.id ? {...x, precio:val} : x));
                                 await actualizarCita(c.id, {precio:val});
+                                if(c.estado === "completada" && c.clienteTel){
+                                  const docId = c.clienteTel.replace(/\D/g,'');
+                                  const ref = doc(db,"clientes",docId);
+                                  const snap = await getDoc(ref);
+                                  if(snap.exists()){
+                                    const cl = snap.data();
+                                    const historialActualizado = (cl.historial||[]).map(h => 
+                                      h.fecha === c.fecha ? {...h, precio: val} : h
+                                    );
+                                    const gastoTotal = historialActualizado.reduce((s,h) => s + (h.precio||0), 0);
+                                    await updateDoc(ref, {historial: historialActualizado, gasto: gastoTotal});
+                                  }
+                                }
                               }}
                               style={{width:"52px", textAlign:"center", background:"#F0F4F9", border:"1px solid #CED9E8", borderRadius:6, padding:"4px 6px", fontSize:12, fontWeight:700, color:TX}}
                             />
