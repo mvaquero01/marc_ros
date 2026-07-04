@@ -664,154 +664,118 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
   return (
     <div style={{ width: "100%", position: "relative" }}>
 
-      {/* CABECERA FIJA — sticky respecto a la página */}
-      <div
-        id="cal-header-row"
-        style={{
-          position: "sticky",
-          top: navOffset + "px",
-          zIndex: 8,
-          background: "#F8FBFF",
-          display: "flex",
-          overflowX: "hidden",
-          borderRadius: "13px 13px 0 0",
-          border: "1px solid #CED9E8",
-          borderBottom: "none",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        }}
-      >
-        {/* Hueco del eje de horas */}
-        <div style={{ width: 52, flexShrink: 0, background: "#E8EEF6", borderRight: "1px solid #CED9E8", height: 52, zIndex: 6, position: "sticky", left: 0 }} />
-        {/* Cabeceras de días */}
-        {dias.map((d, i) => {
-          const iso = isoDate(d);
-          const esHoy = iso === HOY_ISO;
-          return (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                minWidth: 130,
-                height: 52,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRight: "1px solid #CED9E8",
-                background: esHoy ? "#1B4F8A" : "#E8EEF6",
-                padding: "4px 8px",
-                gap: 7,
-              }}
-            >
-              <span style={{ fontSize: 9, fontWeight: 700, color: esHoy ? "#fff" : "#4A6080", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap", lineHeight: 1 }}>
-                {DIAS_ES[d.getDay()]}
-              </span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: esHoy ? "#fff" : "#0D1F35", whiteSpace: "nowrap", lineHeight: 1 }}>
-                {d.getDate()} {MESES_ES[d.getMonth()]}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* CUERPO — scroll horizontal, sin cabeceras */}
-      <div
-        ref={scrollRef}
-        onScroll={onBodyScroll}
-        style={{
-          display: "flex",
-          overflowX: "auto",
-          overflowY: "visible",
-          background: "#F8FBFF",
-          border: "1px solid #CED9E8",
-          borderTop: "none",
-          borderRadius: "0 0 13px 13px",
-          width: "100%",
+      <div style={{
+        border: "1px solid #CED9E8",
+        borderRadius: "13px",
+        overflow: "hidden",
+        position: "sticky",
+        top: navOffset + "px",
+        zIndex: 8,
+        maxHeight: "calc(100vh - " + (navOffset + 80) + "px)",
+        display: "flex",
+        flexDirection: "column",
+      }}>
+        <div style={{
+          overflow: "auto",
           WebkitOverflowScrolling: "touch",
-        }}
-      >
-        {/* Eje de horas */}
-        <div style={{ width: 52, flexShrink: 0, flexGrow: 0, borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
-          <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
-            {HORA_LABELS.map((h) => (
-              <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#4A6080", fontWeight: 700, transform: "translateY(-50%)" }}>
-                {h}:00
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+        }}>
+          <div style={{
+            display: "flex",
+            position: "sticky",
+            top: 0,
+            zIndex: 8,
+            background: "#F8FBFF",
+            borderBottom: "1px solid #CED9E8",
+            minWidth: "max-content",
+          }}>
+            <div style={{ width: 52, flexShrink: 0, background: "#E8EEF6", borderRight: "1px solid #CED9E8", height: 52, position: "sticky", left: 0, zIndex: 9 }} />
+            {dias.map((d, i) => {
+              const iso = isoDate(d);
+              const esHoy = iso === HOY_ISO;
+              return (
+                <div key={i} style={{
+                  flex: 1, minWidth: 130, height: 52,
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                  borderRight: "1px solid #CED9E8",
+                  background: esHoy ? "#1B4F8A" : "#E8EEF6",
+                  padding: "4px 8px", gap: 7,
+                }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: esHoy ? "#fff" : "#4A6080", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap", lineHeight: 1 }}>
+                    {DIAS_ES[d.getDay()]}
+                  </span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: esHoy ? "#fff" : "#0D1F35", whiteSpace: "nowrap", lineHeight: 1 }}>
+                    {d.getDate()} {MESES_ES[d.getMonth()]}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ display: "flex", minWidth: "max-content" }}>
+            <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
+              <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
+                {HORA_LABELS.map((h) => (
+                  <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#4A6080", fontWeight: 700, transform: "translateY(-50%)" }}>
+                    {h}:00
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {dias.map((d, i) => {
+              const iso = isoDate(d);
+              const tramosDelDiaCol = getTramosDia(1, iso, [], horariosGenerales||[]);
+              const citasDia = citas.filter((c) => c.fecha === iso && (!peluqueroFiltroId || c.peluqueroId === peluqueroFiltroId)).sort((a, b) => a.hora.localeCompare(b.hora));
+
+              return (
+                <div key={i} style={{ flex: 1, minWidth: 130, borderRight: "1px solid #CED9E8", display: "flex", flexDirection: "column" }}>
+                  <div style={{ position: "relative", height: GRID_H, flexShrink: 0, paddingTop: 8 }}>
+                    {HORA_LABELS.map((h) => (
+                      <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, borderTop: `1px solid ${h % 2 === 0 ? "#CED9E8" : "#E0E8F2"}`, zIndex: 0 }} />
+                    ))}
+                    {(() => {
+                      const tramosDelDia = tramosDelDiaCol;
+                      if(tramosDelDia.length === 0) return (
+                        <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                      );
+                      const zonas = [];
+                      const antesInicio = HORA_APE;
+                      const antesFin = toMin(tramosDelDia[0].entrada);
+                      if(antesFin > antesInicio) zonas.push({top: (antesInicio - HORA_APE) * PX_MIN, height: (antesFin - antesInicio) * PX_MIN});
+                      for(let ti = 0; ti < tramosDelDia.length - 1; ti++){
+                        const ini = toMin(tramosDelDia[ti].salida);
+                        const fin = toMin(tramosDelDia[ti+1].entrada);
+                        if(fin > ini) zonas.push({top: (ini - HORA_APE) * PX_MIN, height: (fin - ini) * PX_MIN});
+                      }
+                      const despuesInicio = toMin(tramosDelDia[tramosDelDia.length-1].salida);
+                      const despuesFin = HORA_CIE;
+                      if(despuesFin > despuesInicio) zonas.push({top: (despuesInicio - HORA_APE) * PX_MIN, height: (despuesFin - despuesInicio) * PX_MIN});
+                      return zonas.map((z, zi) => (
+                        <div key={zi} style={{ position: "absolute", left: 0, right: 0, top: z.top, height: z.height, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
+                      ));
+                    })()}
+                    {citasDia.map((c) => {
+                      const svc = CONFIG.serviciosDefault.find((s) => s.id === c.servicioId) || { duracionMin: 30 };
+                      const pel = CONFIG.peluqueros.find((p) => p.id === c.peluqueroId);
+                      const col = pel?.color || "#1B4F8A";
+                      const top = (toMin(c.hora) - HORA_APE) * PX_MIN;
+                      const height = Math.max(svc.duracionMin * PX_MIN - 2, 18);
+                      return (
+                        <div key={c.id} style={{ position: "absolute", top, left: "1px", right: "2px", height, background: `${col}22`, border: `1.5px solid ${col}99`, borderLeft: `3px solid ${col}`, borderRadius: 4, padding: "2px 4px", overflow: "hidden", zIndex: 2, boxSizing: "border-box" }}>
+                          <div style={{ fontSize: 9, fontWeight: 700, color: col, lineHeight: 1.3 }}>{c.hora}</div>
+                          {height > 20 && <div style={{ fontSize: 9, color: "#0D1F35", fontWeight: 600, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.clienteNombre.split(" ")[0]}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-
-        {/* Columnas por día */}
-        {dias.map((d, i) => {
-          const iso = isoDate(d);
-          const tramosDelDiaCol = getTramosDia(1, iso, [], horariosGenerales||[]);
-          const citasDia = citas.filter((c) => c.fecha === iso && (!peluqueroFiltroId || c.peluqueroId === peluqueroFiltroId)).sort((a, b) => a.hora.localeCompare(b.hora));
-          const pelEnEsteDia = CONFIG.peluqueros.filter((p) => !!p.horario[d.getDay()]);
-
-          return (
-            <div key={i} style={{ flex: 1, minWidth: 130, borderRight: "1px solid #CED9E8", display: "flex", flexDirection: "column" }}>
-              <div style={{ position: "relative", height: GRID_H, flexShrink: 0, paddingTop: 8 }}>
-                {HORA_LABELS.map((h) => (
-                  <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, borderTop: `1px solid ${h % 2 === 0 ? "#CED9E8" : "#E0E8F2"}`, zIndex: 0 }} />
-                ))}
-                {(() => {
-                  const tramosDelDia = tramosDelDiaCol;
-                  if(tramosDelDia.length === 0) return (
-                    <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
-                  );
-                  const zonas = [];
-                  // Zona antes del primer tramo
-                  const antesInicio = HORA_APE;
-                  const antesFin = toMin(tramosDelDia[0].entrada);
-                  if(antesFin > antesInicio) zonas.push({top: (antesInicio - HORA_APE) * PX_MIN, height: (antesFin - antesInicio) * PX_MIN});
-                  // Zonas entre tramos
-                  for(let ti = 0; ti < tramosDelDia.length - 1; ti++){
-                    const ini = toMin(tramosDelDia[ti].salida);
-                    const fin = toMin(tramosDelDia[ti+1].entrada);
-                    if(fin > ini) zonas.push({top: (ini - HORA_APE) * PX_MIN, height: (fin - ini) * PX_MIN});
-                  }
-                  // Zona después del último tramo
-                  const despuesInicio = toMin(tramosDelDia[tramosDelDia.length-1].salida);
-                  const despuesFin = HORA_CIE;
-                  if(despuesFin > despuesInicio) zonas.push({top: (despuesInicio - HORA_APE) * PX_MIN, height: (despuesFin - despuesInicio) * PX_MIN});
-                  return zonas.map((z, zi) => (
-                    <div key={zi} style={{ position: "absolute", left: 0, right: 0, top: z.top, height: z.height, background: "repeating-linear-gradient(45deg,#F5F0E8,#F5F0E8 4px,#EDE6D9 4px,#EDE6D9 8px)", zIndex: 1, opacity: 0.6 }} />
-                  ));
-                })()}
-                {tramosDelDiaCol.length > 0 && (peluqueroFiltroId
-                  ? CONFIG.peluqueros.filter(p => p.id === peluqueroFiltroId)
-                  : pelEnEsteDia
-                ).map((p) => {
-                  const hp = p.horario[d.getDay()];
-                  if (!hp?.descanso) return null;
-                  const top = (toMin(hp.descanso.inicio) - HORA_APE) * PX_MIN;
-                  const height = (toMin(hp.descanso.fin) - toMin(hp.descanso.inicio)) * PX_MIN;
-                  return (
-                    <div key={p.id} style={{ position: "absolute", left: 0, right: 0, top, height, background: p.color + "0A", zIndex: 1, borderTop: `1px dashed ${p.color}33`, borderBottom: `1px dashed ${p.color}33` }} />
-                  );
-                })}
-                {citasDia.map((c) => {
-                  const svc = CONFIG.serviciosDefault.find((s) => s.id === c.servicioId) || { duracionMin: 30 };
-                  const pel = CONFIG.peluqueros.find((p) => p.id === c.peluqueroId);
-                  const col = pel?.color || "#1B4F8A";
-                  const top = (toMin(c.hora) - HORA_APE) * PX_MIN;
-                  const height = Math.max(svc.duracionMin * PX_MIN - 2, 18);
-                  const pelIdx = peluqueroFiltroId ? 0 : CONFIG.peluqueros.findIndex((p) => p.id === c.peluqueroId);
-                  const total = peluqueroFiltroId ? 1 : CONFIG.peluqueros.length;
-                  const cw = 100 / total;
-                  return (
-                    <div key={c.id} style={{ position: "absolute", top, left: `calc(${pelIdx * cw}% + 1px)`, width: `calc(${cw}% - 2px)`, height, background: `${col}22`, border: `1.5px solid ${col}99`, borderLeft: `3px solid ${col}`, borderRadius: 4, padding: "2px 4px", overflow: "hidden", zIndex: 2, boxSizing: "border-box" }}>
-                      <div style={{ fontSize: 9, fontWeight: 700, color: col, lineHeight: 1.3 }}>{c.hora}</div>
-                      {height > 20 && <div style={{ fontSize: 9, color: "#0D1F35", fontWeight: 600, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.clienteNombre.split(" ")[0]}</div>}
-                      {height > 34 && <div style={{ fontSize: 8, color: "#4A6080", lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.servicio}</div>}
-                      {height > 48 && <div style={{ fontSize: 8, color: col, fontWeight: 600 }}>{pel?.nombre}</div>}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
       </div>
     </div>
   );
