@@ -2756,7 +2756,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <th className="th-premium">Hora</th>
                           <th className="th-premium">Cliente</th>
                           <th className="th-premium">Estado</th>
+                          <th className="th-premium">Precio</th>
                           <th className="th-premium">Pago</th>
+                          <th className="th-premium">Nota</th>
                           <th className="th-premium">Acc.</th>
                         </tr>
                       </thead>
@@ -2769,6 +2771,19 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{fontSize:"9px",color:TX2}}>{c.clienteTel}</div>
                           </td>
                           <td className="td-premium"><EstadoPremium estado={c.estado}/></td>
+                          <td className="td-premium">
+                            <input
+                              type="number"
+                              defaultValue={c.precio||""}
+                              placeholder="—"
+                              onBlur={async e => {
+                                const val = Number(e.target.value);
+                                setCitas(prev => prev.map(x => x.id===c.id ? {...x, precio:val} : x));
+                                await actualizarCita(c.id, {precio:val});
+                              }}
+                              style={{width:"52px", textAlign:"center", background:"#F0F4F9", border:"1px solid #CED9E8", borderRadius:6, padding:"4px 6px", fontSize:12, fontWeight:700, color:TX}}
+                            />
+                          </td>
                           <td className="td-premium"><SelectorPago cita={c} /></td>
                           <AccionesCitaPremium c={c}/>
                         </tr>
@@ -2788,6 +2803,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <th className="th-premium">Hora</th>
                           <th className="th-premium">Cliente</th>
                           <th className="th-premium">Estado</th>
+                          <th className="th-premium">Precio</th>
                           <th className="th-premium">Pago</th>
                           <th className="th-premium">Acc.</th>
                         </tr>
@@ -2800,6 +2816,19 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{fontSize:"9px",color:TX2}}>{c.clienteTel}</div>
                           </td>
                           <td className="td-premium"><EstadoPremium estado={c.estado}/></td>
+                          <td className="td-premium">
+                            <input
+                              type="number"
+                              defaultValue={c.precio||""}
+                              placeholder="—"
+                              onBlur={async e => {
+                                const val = Number(e.target.value);
+                                setCitas(prev => prev.map(x => x.id===c.id ? {...x, precio:val} : x));
+                                await actualizarCita(c.id, {precio:val});
+                              }}
+                              style={{width:"52px", textAlign:"center", background:"#F0F4F9", border:"1px solid #CED9E8", borderRadius:6, padding:"4px 6px", fontSize:12, fontWeight:700, color:TX}}
+                            />
+                          </td>
                           <td className="td-premium"><SelectorPago cita={c} /></td>
                           <td className="td-premium">
                             {editNota===c.id?(
@@ -2997,7 +3026,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                       <div style={{ textAlign: "left" }}>
                         <div style={{ fontWeight: 600, color: TX, marginBottom: 2 }}>{h.servicio}</div>
                         <div style={{ fontSize: 10, color: TX2 }}>
-                          {fmtFechaES(h.fecha)} <span style={{ margin: "0 4px" }}>•</span> {h.peluquero}
+                          {fmtFechaES(h.fecha)}
                         </div>
                       </div>
                       
