@@ -484,10 +484,11 @@ async function borrarCita(id){
       if(clienteSnap.exists()){
         const cl = clienteSnap.data();
         if(cita.estado==="completada"){
-          const nuevoHistorial=(cl.historial||[]).filter(h=>!(h.fecha===cita.fecha&&h.servicio===cita.servicio&&h.peluquero===cita.peluquero));
+          const nuevoHistorial=(cl.historial||[]).filter(h=>h.citaId !== id);
+          const nuevoGasto = nuevoHistorial.reduce((s,h)=>s+(h.precio||0),0);
           await updateDoc(clienteRef,{
             visitas:Math.max((cl.visitas||0)-1,0),
-            gasto:Math.max((cl.gasto||0)-cita.precio,0),
+            gasto:nuevoGasto,
             historial:nuevoHistorial,
             ultimaVisita:nuevoHistorial.length>0?nuevoHistorial[nuevoHistorial.length-1].fecha:""
           });
@@ -496,7 +497,6 @@ async function borrarCita(id){
             noShows:Math.max((cl.noShows||0)-1,0)
           });
         }
-        // Si no tiene visitas ni gasto ni noshows, borrar la ficha
         const clAct = (await getDoc(clienteRef)).data();
         if((clAct.visitas||0)===0&&(clAct.gasto||0)===0&&(clAct.noShows||0)===0){
           await deleteDoc(clienteRef);
@@ -2207,14 +2207,6 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
           )}
         </div>
 
-        {/* Fila 6: Nota */}
-        <div style={{marginBottom:16}}>
-          <label style={lblS}>Nota (opcional)</label>
-          <input style={inputS} value={form.nota}
-            onChange={e=>setForm(f=>({...f,nota:e.target.value}))}
-            placeholder="Observaciones..."/>
-        </div>
-
         {/* Botones */}
         <div style={{display:"flex",gap:10}}>
           <button
@@ -2299,7 +2291,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       if(!citaSnap.exists()) return;
       const cita=citaSnap.data();
       if(!cita.clienteTel) return;
-      console.log("Buscando cliente:", cita.clienteNombre, cita.clienteTel);
       const nuevoDocId = cita.clienteTel.replace(/\D/g,'');
       let clienteRef = doc(db,"clientes",nuevoDocId);
       let clienteSnap = await getDoc(clienteRef);
@@ -2759,7 +2750,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <th className="th-premium">Precio</th>
                           <th className="th-premium">Pago</th>
                           <th className="th-premium">Acc.</th>
-                          <th className="th-premium">Nota</th>
                         </tr>
                       </thead>
                       <tbody>{citasFiltradas.map(c=>(
@@ -2854,14 +2844,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           </td>
                           <td className="td-premium"><SelectorPago cita={c} /></td>
                           <AccionesCitaPremium c={c}/>
-                          <td className="td-premium">
-                            {editNota===c.id?(
-                              <div style={{display:"flex", justifyContent:"center", gap:4}}>
-                                <Inp style={{padding:"4px 8px",fontSize:"10px", width:"80px"}} value={notaVal} onChange={e=>setNotaVal(e.target.value)}/>
-                                <button style={{background:"#10B981",color:"white",border:"none",borderRadius:6,padding:"4px 8px"}} onClick={()=>guardarNota(c.id)}>✓</button>
-                              </div>
-                            ):(<span style={{fontSize:"10px",color:c.nota?TX:TX2,cursor:"pointer",fontStyle:c.nota?"normal":"italic"}} onClick={()=>{setEditNota(c.id);setNotaVal(c.nota||"");}}>{ c.nota||"+ nota"}</span>)}
-                          </td>
                         </tr>
                       ))}</tbody>
                     </table>
