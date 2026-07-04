@@ -2312,7 +2312,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       }
       if(!clienteSnap.exists()) return;
       const cl=clienteSnap.data();
-      if(estado==="completada") await updateDoc(clienteRef,{visitas:(cl.visitas||0)+1,gasto:(cl.gasto||0)+(cita.precio||0),ultimaVisita:cita.fecha,historial:[...(cl.historial||[]),{fecha:cita.fecha,citaId:cita.id,precio:cita.precio||0}]});
+      if(estado==="completada") await updateDoc(clienteRef,{visitas:(cl.visitas||0)+1,gasto:(cl.gasto||0)+(cita.precio||0),ultimaVisita:cita.fecha,historial:[...(cl.historial||[]),{fecha:cita.fecha,citaId:cita.id||"",precio:cita.precio||0}]});
       if(estado==="no-show") await updateDoc(clienteRef,{noShows:(cl.noShows||0)+1});
       if(estado==="pendiente"&&estadoAnterior==="completada") await updateDoc(clienteRef,{visitas:Math.max((cl.visitas||0)-1,0),gasto:Math.max((cl.gasto||0)-cita.precio,0),historial:(cl.historial||[]).filter((_,i,arr)=>i!==arr.length-1)});
       if(estado==="pendiente"&&estadoAnterior==="no-show") await updateDoc(clienteRef,{noShows:Math.max((cl.noShows||0)-1,0)});
@@ -2844,9 +2844,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                   const snap = await getDoc(ref);
                                   if(snap.exists()){
                                     const cl = snap.data();
-                                    const historialActualizado = (cl.historial||[]).map(h => 
-                                      h.fecha === c.fecha ? {...h, precio: val} : h
-                                    );
                                     const gastoTotal = historialActualizado.reduce((s,h) => s + (h.precio||0), 0);
                                     await updateDoc(ref, {historial: historialActualizado, gasto: gastoTotal});
                                   }
