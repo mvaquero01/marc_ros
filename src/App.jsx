@@ -2758,8 +2758,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <th className="th-premium">Estado</th>
                           <th className="th-premium">Precio</th>
                           <th className="th-premium">Pago</th>
-                          <th className="th-premium">Nota</th>
                           <th className="th-premium">Acc.</th>
+                          <th className="th-premium">Nota</th>
                         </tr>
                       </thead>
                       <tbody>{citasFiltradas.map(c=>(
@@ -2830,6 +2830,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             />
                           </td>
                           <td className="td-premium"><SelectorPago cita={c} /></td>
+                          <AccionesCitaPremium c={c}/>
                           <td className="td-premium">
                             {editNota===c.id?(
                               <div style={{display:"flex", justifyContent:"center", gap:4}}>
@@ -2838,7 +2839,6 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                               </div>
                             ):(<span style={{fontSize:"10px",color:c.nota?TX:TX2,cursor:"pointer",fontStyle:c.nota?"normal":"italic"}} onClick={()=>{setEditNota(c.id);setNotaVal(c.nota||"");}}>{ c.nota||"+ nota"}</span>)}
                           </td>
-                          <AccionesCitaPremium c={c}/>
                         </tr>
                       ))}</tbody>
                     </table>
@@ -3024,10 +3024,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     }}>
                       {/* Contenedor de texto alineado a la izquierda */}
                       <div style={{ textAlign: "left" }}>
-                        <div style={{ fontWeight: 600, color: TX, marginBottom: 2 }}>{h.servicio}</div>
-                        <div style={{ fontSize: 10, color: TX2 }}>
-                          {fmtFechaES(h.fecha)}
-                        </div>
+                        <div style={{ fontWeight: 600, color: TX2, fontSize: 12 }}>{fmtFechaES(h.fecha)}</div>
                       </div>
                       
                       {/* Precio a la derecha */}
