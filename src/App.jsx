@@ -2050,8 +2050,8 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
   }, [form.fecha, citas, bloqueos, festivosSet, horariosGenerales]);
 
   const confirmar = async () => {
-    if (!form.nombre || !form.servicioId || !form.peluqueroId || !form.fecha || !form.hora) return;
-    const svc = servicios.find(s => s.id === Number(form.servicioId));
+    if (!form.nombre || !form.fecha || !form.hora) return;
+    const svc = CONFIG.serviciosDefault[0];
     const pel = CONFIG.peluqueros[0];
 
     if (esEdicion) {
