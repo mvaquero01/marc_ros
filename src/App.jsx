@@ -2321,7 +2321,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   const as = {
    root: { 
       minHeight: "100vh", 
-      background: CR, 
+      height: tab === "caja" ? "100vh" : "auto",
+      overflow: tab === "caja" ? "hidden" : "visible",
+      background: CR,
       fontFamily: FONT, 
       color: TX, 
       width: "100%", 
