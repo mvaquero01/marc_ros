@@ -3121,10 +3121,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     // 2. CÁLCULOS
     const citasDia = citas.filter(c => c.fecha === fechaCaja);
     const completadas = citasDia.filter(c => c.estado === "completada");
-    const efec = completadas.filter(c => c.metodoPago === "efectivo").reduce((s, c) => s + c.precio, 0);
-    const tarj = completadas.filter(c => c.metodoPago === "tarjeta").reduce((s, c) => s + c.precio, 0);
-    const biz = completadas.filter(c => c.metodoPago === "bizum").reduce((s, c) => s + c.precio, 0);
-    const facturadoDia = efec + tarj + biz;
+    const efec = completadas.filter(c => c.metodoPago === "efectivo").reduce((s, c) => s + (c.precio||0), 0);
+    const biz = completadas.filter(c => c.metodoPago === "bizum").reduce((s, c) => s + (c.precio||0), 0);
+    const facturadoDia = completadas.reduce((s, c) => s + (c.precio||0), 0);
     const dineroFisicoEsperado = parseFloat(fondoCaja || 0) + efec - parseFloat(gastosCaja || 0);
 
     const hayCambios = notaCierre !== datosOriginales.nota || 
@@ -3220,14 +3219,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <div style={as.kpiVal}>{facturadoDia} €</div>
               <div style={as.kpiLbl}>Facturado Hoy</div>
             </div>
-            <div style={{ ...as.kpi, background: "#DEF7EC" }}>
+            {efec > 0 && <div style={{ ...as.kpi, background: "#DEF7EC" }}>
               <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
               <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
-            </div>
-            <div style={{ ...as.kpi, background: "#FCE8F3" }}>
+            </div>}
+            {biz > 0 && <div style={{ ...as.kpi, background: "#FCE8F3" }}>
               <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
               <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
-            </div>
+            </div>}
           </div>
 
           {/* NOTA */}
