@@ -2352,6 +2352,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     },
     body: { 
       padding: "18px", 
+      paddingBottom: "0px",
       width: "90%", 
       maxWidth: "90%", 
       margin: 0,
