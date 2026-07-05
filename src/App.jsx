@@ -2761,7 +2761,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                   if(snap.exists()){
                                     const cl = snap.data();
                                     const historialActualizado = (cl.historial||[]).map(h => 
-                                      (h.citaId && h.citaId === c.id) || (!h.citaId && h.fecha === c.fecha) ? {...h, precio: val, citaId: c.id} : h
+                                      h.citaId === c.id ? {...h, precio: val} : h
                                     );
                                     const gastoTotal = historialActualizado.reduce((s,h) => s + (h.precio||0), 0);
                                     await updateDoc(ref, {historial: historialActualizado, gasto: gastoTotal});
