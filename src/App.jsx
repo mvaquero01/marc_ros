@@ -3288,7 +3288,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 onChange={e => setNotaCierre(e.target.value)}
                 style={{
                   width: "100%", height: 120, borderRadius: 12, border: `1px solid ${CR3}`,
-                  padding: 15, outline: "none", resize: "none", fontSize: 13, background: CR, color: TX, lineHeight: "1.5"
+                  padding: 15, outline: "none", resize: "none", fontSize: 13, background: CR, color: TX, lineHeight: "1.5", display: "block"
                 }}
                 placeholder="Notas del día..."
               />
@@ -3726,6 +3726,58 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <div style={as.kpiLbl}>Tasa No-Show</div>
           </div>
         </div>
+
+        {/* GRÁFICO DE INGRESOS */}
+        <div style={{ ...as.card, marginBottom: 25 }}>
+          <div style={{ ...as.cardTitle, marginBottom: 16 }}>Ingresos por día</div>
+          {(() => {
+            const hoy = new Date();
+            const dias = [];
+            for(let i = 29; i >= 0; i--){
+              const d = new Date(hoy);
+              d.setDate(hoy.getDate() - i);
+              dias.push(d);
+            }
+            const datos = dias.map(d => {
+              const iso = isoDate(d);
+              const ingreso = citas
+                .filter(c => c.fecha === iso && c.estado === "completada")
+                .reduce((s,c) => s + (c.precio||0), 0);
+              return { dia: `${d.getDate()}/${d.getMonth()+1}`, ingreso, iso };
+            }).filter(d => d.ingreso > 0);
+
+            if(datos.length === 0) return (
+              <div style={{ textAlign: "center", padding: "30px", color: TX2, fontSize: 13, fontStyle: "italic" }}>
+                No hay ingresos registrados en los últimos 30 días
+              </div>
+            );
+
+            return (
+              <div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                    <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
+                    <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
+                    <Tooltip
+                      formatter={(value) => [`${value} €`, "Ingresos"]}
+                      labelStyle={{ color: TX, fontWeight: 700 }}
+                      contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
+                    />
+                    <Bar dataKey="ingreso" radius={[4,4,0,0]}>
+                      {datos.map((d, i) => (
+                        <Cell key={i} fill={d.iso === HOY_ISO ? A : `${A}88`} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <div style={{ textAlign: "center", fontSize: 11, color: TX2, marginTop: 8 }}>
+                  Últimos 30 días — solo días con ingresos
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+
       </div>
     );
   };
