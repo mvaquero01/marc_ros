@@ -3219,14 +3219,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <div style={as.kpiVal}>{facturadoDia} €</div>
               <div style={as.kpiLbl}>Facturado Hoy</div>
             </div>
-            {efec > 0 && <div style={{ ...as.kpi, background: "#DEF7EC" }}>
+            <div style={{ ...as.kpi, background: "#DEF7EC" }}>
               <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
               <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
-            </div>}
-            {biz > 0 && <div style={{ ...as.kpi, background: "#FCE8F3" }}>
+            </div>
+            <div style={{ ...as.kpi, background: "#FCE8F3" }}>
               <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
               <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
-            </div>}
+            </div>
           </div>
 
           {/* NOTA */}
