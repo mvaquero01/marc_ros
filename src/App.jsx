@@ -2752,7 +2752,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                 const val = Number(e.target.value);
                                 setCitas(prev => prev.map(x => x.id===c.id ? {...x, precio:val} : x));
                                 await actualizarCita(c.id, {precio:val});
-                                if(c.estado === "completada" && c.clienteTel){
+                                const citaActual = await getDoc(doc(db,"citas",c.id));
+                                const estadoActual = citaActual.exists() ? citaActual.data().estado : c.estado;
+                                if(estadoActual === "completada" && c.clienteTel){
                                   const docId = c.clienteTel.replace(/\D/g,'');
                                   const ref = doc(db,"clientes",docId);
                                   const snap = await getDoc(ref);
@@ -2810,7 +2812,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                 const val = Number(e.target.value);
                                 setCitas(prev => prev.map(x => x.id===c.id ? {...x, precio:val} : x));
                                 await actualizarCita(c.id, {precio:val});
-                                if(c.estado === "completada" && c.clienteTel){
+                                const citaActual = await getDoc(doc(db,"citas",c.id));
+                                const estadoActual = citaActual.exists() ? citaActual.data().estado : c.estado;
+                                if(estadoActual === "completada" && c.clienteTel){
                                   const docId = c.clienteTel.replace(/\D/g,'');
                                   const ref = doc(db,"clientes",docId);
                                   const snap = await getDoc(ref);
