@@ -3668,7 +3668,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   // ──────────────────────
   // TAB STATS - VERSIÓN FINAL CON SERVICIO ESTRELLA REFINADO Y EUROS AL FINAL
   // ─────────────────────────────────────────────────────────
-  const GraficoIngresos = ({ periodo, citas }) => {
+  const GraficoIngresos = ({ periodo, citas, isMobile }) => {
     const [graficoOffset, setGraficoOffset] = useState(0);
 
     useEffect(() => { setGraficoOffset(0); }, [periodo]);
@@ -3715,7 +3715,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <span style={{ fontSize: 13, fontWeight: 800, color: TX }}>{titulo}</span>
           <button onClick={() => setGraficoOffset(o => Math.min(o+1, 0))} style={{ background: "none", border: "none", cursor: graficoOffset < 0 ? "pointer" : "default", fontSize: 18, color: graficoOffset < 0 ? TX2 : CR3 }}>›</button>
         </div>
-        <ResponsiveContainer width="100%" height={200}>
+        <div style={{ overflowX: periodo === "mes" && isMobile ? "auto" : "visible" }}>
+        <ResponsiveContainer width={periodo === "mes" && isMobile ? datos.length * 30 : "100%"} height={200}>
           <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
             <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
             <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
@@ -3731,6 +3732,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </div>
     );
   };
@@ -3798,7 +3800,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         </div>
 
         {/* GRÁFICO DE INGRESOS */}
-        {(periodo === "semana" || periodo === "mes") && <GraficoIngresos periodo={periodo} citas={citas} />}
+        {(periodo === "semana" || periodo === "mes") && <GraficoIngresos periodo={periodo} citas={citas} isMobile={isMobile} />}
 
       </div>
     );
