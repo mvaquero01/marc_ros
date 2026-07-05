@@ -1892,15 +1892,6 @@ onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })
         </div>
 
         {/* --- NOTIFICACIÓN WHATSAPP --- */}
-        <p style={{ 
-          margin: '0 0 30px 0', 
-          fontSize: '13px', 
-          color: OK_ST.colorSecundario, 
-          lineHeight: '1.5',
-          padding: '0 10px'
-        }}>
-          Te hemos enviado un mensaje por WhatsApp al <strong>{telefonoCliente}</strong> con los detalles de tu reserva.
-        </p>
 
         {/* --- BOTÓN DE VOLVER --- */}
         <button 
@@ -2881,6 +2872,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     // Memoria persistente para el buscador y filtros
     const [busq, setBusq] = useState(() => window._busqCache || "");
     const [clienteBorrar, setClienteBorrar] = useState(null);
+    useEffect(() => {
+      if (!clienteSel) return;
+      const actualizado = clientes.find(c => c.id === clienteSel.id);
+      if (actualizado) setClienteSel(actualizado);
+    }, [clientes]);
     const [inactivos, setInactivos] = useState(() => window._inactivosCache || false);
     const [editNota, setEditNota] = useState(false);
     const [notaVal, setNotaVal] = useState("");
@@ -3203,18 +3199,20 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         <div style={{ paddingTop: "70px" }}>
           
           {/* KPIs */}
-          <div className="admin-kpi-grid" style={{ ...as.kpiGrid, marginBottom: 25 }}>
-            <div style={{ ...as.kpi, borderLeft: `4px solid ${A}` }}>
+          <div style={{ marginBottom: 25 }}>
+            <div style={{ ...as.kpi, borderLeft: `4px solid ${A}`, marginBottom: 10 }}>
               <div style={as.kpiVal}>{facturadoDia} €</div>
               <div style={as.kpiLbl}>Facturado Hoy</div>
             </div>
-            <div style={{ ...as.kpi, background: "#DEF7EC" }}>
-              <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
-              <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
-            </div>
-            <div style={{ ...as.kpi, background: "#FCE8F3" }}>
-              <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
-              <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div style={{ ...as.kpi, background: "#DEF7EC" }}>
+                <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
+                <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
+              </div>
+              <div style={{ ...as.kpi, background: "#FCE8F3" }}>
+                <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
+                <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
+              </div>
             </div>
           </div>
 
@@ -3799,7 +3797,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         
         {/* NAVEGACIÓN DE PESTAÑAS */}
         <div style={{ display: "flex", gap: "10px", marginBottom: "24px", flexWrap: "wrap" }}>
-          {[["valoraciones", "Opiniones"], ["horarios", "Horarios"]].map(([v, l]) => (
+          {[["valoraciones", "Opiniones"]].map(([v, l]) => (
             <button 
               key={v} 
               onClick={() => setConfigSubTab(v)}
