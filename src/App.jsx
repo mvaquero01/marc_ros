@@ -2045,6 +2045,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         fecha:         form.fecha,
         hora:          form.hora,
         precio:        citaInicial?.precio || 0,
+        metodoPago:    citaInicial?.metodoPago || null,
         estado:        form.estado,
         nota:          form.nota,
       };
