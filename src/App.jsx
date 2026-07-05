@@ -3266,8 +3266,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           </div>
 
           {/* NOTA */}
-          <div>
-            <div style={as.card}>
+          <div style={{marginBottom: 0, paddingBottom: 0}}>
+            <div style={{...as.card, marginBottom: 0}}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <div style={{ fontWeight: 800, fontSize: 14, color: TX }}>📝 Nota — {fmtFechaES(fechaCaja)}</div>
                 <button
@@ -3680,7 +3680,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       lunes.setHours(0,0,0,0);
       const domingo = new Date(lunes);
       domingo.setDate(lunes.getDate() + 6);
-      titulo = `${lunes.getDate()}/${lunes.getMonth()+1} — ${domingo.getDate()}/${domingo.getMonth()+1}`;
+      titulo = `${lunes.getDate()} ${MESES_ES[lunes.getMonth()]} — ${domingo.getDate()} ${MESES_ES[domingo.getMonth()]}`;
       datos = Array.from({length:7}, (_,i) => {
         const d = new Date(lunes);
         d.setDate(lunes.getDate() + i);
