@@ -2273,22 +2273,46 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       const cita=citaSnap.data();
       if(!cita.clienteTel) return;
       const nuevoDocId = cita.clienteTel.replace(/\D/g,'');
-      let clienteRef = doc(db,"clientes",nuevoDocId);
-      let clienteSnap = await getDoc(clienteRef);
-      if(!clienteSnap.exists()){
-        const q=query(collection(db,"clientes"),where("telefono","==",nuevoDocId));
-        const snap=await getDocs(q);
-        if(snap.empty) return;
-        clienteRef=doc(db,"clientes",snap.docs[0].id);
-        clienteSnap=await getDoc(clienteRef);
-      }
+      const clienteRef = doc(db,"clientes",nuevoDocId);
+      const clienteSnap = await getDoc(clienteRef);
       if(!clienteSnap.exists()) return;
-      const cl=clienteSnap.data();
-      console.log("citaId al confirmar:", id);
-      if(estado==="completada") await updateDoc(clienteRef,{visitas:(cl.visitas||0)+1,gasto:(cl.gasto||0)+(cita.precio||0),ultimaVisita:cita.fecha,historial:[...(cl.historial||[]),{fecha:cita.fecha,citaId:id,precio:cita.precio||0}]});
-      if(estado==="no-show") await updateDoc(clienteRef,{noShows:(cl.noShows||0)+1});
-      if(estado==="pendiente"&&estadoAnterior==="completada") await updateDoc(clienteRef,{visitas:Math.max((cl.visitas||0)-1,0),gasto:Math.max((cl.gasto||0)-cita.precio,0),historial:(cl.historial||[]).filter((_,i,arr)=>i!==arr.length-1)});
-      if(estado==="pendiente"&&estadoAnterior==="no-show") await updateDoc(clienteRef,{noShows:Math.max((cl.noShows||0)-1,0)});
+      const cl = clienteSnap.data();
+
+      // Reconstruir historial completo desde todas las citas completadas del cliente
+      const todasLasCitas = await getDocs(query(collection(db,"citas"), where("clienteTel","==",nuevoDocId)));
+      const citasCompletadas = todasLasCitas.docs
+        .map(d => ({id: d.id, ...d.data()}))
+        .filter(c => c.estado === "completada" || (c.id === id && estado === "completada"));
+      
+      // Construir historial limpio sin duplicados
+      const historialMap = new Map();
+      citasCompletadas.forEach(c => {
+        if(c.id === id && estado !== "completada") return; // si estamos revirtiendo esta cita, no la incluimos
+        historialMap.set(c.id, {
+          citaId: c.id,
+          fecha: c.fecha,
+          precio: c.precio || 0
+        });
+      });
+      
+      const nuevoHistorial = [...historialMap.values()].sort((a,b) => a.fecha.localeCompare(b.fecha));
+      const nuevoGasto = nuevoHistorial.reduce((s,h) => s + (h.precio||0), 0);
+      const nuevasVisitas = nuevoHistorial.length;
+      const noShows = estado === "no-show" 
+        ? (cl.noShows||0) + 1 
+        : estadoAnterior === "no-show" 
+          ? Math.max((cl.noShows||0) - 1, 0) 
+          : (cl.noShows||0);
+      const ultimaVisita = nuevoHistorial.length > 0 ? nuevoHistorial[nuevoHistorial.length-1].fecha : "";
+
+      await updateDoc(clienteRef, {
+        visitas: nuevasVisitas,
+        gasto: nuevoGasto,
+        historial: nuevoHistorial,
+        ultimaVisita: ultimaVisita,
+        noShows: noShows
+      });
+
     }catch(e){console.error(e);}
   },[]);
 
