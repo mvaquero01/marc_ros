@@ -3704,7 +3704,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         const d = new Date(año, mes, i+1);
         const iso = isoDate(d);
         const ingreso = citas.filter(c => c.fecha === iso && c.estado === "completada").reduce((s,c) => s+(c.precio||0), 0);
-        return { dia: String(i+1), ingreso, iso, esFuturo: d > new Date() };
+        return { dia: String(i+1), ingreso: d > new Date() ? null : ingreso, iso, esFuturo: d > new Date() };
       });
     }
 
@@ -3718,15 +3718,23 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
         {periodo === "semana" ? (
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }} barSize={20}>
+            <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }} barSize={28} style={{ cursor: "pointer" }}>
               <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
               <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
               <Tooltip
                 formatter={(value) => [`${value} €`, "Ingresos"]}
                 labelStyle={{ color: TX, fontWeight: 700 }}
                 contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
+                cursor={{ fill: "transparent" }}
               />
-              <Bar dataKey="ingreso" radius={[4,4,0,0]}>
+              <Bar dataKey="ingreso" radius={[4,4,0,0]} maxBarSize={40}
+                onMouseEnter={(data, index) => {}}
+                shape={(props) => {
+                  const { x, y, width, height, value } = props;
+                  const isHovered = props.tooltipPosition;
+                  return <rect x={x} y={y} width={width} height={Math.max(height, 0)} rx={4} ry={4} fill={props.esFuturo ? CR3 : props.iso === HOY_ISO ? A : value > 0 ? `${A}88` : CR2} />;
+                }}
+              >
                 {datos.map((d, i) => (
                   <Cell key={i} fill={d.esFuturo ? CR3 : d.iso === HOY_ISO ? A : d.ingreso > 0 ? `${A}88` : CR2} />
                 ))}
@@ -3751,8 +3759,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   strokeWidth={2}
                   dot={(props) => {
                     const { cx, cy, payload } = props;
-                    if(payload.esFuturo) return null;
-                    return <circle key={payload.iso} cx={cx} cy={cy} r={payload.ingreso > 0 ? 4 : 2} fill={payload.iso === HOY_ISO ? A : payload.ingreso > 0 ? `${A}88` : CR3} stroke="none" />;
+                    if(payload.ingreso === null) return null;
+                    return <circle key={payload.iso} cx={cx} cy={cy} r={payload.iso === HOY_ISO ? 5 : 3} fill={A} stroke="none" />;
                   }}
                   activeDot={{ r: 6, fill: A }}
                 />
