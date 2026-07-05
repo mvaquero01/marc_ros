@@ -3715,24 +3715,51 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <span style={{ fontSize: 13, fontWeight: 800, color: TX }}>{titulo}</span>
           <button onClick={() => setGraficoOffset(o => Math.min(o+1, 0))} style={{ background: "none", border: "none", cursor: graficoOffset < 0 ? "pointer" : "default", fontSize: 18, color: graficoOffset < 0 ? TX2 : CR3 }}>›</button>
         </div>
-        <div style={{ overflowX: periodo === "mes" && isMobile ? "auto" : "visible" }}>
-        <ResponsiveContainer width={periodo === "mes" && isMobile ? datos.length * 30 : "100%"} height={200}>
-          <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-            <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
-            <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
-            <Tooltip
-              formatter={(value) => [`${value} €`, "Ingresos"]}
-              labelStyle={{ color: TX, fontWeight: 700 }}
-              contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
-            />
-            <Bar dataKey="ingreso" radius={[4,4,0,0]}>
-              {datos.map((d, i) => (
-                <Cell key={i} fill={d.esFuturo ? CR3 : d.iso === HOY_ISO ? A : d.ingreso > 0 ? `${A}88` : CR2} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-        </div>
+
+        {periodo === "semana" ? (
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }} barSize={20}>
+              <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
+              <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
+              <Tooltip
+                formatter={(value) => [`${value} €`, "Ingresos"]}
+                labelStyle={{ color: TX, fontWeight: 700 }}
+                contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
+              />
+              <Bar dataKey="ingreso" radius={[4,4,0,0]}>
+                {datos.map((d, i) => (
+                  <Cell key={i} fill={d.esFuturo ? CR3 : d.iso === HOY_ISO ? A : d.ingreso > 0 ? `${A}88` : CR2} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div style={{ overflowX: isMobile ? "auto" : "visible" }}>
+            <ResponsiveContainer width={isMobile ? datos.length * 20 : "100%"} height={200}>
+              <LineChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <XAxis dataKey="dia" tick={{ fontSize: 9, fill: TX2 }} interval={isMobile ? 1 : 2} />
+                <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
+                <Tooltip
+                  formatter={(value) => [`${value} €`, "Ingresos"]}
+                  labelStyle={{ color: TX, fontWeight: 700 }}
+                  contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="ingreso"
+                  stroke={A}
+                  strokeWidth={2}
+                  dot={(props) => {
+                    const { cx, cy, payload } = props;
+                    if(payload.esFuturo) return null;
+                    return <circle key={payload.iso} cx={cx} cy={cy} r={payload.ingreso > 0 ? 4 : 2} fill={payload.iso === HOY_ISO ? A : payload.ingreso > 0 ? `${A}88` : CR3} stroke="none" />;
+                  }}
+                  activeDot={{ r: 6, fill: A }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     );
   };
