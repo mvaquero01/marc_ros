@@ -1250,7 +1250,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
           />
         </div>
         <h1 className="hero-title" style={{fontSize:32,fontWeight:700,color:WH,marginBottom:6,letterSpacing:1}}>{CONFIG.nombre}</h1>
-        <p className="hero-slogan" style={{fontSize:15,color:"#9ec3e8",marginBottom:4,fontStyle:"italic"}}>"{CONFIG.slogan}"</p>
         <p className="hero-dir" style={{fontSize:12,color:"#9ec3e8",marginBottom:20}}>📍 {CONFIG.direccion} · 📞 {CONFIG.telefono}</p>
         <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
       </div>
@@ -1421,7 +1420,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
             {/* BLOQUE IZQUIERDO: TEXTOS */}
             <div style={{ flex: 1, textAlign: "left" }}>
               <p style={{ fontSize: 20, fontWeight: 900, marginBottom: 5, color: TX }}>{CONFIG.nombre}</p>
-              <p style={{ color: TX2, fontSize: 15, marginBottom: 25 }}>{CONFIG.slogan}</p>
 
               <div style={{ marginBottom: 20 }}>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: TX, marginBottom: 8 }}>Contacto</h3>
@@ -1429,15 +1427,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
                   <div><strong>Dirección:</strong> {CONFIG.direccion}</div>
                   <div><strong>Teléfono:</strong> <span style={{ color: A, fontWeight: 700 }}>{CONFIG.telefono}</span></div>
                   <div><strong>Email:</strong> {CONFIG.email}</div>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: 30 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: TX, marginBottom: 8 }}>Horario</h3>
-                <div style={{ fontSize: 14, color: TX2, lineHeight: "1.6" }}>
-                  {Object.entries(CONFIG.horarioGeneral).map(([d,h])=>(
-                    <div key={d}>{DIAS_FULL[Number(d)]}: {h.apertura} - {h.cierre}</div>
-                  ))}
                 </div>
               </div>
 
