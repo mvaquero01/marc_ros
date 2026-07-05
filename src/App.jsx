@@ -3266,7 +3266,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           </div>
 
           {/* NOTA */}
-          <div style={{ marginBottom: 25 }}>
+          <div>
             <div style={as.card}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <div style={{ fontWeight: 800, fontSize: 14, color: TX }}>📝 Nota — {fmtFechaES(fechaCaja)}</div>
@@ -3728,55 +3728,70 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         </div>
 
         {/* GRÁFICO DE INGRESOS */}
-        <div style={{ ...as.card, marginBottom: 25 }}>
-          <div style={{ ...as.cardTitle, marginBottom: 16 }}>Ingresos por día</div>
-          {(() => {
-            const hoy = new Date();
-            const dias = [];
-            for(let i = 29; i >= 0; i--){
-              const d = new Date(hoy);
-              d.setDate(hoy.getDate() - i);
-              dias.push(d);
-            }
-            const datos = dias.map(d => {
+        {(periodo === "semana" || periodo === "mes") && (() => {
+          const [graficoOffset, setGraficoOffset] = useState(0);
+          
+          let datos = [];
+          let titulo = "";
+          let maxOffset = 0;
+
+          if(periodo === "semana"){
+            const lunes = new Date();
+            const dow = lunes.getDay();
+            lunes.setDate(lunes.getDate() - (dow === 0 ? 6 : dow - 1) + graficoOffset * 7);
+            lunes.setHours(0,0,0,0);
+            const domingo = new Date(lunes);
+            domingo.setDate(lunes.getDate() + 6);
+            titulo = `${lunes.getDate()}/${lunes.getMonth()+1} — ${domingo.getDate()}/${domingo.getMonth()+1}`;
+            datos = Array.from({length:7}, (_,i) => {
+              const d = new Date(lunes);
+              d.setDate(lunes.getDate() + i);
               const iso = isoDate(d);
-              const ingreso = citas
-                .filter(c => c.fecha === iso && c.estado === "completada")
-                .reduce((s,c) => s + (c.precio||0), 0);
-              return { dia: `${d.getDate()}/${d.getMonth()+1}`, ingreso, iso };
-            }).filter(d => d.ingreso > 0);
+              const ingreso = citas.filter(c => c.fecha === iso && c.estado === "completada").reduce((s,c) => s+(c.precio||0), 0);
+              return { dia: ["L","M","X","J","V","S","D"][i], ingreso, iso, esFuturo: d > new Date() };
+            });
+          }
 
-            if(datos.length === 0) return (
-              <div style={{ textAlign: "center", padding: "30px", color: TX2, fontSize: 13, fontStyle: "italic" }}>
-                No hay ingresos registrados en los últimos 30 días
-              </div>
-            );
+          if(periodo === "mes"){
+            const hoy = new Date();
+            const año = new Date(hoy.getFullYear(), hoy.getMonth() + graficoOffset, 1).getFullYear();
+            const mes = new Date(hoy.getFullYear(), hoy.getMonth() + graficoOffset, 1).getMonth();
+            const diasEnMes = new Date(año, mes + 1, 0).getDate();
+            titulo = `${["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][mes]} ${año}`;
+            datos = Array.from({length: diasEnMes}, (_,i) => {
+              const d = new Date(año, mes, i+1);
+              const iso = isoDate(d);
+              const ingreso = citas.filter(c => c.fecha === iso && c.estado === "completada").reduce((s,c) => s+(c.precio||0), 0);
+              return { dia: String(i+1), ingreso, iso, esFuturo: d > new Date() };
+            });
+          }
 
-            return (
-              <div>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                    <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
-                    <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
-                    <Tooltip
-                      formatter={(value) => [`${value} €`, "Ingresos"]}
-                      labelStyle={{ color: TX, fontWeight: 700 }}
-                      contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
-                    />
-                    <Bar dataKey="ingreso" radius={[4,4,0,0]}>
-                      {datos.map((d, i) => (
-                        <Cell key={i} fill={d.iso === HOY_ISO ? A : `${A}88`} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-                <div style={{ textAlign: "center", fontSize: 11, color: TX2, marginTop: 8 }}>
-                  Últimos 30 días — solo días con ingresos
-                </div>
+          return (
+            <div style={{ ...as.card, marginBottom: 25 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <button onClick={() => setGraficoOffset(o => o-1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: TX2 }}>‹</button>
+                <span style={{ fontSize: 13, fontWeight: 800, color: TX }}>{titulo}</span>
+                <button onClick={() => setGraficoOffset(o => Math.min(o+1, 0))} style={{ background: "none", border: "none", cursor: graficoOffset < 0 ? "pointer" : "default", fontSize: 18, color: graficoOffset < 0 ? TX2 : CR3 }}>›</button>
               </div>
-            );
-          })()}
-        </div>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={datos} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                  <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
+                  <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
+                  <Tooltip
+                    formatter={(value) => [`${value} €`, "Ingresos"]}
+                    labelStyle={{ color: TX, fontWeight: 700 }}
+                    contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
+                  />
+                  <Bar dataKey="ingreso" radius={[4,4,0,0]}>
+                    {datos.map((d, i) => (
+                      <Cell key={i} fill={d.esFuturo ? CR3 : d.iso === HOY_ISO ? A : d.ingreso > 0 ? `${A}88` : CR2} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          );
+        })()}
 
       </div>
     );
