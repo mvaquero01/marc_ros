@@ -2283,7 +2283,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       }
       if(!clienteSnap.exists()) return;
       const cl=clienteSnap.data();
-      if(estado==="completada") await updateDoc(clienteRef,{visitas:(cl.visitas||0)+1,gasto:(cl.gasto||0)+(cita.precio||0),ultimaVisita:cita.fecha,historial:[...(cl.historial||[]),{fecha:cita.fecha,citaId:cita.id||"",precio:cita.precio||0}]});
+      console.log("citaId al confirmar:", id);
+      if(estado==="completada") await updateDoc(clienteRef,{visitas:(cl.visitas||0)+1,gasto:(cl.gasto||0)+(cita.precio||0),ultimaVisita:cita.fecha,historial:[...(cl.historial||[]),{fecha:cita.fecha,citaId:id,precio:cita.precio||0}]});
       if(estado==="no-show") await updateDoc(clienteRef,{noShows:(cl.noShows||0)+1});
       if(estado==="pendiente"&&estadoAnterior==="completada") await updateDoc(clienteRef,{visitas:Math.max((cl.visitas||0)-1,0),gasto:Math.max((cl.gasto||0)-cita.precio,0),historial:(cl.historial||[]).filter((_,i,arr)=>i!==arr.length-1)});
       if(estado==="pendiente"&&estadoAnterior==="no-show") await updateDoc(clienteRef,{noShows:Math.max((cl.noShows||0)-1,0)});
