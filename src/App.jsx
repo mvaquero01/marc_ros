@@ -2044,7 +2044,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         peluquero:     pel.nombre,
         fecha:         form.fecha,
         hora:          form.hora,
-        precio:        svc.precio,
+        precio:        citaInicial?.precio || 0,
         estado:        form.estado,
         nota:          form.nota,
       };
@@ -3201,20 +3201,39 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           
           {/* KPIs */}
           <div style={{ marginBottom: 25 }}>
-            <div style={{ ...as.kpi, borderLeft: `4px solid ${A}`, marginBottom: 10 }}>
-              <div style={as.kpiVal}>{facturadoDia} €</div>
-              <div style={as.kpiLbl}>Facturado Hoy</div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <div style={{ ...as.kpi, background: "#DEF7EC" }}>
-                <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
-                <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
+            {isMobile ? (
+              <>
+                <div style={{ ...as.kpi, borderLeft: `4px solid ${A}`, marginBottom: 10 }}>
+                  <div style={as.kpiVal}>{facturadoDia} €</div>
+                  <div style={as.kpiLbl}>Facturado Hoy</div>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div style={{ ...as.kpi, background: "#DEF7EC" }}>
+                    <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
+                    <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
+                  </div>
+                  <div style={{ ...as.kpi, background: "#FCE8F3" }}>
+                    <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
+                    <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+                <div style={{ ...as.kpi, borderLeft: `4px solid ${A}` }}>
+                  <div style={as.kpiVal}>{facturadoDia} €</div>
+                  <div style={as.kpiLbl}>Facturado Hoy</div>
+                </div>
+                <div style={{ ...as.kpi, background: "#DEF7EC" }}>
+                  <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
+                  <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
+                </div>
+                <div style={{ ...as.kpi, background: "#FCE8F3" }}>
+                  <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
+                  <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
+                </div>
               </div>
-              <div style={{ ...as.kpi, background: "#FCE8F3" }}>
-                <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
-                <div style={{ ...as.kpiLbl, color: "#99154B" }}>📱 Bizum</div>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* NOTA */}
