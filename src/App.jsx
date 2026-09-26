@@ -1624,12 +1624,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
       <div style={{ maxWidth: CONFIG_RESERVA.anchoContenedor, margin: "0 auto", padding: `0 20px`, paddingTop: esMovil ? "20px" : CONFIG_RESERVA.separacionSuperior }}>
         
         {/* 3. BOTONES VOLVER ATRÁS (Fácil de modificar) */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: CONFIG_RESERVA.distanciaTituloCajas }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "20px" }}>
           {paso === 2 && (
             <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(1)}>←</button>
           )}
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>
-            {paso === 2 && "✦ Reserva"}
+            {paso === 2 && "✦ Fecha y hora"}
           </div>
         </div>
 
