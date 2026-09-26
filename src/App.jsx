@@ -1776,8 +1776,8 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <div style={sty.card}>
                 <div style={sty.lbl}>Resumen</div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", paddingBottom: "12px", borderBottom: "1px solid #F1F5F9" }}>
-                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D" }}>✂️ Corte</span>
-                  <span style={{ fontSize: "12px", color: "#94A3B8", whiteSpace: "nowrap" }}>⏱ 30 min</span>
+                  <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D" }}>{selServicio?.nombre}</span>
+                  <span style={{ fontSize: "12px", color: "#94A3B8", whiteSpace: "nowrap" }}>⏱ {selServicio?.duracionMin} min</span>
                 </div>
                 <div style={{ textAlign: "center", padding: "14px 8px 0 8px" }}>
                   <span style={{ fontSize: "15px", fontWeight: 700, color: "#0A1F3D" }}>
