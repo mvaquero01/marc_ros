@@ -954,12 +954,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
   // Escuchador de la URL + Motor de Animaciones
   useEffect(() => {
     if (location.pathname === '/reservar') {
-      setSelServicio(CONFIG.serviciosDefault[0]);
+      setSelServicio(null);
       setSelPeluquero(CONFIG.peluqueros[0]);
       setSelHora(null);
       setSelDia(new Date());
       setMesRef(new Date());
-      setPaso(2);
+      setPaso(1);
     } else if (location.pathname === '/') {
       setPaso(0);
     }
@@ -969,12 +969,19 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const irAPaso = (n) => {
     setPaso(n);
 
+    if (n === 1) {
+      setSelServicio(null);
+      setSelHora(null);
+      setSelDia(new Date());
+      setMesRef(new Date());
+      setSelPeluquero(CONFIG.peluqueros[0]);
+    }
     if (n === 2) {
       setSelHora(null);
       setSelDia(new Date());
       setMesRef(new Date());
       setSelPeluquero(CONFIG.peluqueros[0]);
-      setSelServicio(CONFIG.serviciosDefault[0]);
+      // OJO: ya NO reseteamos selServicio aquí, porque viene elegido del paso 1
     }
     if (n === 0) {
       setSelServicio(CONFIG.serviciosDefault[0]);
@@ -985,7 +992,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
 
     if (n === 0) {
       navigate("/", { replace: false });
-    } else if (n === 2) {
+    } else if (n === 1) {
       navigate("/reservar", { replace: false });
     }
 
@@ -996,6 +1003,18 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const [mesRef, setMesRef] = useState(new Date());
   const [form,setForm]=useState({nombre:"",telefono:""});
   const festivosSet=useMemo(()=>new Set(festivos.map(f=>f.fecha)),[festivos]);
+
+  // Servicios que se pueden elegir en el paso 1
+  const encontrarServicio = (lista, patrones) =>
+    lista.find(s => patrones.some(p => normalize(s.nombre) === normalize(p)));
+
+  const serviciosPaso1 = useMemo(() => {
+    const fuente = (servicios && servicios.length > 0) ? servicios : CONFIG.serviciosDefault;
+    const corte       = encontrarServicio(fuente, ["Corte"]);
+    const corteBarba  = encontrarServicio(fuente, ["Corte + Barba", "Corte y Barba", "Corte+Barba"]);
+    const barba       = encontrarServicio(fuente, ["Barba"]);
+    return [corte, corteBarba, barba].filter(Boolean);
+  }, [servicios]);
 
   const CUALQUIERA_ID = "cualquiera";
   const slots=useMemo(()=>{
@@ -1223,7 +1242,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           ))}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+          <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
           <button style={{background:"transparent",border:"none",color:CR3,cursor:"pointer",fontSize:13,padding:0}} onClick={()=>navigate("/login")}>⚙</button>
         </div>
       </div>
@@ -1251,7 +1270,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         </div>
         <h1 className="hero-title" style={{fontSize:32,fontWeight:700,color:WH,marginBottom:6,letterSpacing:1}}>{CONFIG.nombre}</h1>
         <p className="hero-dir" style={{fontSize:12,color:"#9ec3e8",marginBottom:20}}>📍 {CONFIG.direccion} · 📞 {CONFIG.telefono}</p>
-        <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+        <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
       </div>
       
       <div style={{ padding: "0 4% 0px 4%", marginTop: 20, marginBottom: "0px" }}>
@@ -1434,7 +1453,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <div style={{ display: "flex", gap: "15px", alignItems: "center", marginTop: "30px" }}>
                 
                 {/* BOTÓN PEDIR CITA (ESTILO RESERVAR) */}
-                <button onClick={()=>irAPaso(2)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+                <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
 
                 {/* BOTÓN INSTAGRAM (SIN ERRORES VISUALES) */}
                 <a href={CONFIG.instagram} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "45px", height: "45px", background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", borderRadius: "8px", textDecoration: "none", flexShrink: 0, cursor: "pointer", transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility: "hidden", willChange: "transform", transform: "scale(1)", transformStyle: "preserve-3d" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
@@ -1470,7 +1489,53 @@ function ClientePage({ sharedProps, startPaso=0 }){
     </div>
   );
 
+  // ── PASO 1: ELEGIR SERVICIO ──
+  if (paso === 1) return (
+    <div className="cliente-wrap" style={{ fontFamily: FONT, background: WH, minHeight: "100vh", paddingTop: esMovil ? "0px" : "70px" }}>
+      {!esMovil && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "70px", background: WH, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 4%", zIndex: 2000, borderBottom: `1px solid ${CR3}`, boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)" }}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center"}}>
+              <img src="https://i.postimg.cc/4xxWbVq0/postepelu.webp" alt="Logo Peluquería" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
+            <span style={{fontSize:17,fontWeight:700,color:TX}}>{CONFIG.nombre}</span>
+          </div>
+        </div>
+      )}
 
+      <div style={{ maxWidth: "90%", margin: "0 auto", padding: "0 20px", paddingTop: esMovil ? "20px" : "100px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "50px" }}>
+          <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
+          <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ ¿Qué te hacemos?</div>
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "center", paddingBottom: "60px" }}>
+          {serviciosPaso1.length === 0 && (
+            <div style={{ fontSize: 13, color: TX2, fontStyle: "italic" }}>No hay servicios configurados todavía.</div>
+          )}
+          {serviciosPaso1.map(s => {
+            const n = normalize(s.nombre);
+            const emoji = n.includes("barba") && n.includes("corte") ? "💈" : n.includes("barba") ? "🧔" : "✂️";
+            return (
+              <div key={s.id} className="card-hover"
+                onClick={() => { setSelServicio(s); irAPaso(2); }}
+                style={{
+                  width: esMovil ? "100%" : "240px",
+                  background: WH, border: `1px solid ${CR3}`, borderRadius: 16,
+                  padding: "28px 20px", textAlign: "center", cursor: "pointer",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.04)"
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 10 }}>{emoji}</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: TX, marginBottom: 6 }}>{s.nombre}</div>
+                <div style={{ fontSize: 13, color: TX2 }}>{s.duracionMin} min · {s.precio} €</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 
   // ── FLUJO RESERVA (pasos 1-5) ──
   // ★ Botón CONTINUAR fijo en la parte inferior
@@ -1523,7 +1588,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         {/* 3. BOTONES VOLVER ATRÁS (Fácil de modificar) */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: CONFIG_RESERVA.distanciaTituloCajas }}>
           {paso === 2 && (
-            <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
+            <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(1)}>←</button>
           )}
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>
             {paso === 2 && "✦ Reserva"}
@@ -1924,7 +1989,7 @@ onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })
       </div>
 
       {/* 6. BOTÓN CONTINUAR FLOTANTE */}
-      {paso >= 1 && paso <= 4 && (
+      {paso >= 2 && paso <= 4 && (
         <div className="sticky-bottom">
           <button 
             className="btn-continuar-float" 
