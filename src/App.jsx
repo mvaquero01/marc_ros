@@ -17,8 +17,14 @@ import {
 import { CONFIG } from "./config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase.js";
-import logo from "./assets/postepelu.webp";
-import heroImg from "./assets/salon.jpg";
+import logo from "./assets/logo.webp";
+import heroImg from "./assets/hero.jpg";
+import iconCitas from "./assets/tab-citas.jpg";
+import iconClientes from "./assets/tab-clientes.png";
+import iconCaja from "./assets/tab-caja.webp";
+import iconStats from "./assets/tab-stats.webp";
+import iconDisponibilidad from "./assets/tab-disponibilidad.png";
+import iconConfig from "./assets/tab-config.jpg";
 
 // ─────────────────────────────────────────────
 // CSS GLOBAL
@@ -930,7 +936,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   };
 
   const [paso, setPaso] = useState(startPaso);
-  const [selServicio, setSelServicio] = useState(CONFIG.serviciosDefault[0]);
+  const [selServicio, setSelServicio] = useState(null);
   const [selPeluquero, setSelPeluquero] = useState(CONFIG.peluqueros[0]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -1261,7 +1267,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center"}}>
             <img 
-              src="https://i.postimg.cc/4xxWbVq0/postepelu.webp" 
+              src={logo}
               alt="Logo Peluquería" 
               style={{
                 width: "100%", 
@@ -1297,7 +1303,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           width: "100%" 
         }}>
           <img 
-            src="https://i.postimg.cc/4xxWbVq0/postepelu.webp" 
+            src={logo}
             alt="Logo" 
             style={{
               width: "60px",      // Ajusta el tamaño a tu gusto
@@ -1610,7 +1616,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center"}}>
               <img 
-                src="https://i.postimg.cc/4xxWbVq0/postepelu.webp" 
+                src={logo}
                 alt="Logo Peluquería" 
                 style={{ width: "100%", height: "100%", objectFit: "contain" }} 
               />
@@ -4341,12 +4347,12 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
 // 1. EL ARRAY DE PESTAÑAS
   const tabs = [
-    ["citas", "https://i.postimg.cc/FK40ZMS2/citas.jpg", "Citas"],
-    ["clientes", "https://i.postimg.cc/TP6n9zmx/clientes.png", "Clientes"],
-    ["caja", "https://i.postimg.cc/LspjTcfp/caja.webp", "Caja"],
-    ["stats", "https://i.postimg.cc/vms5zJ9d/estadisticas.webp", "Estadísticas"],
-    ["disponibilidad", "https://i.postimg.cc/jjjnZPvj/disponibilidad.png", "Disponibilidad"],
-    ["config", "https://i.postimg.cc/0QYvSHmr/configuracion.jpg", "Configuración"],
+    ["citas", iconCitas, "Citas"],
+    ["clientes", iconClientes, "Clientes"],
+    ["caja", iconCaja, "Caja"],
+    ["stats", iconStats, "Estadísticas"],
+    ["disponibilidad", iconDisponibilidad, "Disponibilidad"],
+    ["config", iconConfig, "Configuración"],
   ];
 
   // --- PANEL DE CONTROL DE ESPACIOS DEL MENÚ ---
@@ -4393,7 +4399,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         <div style={{display:"flex",alignItems:"center",gap:15}}>
           <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center"}}>
             <img 
-              src="https://i.postimg.cc/4xxWbVq0/postepelu.webp" 
+              src={logo}
               alt="Logo Peluquería" 
               style={{ width: "100%", height: "100%", objectFit: "contain" }} 
             />
