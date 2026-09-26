@@ -17,6 +17,8 @@ import {
 import { CONFIG } from "./config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase.js";
+import logo from "./assets/postepelu.webp";
+import heroImg from "./assets/salon.jpg";
 
 // ─────────────────────────────────────────────
 // CSS GLOBAL
@@ -1111,7 +1113,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
       zIndex: 1000 // Asegúrate de que este número sea el más alto de la página
     },
     hero: {
-      backgroundImage: `linear-gradient(rgba(13, 31, 53, 0.7), rgba(13, 31, 53, 0.7)), url('https://i.postimg.cc/8CbxPT8S/salon-belleza-vs-peluqueria.jpg')`,
+      backgroundImage: `linear-gradient(rgba(13, 31, 53, 0.7), rgba(13, 31, 53, 0.7)), url(${heroImg})`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       padding: "60px 20px", 
@@ -1207,6 +1209,32 @@ function ClientePage({ sharedProps, startPaso=0 }){
     }
   };
   const esMovil = window.innerWidth <= 768;
+  const PASOS_RESERVA = ["Servicio", "Fecha y hora", "Confirmación"];
+  const StepIndicator = ({ actual }) => (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+      {PASOS_RESERVA.map((label, i) => {
+        const n = i + 1;
+        const activo = n === actual;
+        const completado = n < actual;
+        return (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{
+              width: 22, height: 22, borderRadius: "50%",
+              background: activo || completado ? A : CR2,
+              color: activo || completado ? WH : TX2,
+              fontSize: 11, fontWeight: 800,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0
+            }}>
+              {completado ? "✓" : n}
+            </div>
+            <span style={{ fontSize: 11, fontWeight: activo ? 800 : 600, color: activo ? A : TX2, whiteSpace: "nowrap" }}>{label}</span>
+            {n < PASOS_RESERVA.length && <div style={{ width: 20, height: 2, background: completado ? A : CR3, margin: "0 4px" }} />}
+          </div>
+        );
+      })}
+    </div>
+  );
   if(paso===0) return(
     <div className="cliente-wrap" style={{ 
       fontFamily: FONT, 
@@ -1508,7 +1536,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "70px", background: WH, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 4%", zIndex: 2000, borderBottom: `1px solid ${CR3}`, boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)" }}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center"}}>
-              <img src="https://i.postimg.cc/4xxWbVq0/postepelu.webp" alt="Logo Peluquería" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              <img src={logo} alt="Logo Peluquería" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
             <span style={{fontSize:17,fontWeight:700,color:TX}}>{CONFIG.nombre}</span>
           </div>
@@ -1516,10 +1544,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
       )}
 
       <div style={{ maxWidth: "90%", margin: "0 auto", padding: "0 20px", paddingTop: esMovil ? "20px" : "100px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "50px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "20px" }}>
           <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Servicio</div>
         </div>
+
+        <StepIndicator actual={1} />
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "center", paddingBottom: "60px" }}>
           {serviciosPaso1.length === 0 && (
@@ -1548,7 +1578,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   // ── FLUJO RESERVA (pasos 1-5) ──
   // ★ Botón CONTINUAR fijo en la parte inferior
   // --- LÓGICA DE BOTÓN CONTINUAR ---
-  const formValido = form.nombre?.trim() !== '' && form.telefono?.trim() !== '';
+  const formValido = form.nombre?.trim() !== '' && form.telefono?.trim().length === 9;
   const btnOk = paso === 2 ? !!(selDia && selHora && formValido) : false;
   const btnLabel = btnOk ? "CONFIRMAR RESERVA ✓" : "COMPLETA TODOS LOS CAMPOS";
   const btnAction = () => {
@@ -1602,6 +1632,8 @@ function ClientePage({ sharedProps, startPaso=0 }){
             {paso === 2 && "✦ Reserva"}
           </div>
         </div>
+
+        {(paso === 2 || paso === 5) && <StepIndicator actual={paso === 2 ? 2 : 3} />}
 
         {/* 5. CONTENIDO DE LOS PASOS */}
         <div className="slide-in" style={{ paddingBottom: "140px" }}>
@@ -1802,7 +1834,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Teléfono</label>
                           <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Tu número de móvil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }}
-onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })} />
+                          maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />   
                         </div>
                       </div>
                   </div>
@@ -1823,7 +1855,7 @@ onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })
                         </div>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Teléfono</label>
-                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Tu número de móvil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })} />
+                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Tu número de móvil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />
                         </div>
                       </div>
                     </div>
@@ -2043,6 +2075,7 @@ onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '') })
 // ─────────────────────────────────────────────
 function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festivosSet, citaInicial, onGuardada, horariosEspeciales, horariosGenerales }) {
   const esEdicion = !!citaInicial;
+  const listaServicios = (servicios && servicios.length > 0) ? servicios : CONFIG.serviciosDefault;
 
   const [form, setForm] = useState({
     nombre: "", telefono: "", servicioId: "", peluqueroId: "",
@@ -2058,7 +2091,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       setForm({
         nombre:      citaInicial.clienteNombre || "",
         telefono:    citaInicial.clienteTel    || "",
-        servicioId:  String(CONFIG.serviciosDefault[0].id),
+        servicioId:  String(citaInicial.servicioId || listaServicios[0].id),
         peluqueroId: String(CONFIG.peluqueros[0].id),
         fecha:       citaInicial.fecha         || "",
         hora:        citaInicial.hora          || "",
@@ -2066,11 +2099,11 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         estado:      citaInicial.estado        || "pendiente",
       });
     } else {
-      setForm({ nombre:"", telefono:"", servicioId:String(CONFIG.serviciosDefault[0].id), peluqueroId:String(CONFIG.peluqueros[0].id), fecha:"", hora:"", nota:"", estado:"pendiente" });
+      setForm({ nombre:"", telefono:"", servicioId:String(listaServicios[0].id), peluqueroId:String(CONFIG.peluqueros[0].id), fecha:"", hora:"", nota:"", estado:"pendiente" });
       setClienteRec(null);
     }
     setShowCal(false);
-  }, [show, citaInicial]);
+  }, [show, citaInicial, servicios]);
 
   const buscarCliente = tel => {
     const found = clientes.find(c => c.telefono === tel.replace(/\s/g, ""));
@@ -2079,9 +2112,9 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
   };
 
   const slotsManuales = useMemo(() => {
-    if (!form.fecha) return [];
+    if (!form.fecha || !form.servicioId) return [];
     const pel = CONFIG.peluqueros[0];
-    const svc = CONFIG.serviciosDefault[0];
+    const svc = listaServicios.find(s => String(s.id) === String(form.servicioId)) || listaServicios[0];
     if (festivosSet.has(form.fecha)) return [];
     if (peluqueroEstaBloqueado(pel.id, form.fecha, bloqueos)) return [];
     const tramos = getTramosDia(pel.id, form.fecha, [], horariosGenerales||[]);
@@ -2100,11 +2133,11 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       return disponibles.filter(h => toMin(h) > m);
     }
     return [...disponibles].sort((a,b) => toMin(a) - toMin(b));
-  }, [form.fecha, citas, bloqueos, festivosSet, horariosGenerales]);
+  }, [form.fecha, form.servicioId, citas, bloqueos, festivosSet, horariosGenerales, servicios]);
 
   const confirmar = async () => {
-    if (!form.nombre || !form.fecha || !form.hora) return;
-    const svc = CONFIG.serviciosDefault[0];
+    if (!form.nombre || !form.fecha || !form.hora || !form.servicioId) return;
+    const svc = listaServicios.find(s => String(s.id) === String(form.servicioId)) || listaServicios[0];
     const pel = CONFIG.peluqueros[0];
 
     if (esEdicion) {
@@ -2188,6 +2221,16 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
               onChange={e=>setForm(f=>({...f,nombre:e.target.value}))}
               placeholder="Nombre cliente"/>
           </div>
+        </div>
+
+        {/* Fila 2: Servicio */}
+        <div style={{marginBottom:8}}>
+          <label style={lblS}>Servicio</label>
+          <select style={selS} value={form.servicioId} onChange={e=>setForm(f=>({...f,servicioId:e.target.value,hora:""}))}>
+            {listaServicios.map(s=>(
+              <option key={s.id} value={s.id}>{s.nombre} · {s.duracionMin} min</option>
+            ))}
+          </select>
         </div>
 
         {/* Cliente encontrado */}
