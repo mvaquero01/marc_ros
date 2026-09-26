@@ -953,13 +953,23 @@ function ClientePage({ sharedProps, startPaso=0 }){
 
   // Escuchador de la URL + Motor de Animaciones
   useEffect(() => {
-    if (location.pathname === '/reservar') {
+    if (location.pathname === '/servicio') {
       setSelServicio(null);
       setSelPeluquero(CONFIG.peluqueros[0]);
       setSelHora(null);
       setSelDia(new Date());
       setMesRef(new Date());
       setPaso(1);
+    } else if (location.pathname === '/reserva') {
+      // Si alguien entra directo a /reserva sin haber elegido servicio, lo mandamos a elegirlo
+      if (!selServicio) {
+        navigate('/servicio', { replace: true });
+        return;
+      }
+      setSelHora(null);
+      setSelDia(new Date());
+      setMesRef(new Date());
+      setPaso(2);
     } else if (location.pathname === '/') {
       setPaso(0);
     }
@@ -993,7 +1003,9 @@ function ClientePage({ sharedProps, startPaso=0 }){
     if (n === 0) {
       navigate("/", { replace: false });
     } else if (n === 1) {
-      navigate("/reservar", { replace: false });
+      navigate("/servicio", { replace: false });
+    } else if (n === 2) {
+      navigate("/reserva", { replace: false });
     }
 
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -4568,10 +4580,11 @@ function AppData(){
   const sharedProps = { valoraciones, setValoraciones, citas, festivos, setFestivos, bloqueos, setBloqueos, servicios, setServicios, categorias, setCategorias, sliderRef, isMobile, scrollSlider, sliderAtStart, setSliderAtStart, sliderAtEnd, setSliderAtEnd, horariosEspeciales, setHorariosEspeciales, horariosGenerales, setHorariosGenerales };
 
   return (
-    <Routes>
+     <Routes>
       {/* Fíjate cómo ahora le pasamos sharedProps={sharedProps} pero sin BrowserRouter */}
       <Route path="/" element={<ClientePage sharedProps={sharedProps} />} />
-      <Route path="/reservar" element={<ClientePage sharedProps={sharedProps} />} />
+      <Route path="/servicio" element={<ClientePage sharedProps={sharedProps} />} />
+      <Route path="/reserva" element={<ClientePage sharedProps={sharedProps} />} />
       <Route path="/admin" element={<AdminPage {...sharedProps} />} />
       <Route path="/login" element={<LoginPage />} />
     </Routes>
