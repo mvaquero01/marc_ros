@@ -1518,7 +1518,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
       <div style={{ maxWidth: "90%", margin: "0 auto", padding: "0 20px", paddingTop: esMovil ? "20px" : "100px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "50px" }}>
           <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
-          <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ ¿Qué te hacemos?</div>
+          <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Servicio</div>
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "center", paddingBottom: "60px" }}>
