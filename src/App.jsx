@@ -1514,8 +1514,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
             <div style={{ fontSize: 13, color: TX2, fontStyle: "italic" }}>No hay servicios configurados todavía.</div>
           )}
           {serviciosPaso1.map(s => {
-            const n = normalize(s.nombre);
-            const emoji = n.includes("barba") && n.includes("corte") ? "💈" : n.includes("barba") ? "🧔" : "✂️";
             return (
               <div key={s.id} className="card-hover"
                 onClick={() => { setSelServicio(s); irAPaso(2); }}
@@ -1526,9 +1524,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                   boxShadow: "0 4px 12px rgba(0,0,0,0.04)"
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 10 }}>{emoji}</div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: TX, marginBottom: 6 }}>{s.nombre}</div>
-                <div style={{ fontSize: 13, color: TX2 }}>{s.duracionMin} min · {s.precio} €</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: TX }}>{s.nombre}</div>
               </div>
             );
           })}

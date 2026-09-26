@@ -18,7 +18,9 @@ export const CONFIG = {
   horarioGeneral: {},
 
   serviciosDefault: [
-    { id: 1, nombre: "Corte", desc: "", duracionMin: 30, precio: 0, emoji: "✂️" }
+    { id: 1, nombre: "Corte", desc: "", duracionMin: 30, precio: 0 },
+    { id: 2, nombre: "Corte + Barba", desc: "", duracionMin: 45, precio: 0 },
+    { id: 3, nombre: "Barba", desc: "", duracionMin: 15, precio: 0 }
   ],
 
   peluqueros: [
