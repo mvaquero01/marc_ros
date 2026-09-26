@@ -991,7 +991,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
       setSelDia(new Date());
       setMesRef(new Date());
       setSelPeluquero(CONFIG.peluqueros[0]);
-      // OJO: ya NO reseteamos selServicio aquí, porque viene elegido del paso 1
+      // NO reseteamos selServicio aquí: viene elegido del paso 1
     }
     if (n === 0) {
       setSelServicio(CONFIG.serviciosDefault[0]);
