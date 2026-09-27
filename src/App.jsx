@@ -1581,7 +1581,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   // --- LÓGICA DE BOTÓN CONTINUAR ---
   const formValido = form.nombre?.trim() !== '' && form.telefono?.trim().length === 9;
   const btnOk = paso === 2 ? !!(selDia && selHora && formValido) : false;
-  const btnLabel = btnOk ? "CONFIRMAR RESERVA ✓" : "COMPLETA TODOS LOS CAMPOS";
+  const btnLabel = btnOk ? "CONFIRMAR RESERVA ✓" : "OMPLE TOTES LES DADES";
   const btnAction = () => {
     if (!btnOk) return;
     if (paso === 2) confirmarReserva();
@@ -1670,7 +1670,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             }
 
             const sty = {
-              card: { background: WH, borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", padding: "14px" },              lbl: { fontSize: "10px", fontWeight: 800, color: "#1C1C1C", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
+              card: { background: WH, borderRadius: "16px", border: `1px solid ${CR3}`, boxShadow: "0 4px 12px rgba(0,0,0,0.04)", padding: "14px" },              lbl: { fontSize: "10px", fontWeight: 800, color: "#1C1C1C", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
             };
 
             const SelectorPeluquero = () => null;
@@ -1792,7 +1792,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                       {slots.map(h => {
                         const seleccionado = selHora === h;
                         return (
-                          <button key={h} onClick={() => setSelHora(h)} style={{ borderRadius: "8px", fontWeight: 700, fontSize: "13px", cursor: "pointer", border: seleccionado ? "2px solid #1B4F8A" : "1px solid #E2E8F0", background: seleccionado ? "#1B4F8A" : "#FFF", color: seleccionado ? "#FFF" : "#2D3748", width: "72px", height: "38px", transition: "all 0.15s ease", flexShrink: 0 }}>
+                          <button key={h} onClick={() => setSelHora(h)} style={{ borderRadius: "8px", fontWeight: 700, fontSize: "13px", cursor: "pointer", border: seleccionado ? `2px solid ${A}` : `1px solid ${CR3}`, background: seleccionado ? A : "#FFF", color: seleccionado ? "#FFF" : "#2D3748", width: "72px", height: "38px", transition: "all 0.15s ease", flexShrink: 0 }}>
                             {h}
                           </button>
                         );
@@ -1829,12 +1829,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
-                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escriu el teu nom" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
+                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: `1px solid ${CR3}`, fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: WH, boxSizing: "border-box" }} placeholder="Escriu el teu nom" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
                         </div>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
-                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }}
-                          maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />   
+                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: `1px solid ${CR3}`, fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: WH, boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />                          maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />   
                         </div>
                       </div>
                   </div>
@@ -1851,12 +1850,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
-                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escriu el teu nom" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
+                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: `1px solid ${CR3}`, fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: WH, boxSizing: "border-box" }} placeholder="Escriu el teu nom" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
                         </div>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
-                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />
-                        </div>
+                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: `1px solid ${CR3}`, fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: WH, boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />                        </div>
                       </div>
                     </div>
                   </div>
@@ -3683,8 +3681,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         <div style={colStyle}>
           {diaSeleccionado ? (
             <div className="anim">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", minHeight: "28px" }}>
-                <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", minHeight: "28px", rowGap: 4 }}>
+                <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", whiteSpace: "nowrap" }}>
                   {diaSeleccionado.toLocaleDateString("ca-ES", { weekday: "long", day: "numeric", month: "long" })}
                 </span>
                 <button style={{ background: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#fee2e2" : "transparent", color: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#ef4444" : "transparent", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "pointer" : "default", pointerEvents: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "auto" : "none" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Esborrar dia</button>
@@ -4099,7 +4097,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             </div>
 
             {showNewVal && (
-              <div style={{ ...cardS, border: "1px solid #93c5fd", background: "#f8fafc" }}>
+              <div style={{ ...cardS, border: "1px solid #C8102E", background: "#f8fafc" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "12px" }}>
                   <div><label style={labelS}>Nom del client</label><input style={inputS} value={newVal.nombre} onChange={e => setNewVal(f => ({ ...f, nombre: e.target.value }))} placeholder="Ex: Laura M." /></div>
                   <div>
@@ -4153,7 +4151,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   style={{ ...cardS, padding: "0", marginBottom: 0, overflow: "hidden", cursor: editVal ? "default" : "grab" }}
                 >
                   {editVal?.id === v.id ? (
-                    <div style={{ ...cardS, border: "1px solid #93c5fd", background: "#f8fafc", margin: 0 }}>
+                    <div style={{ ...cardS, border: "1px solid #C8102E", background: "#f8fafc", margin: 0 }}>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
                         <div><label style={labelS}>Nom</label><input style={inputS} value={editVal.nombre} onChange={e => setEditVal(f => ({ ...f, nombre: e.target.value }))} /></div>
                         <div>
