@@ -1291,7 +1291,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           <button style={{background:"transparent",border:"none",color:CR3,cursor:"pointer",fontSize:13,padding:0}} onClick={()=>navigate("/login")}>⚙</button>
         </div>
       </div>
-      <a href={`https://wa.me/${CONFIG.whatsapp}?text=Som l'Espanyol, i això és la nostra vida!!`} target="_blank" rel="noreferrer" className="wa-fab"><WhatsAppIcon/></a>
+      <a href={`https://wa.me/${CONFIG.whatsapp}?text=Hola Marc, com ho tens de disponible avui?`} target="_blank" rel="noreferrer" className="wa-fab"><WhatsAppIcon/></a>
       <div className="anim" style={cs.hero}>
         <div style={cs.heroGlow}/>
         <div className="hero-emoji" style={{ 
@@ -1513,7 +1513,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               {/* BOTÓN VER EN GOOGLE MAPS */}
               <div style={{ textAlign: "center", marginTop: "30px" }}>
                 <a href={CONFIG.googleMapsLink} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: A, fontSize: "14px", fontWeight: 700, textDecoration: "none", padding: "8px 16px", borderRadius: "8px", background: `${A}10`, border: `1px solid ${A}30`, transition: "all 0.3s ease" }} onMouseEnter={(e) => e.currentTarget.style.background = `${A}20`} onMouseLeave={(e) => e.currentTarget.style.background = `${A}10`}>
-                  <span>🗺️ Ver en Google Maps</span>
+                  <span>🗺️ Veure a Google Maps</span>
                 </a>
               </div>
             </div>
@@ -1824,7 +1824,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
-                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escribe tu nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
+                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escriu el teu nom" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
                         </div>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
@@ -1846,7 +1846,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
-                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escribe tu nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
+                          <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escriu el teu nom" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
                         </div>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
