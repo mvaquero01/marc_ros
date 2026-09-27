@@ -1583,7 +1583,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   if (reservando) return (
     <div className="cliente-wrap" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:WH,fontFamily:FONT}}>
       <div style={{textAlign:"center"}}>
-        <img src={uesaLogo} alt="Reservant" style={{width:60,height:"auto",marginBottom:16}} />
+        <img src={uesaLogo} alt="Reservant" style={{width:60,height:"auto",marginBottom:16,display:"block",margin:"0 auto 16px auto"}} />
         <div style={{fontSize:16,fontWeight:700,color:"#0D1F35"}}>Confirmant la teva cita...</div>
       </div>
     </div>
@@ -4625,7 +4625,7 @@ function AppData(){
   if(cargando) return(
     <div className="cliente-wrap" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:WH,fontFamily:FONT}}>
       <div style={{textAlign:"center"}}>
-        <img src={uesaLogo} alt="Carregant" style={{width:60,height:"auto",marginBottom:16}} />
+        <img src={uesaLogo} alt="Carregant" style={{width:60,height:"auto",marginBottom:16,display:"block",margin:"0 auto 16px auto"}} />
         <div style={{fontSize:16,fontWeight:700,color:"#0D1F35"}}>Carregant...</div>
         <div style={{fontSize:12,color:"#1C1C1C",marginTop:8}}>Connectant amb Firebase</div>
       </div>
