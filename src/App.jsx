@@ -25,6 +25,7 @@ import iconCaja from "./assets/tab-caja.webp";
 import iconStats from "./assets/tab-stats.webp";
 import iconDisponibilidad from "./assets/tab-disponibilidad.png";
 import iconConfig from "./assets/tab-config.jpg";
+import uesaLogo from "./assets/uesa.webp";
 
 // ─────────────────────────────────────────────
 // CSS GLOBAL
@@ -1027,6 +1028,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const [selHora,setSelHora]=useState(null);
   const [mesRef, setMesRef] = useState(new Date());
   const [form,setForm]=useState({nombre:"",telefono:""});
+  const [reservando,setReservando]=useState(false);
   const festivosSet=useMemo(()=>new Set(festivos.map(f=>f.fecha)),[festivos]);
 
   // Servicios que se pueden elegir en el paso 1
@@ -1080,10 +1082,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const reset=()=>{ scrollTop(); navigate("/"); };
   const confirmarReserva=async()=>{
     if(!form.nombre||!form.telefono) return;
+    setReservando(true);
     let pelFinal = selPeluquero;
     if(selPeluquero.id === CUALQUIERA_ID){
       const asignado = asignarPeluqueroAleatorio(selServicio.id, isoDate(selDia), selHora, citas, bloqueos, festivosSet, servicios, horariosEspeciales, horariosGenerales);
-      if(!asignado) return; // no hay nadie disponible (no debería pasar)
+      if(!asignado){ setReservando(false); return; } // no hay nadie disponible (no debería pasar)
       pelFinal = asignado;
     }
     await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
@@ -1106,6 +1109,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
       await updateDoc(ref,{nombre:form.nombre});
     }
     setPaso(5); scrollTop();
+    setReservando(false);
   };
   const waMsgCliente=`Hola ${form.nombre} 👋%0AReserva confirmada a *${CONFIG.nombre}*%0A%0A✂️ ${selServicio?.nombre}%0A💈 ${selPeluquero?.nombre}%0A📅 ${selDia?fmtLarga(selDia):""}%0A🕐 ${selHora}%0A💶 €${selServicio?.precio}%0A%0AT'esperem 😊`;
   const horarioResumido=()=>[];
@@ -1576,6 +1580,15 @@ function ClientePage({ sharedProps, startPaso=0 }){
     </div>
   );
 
+  if (reservando) return (
+    <div className="cliente-wrap" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:WH,fontFamily:FONT}}>
+      <div style={{textAlign:"center"}}>
+        <img src={uesaLogo} alt="Reservant" style={{width:60,height:"auto",marginBottom:16}} />
+        <div style={{fontSize:16,fontWeight:700,color:"#0D1F35"}}>Confirmant la teva cita...</div>
+      </div>
+    </div>
+  );
+
   // ── FLUJO RESERVA (pasos 1-5) ──
   // ★ Botón CONTINUAR fijo en la parte inferior
   // --- LÓGICA DE BOTÓN CONTINUAR ---
@@ -1934,11 +1947,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
           height: '70px',
           borderRadius: '50%',
           background: OK_ST.bgCheck,
+          border: `2px solid ${OK_ST.colorCheck}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           marginBottom: '25px',
-          boxShadow: `0 0 0 10px ${OK_ST.bgHalo}` 
+          boxShadow: `0 0 0 8px ${OK_ST.bgHalo}` 
         }}>
           <span style={{ fontSize: '35px', color: OK_ST.colorCheck, fontWeight: '900' }}>✓</span>
         </div>
@@ -4609,11 +4623,11 @@ function AppData(){
 
   // 3. PANTALLA DE CARGA (El if debe ir DESPUÉS de todos los hooks)
   if(cargando) return(
-    <div className="cliente-wrap" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#F8FBFF",fontFamily:FONT}}>
+    <div className="cliente-wrap" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:WH,fontFamily:FONT}}>
       <div style={{textAlign:"center"}}>
-        <div style={{fontSize:40,marginBottom:16}}>✂️</div>
-        <div style={{fontSize:16,fontWeight:700,color:"#0D1F35"}}>Cargando...</div>
-        <div style={{fontSize:12,color:"#4A6080",marginTop:8}}>Conectando con Firebase</div>
+        <img src={uesaLogo} alt="Carregant" style={{width:60,height:"auto",marginBottom:16}} />
+        <div style={{fontSize:16,fontWeight:700,color:"#0D1F35"}}>Carregant...</div>
+        <div style={{fontSize:12,color:"#1C1C1C",marginTop:8}}>Connectant amb Firebase</div>
       </div>
     </div>
   );
