@@ -1833,8 +1833,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                         </div>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
-                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: `1px solid ${CR3}`, fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: WH, boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />                          maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />   
-                        </div>
+                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: `1px solid ${CR3}`, fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: WH, boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />                        </div>
                       </div>
                   </div>
                 ) : (
