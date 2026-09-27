@@ -861,7 +861,7 @@ function LoginPage(){
     setError(true); setTimeout(()=>setError(false),2500);
   };
   return(
-    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,#3D0A0F 0%,#7A0A1D 60%,#3D0A0F 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
+    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,${CR} 0%,${WH} 60%,${CR} 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
       <div style={{background:WH,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:360,boxShadow:"0 20px 60px rgba(0,0,0,.4)"}}>
         <div style={{width:56,height:56,background:`linear-gradient(135deg,${A},#7A0A1D)`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 20px"}}>🔐</div>
         <h2 style={{textAlign:"center",fontSize:22,fontWeight:700,color:TX,marginBottom:4}}>Accés privat</h2>
@@ -927,12 +927,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
 
   // --- PANEL DE CONTROL VISUAL (Modifica estos valores para ajustar distancias) ---
   const CONFIG_RESERVA = {
-    anchoContenedor: "90%",      // Ancho total de la zona de reserva
-    separacionSuperior: "100px",    // Distancia del título con el header (techo)
-    distanciaTituloCajas: "50px",   // Espacio entre el título y las fotos/contenido
-    anchoCajaPC: "25%",             // Tamaño de los cuadros de servicio/peluquero
-    anchoCajaMovil: "48%",          // Tamaño en móviles
-    colorFondo: "#F8FBFF"           // Fondo de la zona de reserva
+    anchoContenedor: "90%",
+    separacionSuperior: "100px",
+    distanciaTituloCajas: "50px",
+    anchoCajaPC: "25%",
+    anchoCajaMovil: "48%",
+    colorFondo: WH           // Fondo de la zona de reserva
   };
 
   const [paso, setPaso] = useState(startPaso);
@@ -1666,7 +1666,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
 
             const sty = {
               card: { background: "#FFF", borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", padding: "14px" },
-              lbl: { fontSize: "10px", fontWeight: 800, color: "#A0AEC0", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
+              lbl: { fontSize: "10px", fontWeight: 800, color: "#1C1C1C", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
             };
 
             const SelectorPeluquero = () => null;
@@ -1749,7 +1749,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                             justifyContent: "center",
                             fontSize: "12px",
                             fontWeight: isSel || isHoy ? 800 : 500,
-                            background: isSel ? "#1B4F8A" : "transparent",
+                            background: isSel ? A : "transparent",
                             color: isSel ? "#fff" : d < HOY ? "#CBD5E0" : !disp && !isSel ? "#CBD5E0" : "#0A1F3D",
                             outline: isHoy && !isSel ? "1.5px solid #1B4F8A" : "none",
                             outlineOffset: "0px",
@@ -2034,10 +2034,10 @@ function ClientePage({ sharedProps, startPaso=0 }){
             style={{ 
               // CAMBIO: Usamos backgroundColor (colores sólidos) para que la animación sea perfecta
               backgroundColor: !btnOk 
-                ? "#E2E8F0" // Gris claro cuando está bloqueado
+                ? CR3 // Gris crema cuando está bloqueado
                 : (paso === 4 
                     ? "#10B981" // Verde esmeralda sólido
-                    : A),       // Azul sólido de tu marca
+                    : A),
               
               color: !btnOk ? "#1C1C1C" : WH,
               
@@ -2185,7 +2185,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
 
   if (!show) return null;
 
-  const inputS = { width:"100%", background:"#F0F4F9", border:"1px solid #CED9E8", borderRadius:9, padding:"7px 11px", fontSize:13, color:"#0D1F35", outline:"none", boxSizing:"border-box", fontFamily:"inherit" };
+  const inputS = { width:"100%", background:CR2, border:`1px solid ${CR3}`, borderRadius:9, padding:"7px 11px", fontSize:13, color:"#0D1F35", outline:"none", boxSizing:"border-box", fontFamily:"inherit" };
   const selS   = { ...inputS };
   const lblS   = { fontSize:11, color:"#4A6080", textTransform:"uppercase", letterSpacing:1, marginBottom:5, fontWeight:700, display:"block" };
 
@@ -2193,7 +2193,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
 
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:10000,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
-      <div style={{background:"#F8FBFF",borderRadius:18,padding:"16px",width:"100%",maxWidth:440,boxShadow:"0 20px 60px rgba(0,0,0,.3)",overflow:"visible"}}>
+      <div style={{background:WH,borderRadius:18,padding:"16px",width:"100%",maxWidth:440,boxShadow:"0 20px 60px rgba(0,0,0,.3)",overflow:"visible"}}>
 
         {/* Cabecera */}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
@@ -2303,7 +2303,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         {/* Botones */}
         <div style={{display:"flex",gap:10}}>
           <button
-            style={{background:"#E0E8F2",color:"#4A6080",border:"1px solid #CED9E8",borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:"pointer"}}
+            style={{background:CR2,color:"#1C1C1C",border:`1px solid ${CR3}`,borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:"pointer"}}
             onClick={onClose}>
             Cancel·lar
           </button>
@@ -3529,8 +3529,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const bloqueosAgrupados = agruparBloqueos(bloqueos);
     const festivosSet = useMemo(() => new Set(festivos.map(f => f.fecha)), [festivos]);
 
-    const colStyle = { background: "#f8fafc", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0" };
-    const btnBlue = { background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 14px", fontSize: "11px", fontWeight: "700", cursor: "pointer" };
+    const colStyle = { background: WH, padding: "20px", borderRadius: "12px", border: `1px solid ${CR3}` };
+    const btnBlue = { background: A, color: "#fff", border: "none", borderRadius: "6px", padding: "6px 14px", fontSize: "11px", fontWeight: "700", cursor: "pointer" };
     const inputS = { width: "100%", padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" };
     const timeInputS = { ...inputS, cursor: "text" };
     const btnAddTramo = { background: "#e0f2fe", color: "#0369a1", border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" };
@@ -3681,7 +3681,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <div className="anim">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", minHeight: "28px" }}>
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
-                  {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
+                  {diaSeleccionado.toLocaleDateString("ca-ES", { weekday: "long", day: "numeric", month: "long" })}
                 </span>
                 <button style={{ background: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#fee2e2" : "transparent", color: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#ef4444" : "transparent", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "pointer" : "default", pointerEvents: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "auto" : "none" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Esborrar dia</button>
               </div>
@@ -3731,7 +3731,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <div style={{ background: WH, borderRadius: 18, padding: "32px", width: "100%", maxWidth: 400, boxShadow: "0 20px 60px rgba(0,0,0,.3)", textAlign: "center" }}>
               <div style={{ fontSize: 40, marginBottom: 16 }}>📅</div>
               <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>Vols esborrar l'horari d'aquest dia?</h3>
-              <p style={{ fontSize: 13, color: TX2, marginBottom: 24 }}>{horarioBorrar.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</p>
+              <p style={{ fontSize: 13, color: TX2, marginBottom: 24 }}>{horarioBorrar.toLocaleDateString("ca-ES", { weekday: "long", day: "numeric", month: "long" })}</p>
               <div style={{ display: "flex", gap: 10 }}>
                 <Btn ok={false} style={{ flex: 1 }} onClick={() => setHorarioBorrar(null)}>Cancel·lar</Btn>
                 <button style={{ flex: 1, background: `linear-gradient(135deg,${ER},#b91c1c)`, color: WH, border: "none", borderRadius: 11, padding: "12px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }} onClick={confirmarBorradoHorario}>Esborrar</button>
@@ -4049,11 +4049,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     };
 
     // --- ESTILOS REUTILIZABLES ---
-    const cardS = { background: "#fff", borderRadius: "12px", padding: "20px", marginBottom: "16px", border: "1px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" };
-    const inputS = { width: "100%", padding: "10px 12px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "13px", color: "#1e293b", outline: "none", boxSizing: "border-box" };
+    const cardS = { background: WH, borderRadius: "12px", padding: "20px", marginBottom: "16px", border: `1px solid ${CR3}`, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" };
+    const inputS = { width: "100%", padding: "10px 12px", background: CR2, border: `1px solid ${CR3}`, borderRadius: "8px", fontSize: "13px", color: "#1C1C1C", outline: "none", boxSizing: "border-box" };
     const labelS = { fontSize: "11px", fontWeight: "800", color: "#1C1C1C", marginBottom: "6px", display: "block", textTransform: "uppercase", letterSpacing: "0.5px" };
-    
-    const btnBlue = { background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer", transition: "0.2s" };
+        
+    const btnBlue = { background: A, color: "#fff", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer", transition: "0.2s" };
     const btnGreen = { ...btnBlue, background: "#10b981" };
     const btnCancel = { background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer" };
     
@@ -4074,9 +4074,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               key={v} 
               onClick={() => setConfigSubTab(v)}
               style={{
-                background: configSubTab === v ? "#1e3a8a" : "#fff",
+                background: configSubTab === v ? A : WH,
                 color: configSubTab === v ? "#fff" : "#1C1C1C",
-                border: `1px solid ${configSubTab === v ? "#1e3a8a" : "#cbd5e1"}`,
+                border: `1px solid ${configSubTab === v ? A : CR3}`,
                 borderRadius: "8px", padding: "8px 18px", fontSize: "13px", fontWeight: "700", cursor: "pointer", transition: "0.2s"
               }}
             >
