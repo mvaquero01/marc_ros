@@ -695,11 +695,11 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
             position: "sticky",
             top: 0,
             zIndex: 8,
-            background: "#F8FBFF",
-            borderBottom: "1px solid #CED9E8",
+            background: WH,
+            borderBottom: `1px solid ${CR3}`,
             minWidth: "max-content",
           }}>
-            <div style={{ width: 52, flexShrink: 0, background: "#E8EEF6", borderRight: "1px solid #CED9E8", height: 52, position: "sticky", left: 0, zIndex: 9 }} />
+            <div style={{ width: 52, flexShrink: 0, background: CR2, borderRight: `1px solid ${CR3}`, height: 52, position: "sticky", left: 0, zIndex: 9 }} />
             {dias.map((d, i) => {
               const iso = isoDate(d);
               const esHoy = iso === HOY_ISO;
@@ -707,8 +707,8 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
                 <div key={i} style={{
                   flex: 1, minWidth: 130, height: 52,
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  borderRight: "1px solid #CED9E8",
-                  background: esHoy ? "#1B4F8A" : "#E8EEF6",
+                  borderRight: `1px solid ${CR3}`,
+                  background: esHoy ? A : CR2,
                   padding: "4px 8px", gap: 7,
                 }}>
                   <span style={{ fontSize: 9, fontWeight: 700, color: esHoy ? "#fff" : "#4A6080", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap", lineHeight: 1 }}>
@@ -723,8 +723,7 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
           </div>
 
           <div style={{ display: "flex", minWidth: "max-content" }}>
-            <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: "1px solid #CED9E8", background: "#E8EEF6" }}>
-              <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
+            <div style={{ width: 52, flexShrink: 0, position: "sticky", left: 0, zIndex: 4, borderRight: `1px solid ${CR3}`, background: CR2 }}>              <div style={{ position: "relative", height: GRID_H, paddingTop: 8 }}>
                 {HORA_LABELS.map((h) => (
                   <div key={h} style={{ position: "absolute", top: (h * 60 - HORA_APE) * PX_MIN, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#4A6080", fontWeight: 700, transform: "translateY(-50%)" }}>
                     {h}:00
@@ -809,12 +808,12 @@ function NavSemana({offset,onChange,weekDays}){
         <button style={btnS} onClick={()=>onChange(o=>o-1)}>← Anterior</button>
         <span style={{fontSize:12,fontWeight:700,color:TX,textAlign:"center"}}>{weekDays[0].getDate()} {MESES_ES[weekDays[0].getMonth()]} – {weekDays[5].getDate()} {MESES_ES[weekDays[5].getMonth()]}</span>
         <div style={{display:"flex",gap:8}}>
-          <button style={btnS} onClick={()=>onChange(o=>o+1)}>Siguiente →</button>
+          <button style={btnS} onClick={()=>onChange(o=>o+1)}>Següent →</button>
         </div>
       </div>
       {offset!==0&&(
         <div style={{display:"flex",justifyContent:"center"}}>
-          <button style={{...btnS,background:A,color:WH,border:`2px solid ${A}`,position:"relative",zIndex:0}} onClick={()=>onChange(0)}>Volver a hoy</button>
+          <button style={{...btnS,background:A,color:WH,border:`2px solid ${A}`,position:"relative",zIndex:0}} onClick={()=>onChange(0)}>Tornar a avui</button>
         </div>
       )}
     </div>
@@ -861,14 +860,14 @@ function LoginPage(){
     setError(true); setTimeout(()=>setError(false),2500);
   };
   return(
-    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,${CR} 0%,${WH} 60%,${CR} 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
+    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,#3D0A0F 0%,#7A0A1D 60%,#3D0A0F 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
       <div style={{background:WH,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:360,boxShadow:"0 20px 60px rgba(0,0,0,.4)"}}>
         <div style={{width:56,height:56,background:`linear-gradient(135deg,${A},#7A0A1D)`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 20px"}}>🔐</div>
         <h2 style={{textAlign:"center",fontSize:22,fontWeight:700,color:TX,marginBottom:4}}>Accés privat</h2>
         <p style={{textAlign:"center",fontSize:13,color:TX2,marginBottom:24}}>{CONFIG.nombre}</p>
         {error&&<div style={{background:"#fef2f2",border:"1px solid #fca5a5",borderRadius:8,padding:"10px 14px",fontSize:13,color:ER,textAlign:"center",marginBottom:14}}>Usuari o contrasenya incorrectes</div>}
-        <div style={{marginBottom:12}}><Lbl>Usuari</Lbl><Inp value={user} onChange={e=>setUser(e.target.value)}/></div>
-        <div style={{marginBottom:20}}><Lbl>Contrasenya</Lbl><Inp type="password" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••"/></div>
+        <div style={{marginBottom:12}}><Lbl>Usuari</Lbl><Inp style={{background:"#FFFFFF"}} value={user} onChange={e=>setUser(e.target.value)}/></div>
+        <div style={{marginBottom:20}}><Lbl>Contrasenya</Lbl><Inp style={{background:"#FFFFFF"}} type="password" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••"/></div>
         <Btn ok style={{width:"100%"}} onClick={handleLogin}>ENTRAR</Btn>
         <button style={{width:"100%",background:"none",border:"none",color:TX2,cursor:"pointer",fontSize:12,marginTop:14}} onClick={()=>navigate("/")}>← Tornar a la web</button>
       </div>
@@ -3605,7 +3604,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           {/* NAVEGACIÓN MES */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
             <button onClick={() => navegar(-1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#1C1C1C" }}>‹</button>
-            <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>{mesRef.toLocaleString("es-ES", { month: "long", year: "numeric" })}</span>
+            <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>{mesRef.toLocaleString("ca-ES", { month: "long", year: "numeric" })}</span>
             <button onClick={() => navegar(1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#1C1C1C" }}>›</button>
           </div>
 
@@ -3698,7 +3697,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               ))}
 
               <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
-                <button style={{ background: "#e0f2fe", color: "#0369a1", border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tram</button>
+                <button style={{ background: CR2, color: A, border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tram</button>
                 <button style={{ flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: "6px", padding: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }} onClick={guardarHorarioDia}>Desar</button>
               </div>
             </div>
@@ -4215,7 +4214,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
               ))}
-              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#1C1C1C", fontSize: "14px", background: "#fff", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>No hi ha opinions registrades.</div>}
+              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#1C1C1C", fontSize: "14px", background: CR, borderRadius: "12px", border: `1px dashed ${CR3}` }}>No hi ha opinions registrades.</div>}
             </div>
           </div>
         )}
