@@ -159,7 +159,7 @@ STYLE.textContent = `
   }
   .mini-cal-cell:hover:not([disabled]) { background:#E0E8F2; }
   .mini-cal-cell[disabled] { opacity:.3; cursor:default; }
-  .mini-cal-cell.selected { background:#1B4F8A !important; color:#fff !important; font-weight:700; border-radius:8px; }
+  .mini-cal-cell.selected { background:#C8102E !important; color:#fff !important; font-weight:700; border-radius:8px; }
   .mini-cal-cell.today { background:#E8EEF6; font-weight:700; }
   .mini-cal-cell.festivo { color:#dc2626; opacity:.4; cursor:default; }
 
@@ -1473,7 +1473,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         
         <div style={{ width: window.innerWidth > 768 ? "80%" : "100%", margin: "0 auto" }}>
           
-          <div style={{ ...cs.sTitle, marginTop: "0px" }}>✦ Contacto</div>
+          <div style={{ ...cs.sTitle, marginTop: "0px" }}>✦ Contacte</div>
 
           <div style={{ display: "flex", flexDirection: window.innerWidth > 768 ? "row" : "column", gap: "40px", alignItems: "center", marginTop: "40px" }}>
             
@@ -1482,7 +1482,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <p style={{ fontSize: 20, fontWeight: 900, marginBottom: 5, color: TX }}>{CONFIG.nombre}</p>
 
               <div style={{ marginBottom: 20 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: TX, marginBottom: 8 }}>Contacto</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: TX, marginBottom: 8 }}>Contacte</h3>
                 <div style={{ fontSize: 14, color: TX2, lineHeight: "1.6" }}>
                   <div><strong>Dirección:</strong> {CONFIG.direccion}</div>
                   <div><strong>Teléfono:</strong> <span style={{ color: A, fontWeight: 700 }}>{CONFIG.telefono}</span></div>
@@ -3684,7 +3684,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", whiteSpace: "nowrap" }}>
                   {diaSeleccionado.toLocaleDateString("ca-ES", { weekday: "long", day: "numeric", month: "long" })}
                 </span>
-                <button style={{ background: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#fee2e2" : "transparent", color: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#ef4444" : "transparent", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "pointer" : "default", pointerEvents: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "auto" : "none" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Esborrar dia</button>
+                {(horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) && (
+                  <button style={{ background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Esborrar dia</button>
+                )}
               </div>
 
               {tramos.map((t, idx) => (
@@ -4096,7 +4098,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             </div>
 
             {showNewVal && (
-              <div style={{ ...cardS, border: "1px solid #C8102E", background: "#f8fafc" }}>
+              <div style={{ ...cardS, border: `1px solid ${CR3}`, background: "#f8fafc" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "12px" }}>
                   <div><label style={labelS}>Nom del client</label><input style={inputS} value={newVal.nombre} onChange={e => setNewVal(f => ({ ...f, nombre: e.target.value }))} placeholder="Ex: Laura M." /></div>
                   <div>
@@ -4150,7 +4152,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   style={{ ...cardS, padding: "0", marginBottom: 0, overflow: "hidden", cursor: editVal ? "default" : "grab" }}
                 >
                   {editVal?.id === v.id ? (
-                    <div style={{ ...cardS, border: "1px solid #C8102E", background: "#f8fafc", margin: 0 }}>
+                    <div style={{ ...cardS, border: `1px solid ${CR3}`, background: "#f8fafc", margin: 0 }}>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
                         <div><label style={labelS}>Nom</label><input style={inputS} value={editVal.nombre} onChange={e => setEditVal(f => ({ ...f, nombre: e.target.value }))} /></div>
                         <div>
