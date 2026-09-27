@@ -1872,11 +1872,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
     borderRadiusBtn: "12px",
     
     // 2. COLORES
-    colorPrimario: "#1B4F8A",
+    colorPrimario: A,
     colorTexto: "#0A1F3D",           
     colorSecundario: "#1C1C1C",      
-    colorFondo: "#FFF",
-    colorBorde: "#E2E8F0",
+    colorFondo: WH,
+    colorBorde: CR3,
     
     // 3. COLORES DEL CHECK
     colorCheck: "#059669",           
