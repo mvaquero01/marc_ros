@@ -157,10 +157,10 @@ STYLE.textContent = `
     display:flex; align-items:center; justify-content:center;
     border-radius:6px; font-size:12px; cursor:pointer; font-weight:500;
   }
-  .mini-cal-cell:hover:not([disabled]) { background:#E0E8F2; }
+  .mini-cal-cell:hover:not([disabled]) { background:#FBDADA; }
   .mini-cal-cell[disabled] { opacity:.3; cursor:default; }
   .mini-cal-cell.selected { background:#C8102E !important; color:#fff !important; font-weight:700; border-radius:8px; }
-  .mini-cal-cell.today { background:#E8EEF6; font-weight:700; }
+  .mini-cal-cell.today { background:#FBDADA; font-weight:700; }
   .mini-cal-cell.festivo { color:#dc2626; opacity:.4; cursor:default; }
 
   /* ── WhatsApp FAB ── */
@@ -3669,9 +3669,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {/* LEYENDA */}
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#1C1C1C" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dcfce7" }} />Amb horari</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#1C1C1C" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloquejat</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#1C1C1C" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sense horari (tancat)</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: 700, color: "#1C1C1C" }}><div style={{ width: 12, height: 12, borderRadius: 3, background: "#16a34a" }} />Amb horari</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: 700, color: "#1C1C1C" }}><div style={{ width: 12, height: 12, borderRadius: 3, background: "#dc2626" }} />Bloquejat</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: 700, color: "#1C1C1C" }}><div style={{ width: 12, height: 12, borderRadius: 3, background: "#f8fafc", border: "2px solid #94a3b8" }} />Sense horari (tancat)</div>
           </div>
 
           </div>
@@ -4105,7 +4105,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     <label style={labelS}>Servei realitzat</label>
                     <select style={inputS} value={newVal.servicio} onChange={e => setNewVal(f => ({ ...f, servicio: e.target.value }))}>
                       <option value="">Seleccionar servei...</option>
-                      {servicios.map(s => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
+                      {(servicios && servicios.length > 0 ? servicios : CONFIG.serviciosDefault).map(s => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
                     </select>
                   </div>
                 </div>
@@ -4159,7 +4159,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <label style={labelS}>Servei</label>
                           <select style={inputS} value={editVal.servicio} onChange={e => setEditVal(f => ({ ...f, servicio: e.target.value }))}>
                             <option value="">Seleccionar...</option>
-                            {servicios.map(s => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
+                            {(servicios && servicios.length > 0 ? servicios : CONFIG.serviciosDefault).map(s => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
                           </select>
                         </div>
                       </div>
