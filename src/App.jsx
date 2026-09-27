@@ -83,7 +83,7 @@ STYLE.textContent = `
   .cliente-root { 
     width: 100%; 
     min-height: 100vh;
-    background: linear-gradient(160deg, #0D1F35 0%, #1B3A5C 50%, #0D1F35 100%);
+    background: linear-gradient(160deg, #3D0A0F 0%, #7A0A1D 50%, #3D0A0F 100%);
     display: flex;
     justify-content: center;
     position: relative;
@@ -285,10 +285,10 @@ document.head.appendChild(STYLE);
 // ─────────────────────────────────────────────
 const toMin = h=>{ const [hh,mm]=h.split(":").map(Number); return hh*60+mm; };
 const toStr = m=>`${String(Math.floor(m/60)).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`;
-const DIAS_ES   = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-const DIAS_FULL = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
-const MESES_ES  = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-const MESES_FULL= ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DIAS_ES   = ["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
+const DIAS_FULL = ["Diumenge","Dilluns","Dimarts","Dimecres","Dijous","Divendres","Dissabte"];
+const MESES_ES  = ["gen","feb","mar","abr","mai","jun","jul","ago","set","oct","nov","des"];
+const MESES_FULL= ["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const normalize = s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 const isoDate   = d=>{ const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),dd=String(d.getDate()).padStart(2,"0"); return `${y}-${m}-${dd}`; };
 const fmtFechaES = iso => { if(!iso) return ""; const [y,m,d]=iso.split("-"); return `${d}/${m}/${y}`; };
@@ -573,7 +573,7 @@ function asignarPeluqueroAleatorio(servicioId, fecha, hora, citas, bloqueos, fes
 }
 
 const FONT="'Plus Jakarta Sans',sans-serif";
-const A="#1B4F8A",CR="#F0F4F9",CR2="#E0E8F2",CR3="#CED9E8";
+const A="#C8102E",CR="#F5F1EC",CR2="#EFE6DA",CR3="#E3D5C0";
 const WH="#F8FBFF",TX="#0D1F35",TX2="#4A6080";
 const OK="#16a34a",ER="#dc2626";
 
@@ -584,7 +584,7 @@ const Bdg=({children,color=A,small})=>(
   <span style={{background:color+"18",color,border:`1px solid ${color}33`,borderRadius:20,padding:small?"2px 7px":"3px 10px",fontSize:small?10:11,fontWeight:700,whiteSpace:"nowrap"}}>{children}</span>
 );
 const EstBdg=({e})=>{
-  const m={completada:[OK,"Completada ✓"],pendiente:[A,"Pendiente"],"no-show":[ER,"No show ✗"]};
+  const m={completada:[OK,"Completada ✓"],pendiente:[A,"Pendent"],"no-show":[ER,"No show ✗"]};
   const [c,l]=m[e]||[TX2,e]; return <Bdg color={c}>{l}</Bdg>;
 };
 const Divider=()=><div style={{height:1,background:CR2,margin:"12px 0"}}/>;
@@ -592,7 +592,7 @@ const Lbl=({children})=><div style={{fontSize:11,color:TX2,textTransform:"upperc
 const Inp=({style,inputRef,...p})=><input ref={inputRef} style={{width:"100%",background:CR,border:`1px solid ${CR3}`,borderRadius:9,padding:"10px 13px",fontSize:13,color:TX,outline:"none",boxSizing:"border-box",fontFamily:"inherit",...style}} {...p}/>;
 const Sel=({style,...p})=><select style={{width:"100%",background:CR,border:`1px solid ${CR3}`,borderRadius:9,padding:"10px 13px",fontSize:13,color:TX,outline:"none",boxSizing:"border-box",fontFamily:"inherit",...style}} {...p}/>;
 const Btn=({ok=true,sm,style,children,...p})=>(
-  <button style={{background:ok?`linear-gradient(135deg,${A},#133A6A)`:CR2,color:ok?WH:TX2,border:ok?"none":`1px solid ${CR3}`,borderRadius:sm?8:11,padding:sm?"7px 14px":"12px 20px",fontSize:sm?12:13,fontWeight:700,cursor:ok?"pointer":"not-allowed",letterSpacing:.5,boxShadow:ok?`0 3px 12px ${A}33`:"none",...style}} {...p}>{children}</button>
+  <button style={{background:ok?`linear-gradient(135deg,${A},#7A0A1D)`:CR2,color:ok?WH:TX2,border:ok?"none":`1px solid ${CR3}`,borderRadius:sm?8:11,padding:sm?"7px 14px":"12px 20px",fontSize:sm?12:13,fontWeight:700,cursor:ok?"pointer":"not-allowed",letterSpacing:.5,boxShadow:ok?`0 3px 12px ${A}33`:"none",...style}} {...p}>{children}</button>
 );
 const WhatsAppIcon=()=>(
   <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
@@ -861,16 +861,16 @@ function LoginPage(){
     setError(true); setTimeout(()=>setError(false),2500);
   };
   return(
-    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,#0D1F35 0%,#1B3A5C 60%,#0D1F35 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
+    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,#3D0A0F 0%,#7A0A1D 60%,#3D0A0F 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
       <div style={{background:WH,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:360,boxShadow:"0 20px 60px rgba(0,0,0,.4)"}}>
-        <div style={{width:56,height:56,background:`linear-gradient(135deg,${A},#133A6A)`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 20px"}}>🔐</div>
-        <h2 style={{textAlign:"center",fontSize:22,fontWeight:700,color:TX,marginBottom:4}}>Acceso privado</h2>
+        <div style={{width:56,height:56,background:`linear-gradient(135deg,${A},#7A0A1D)`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 20px"}}>🔐</div>
+        <h2 style={{textAlign:"center",fontSize:22,fontWeight:700,color:TX,marginBottom:4}}>Accés privat</h2>
         <p style={{textAlign:"center",fontSize:13,color:TX2,marginBottom:24}}>{CONFIG.nombre}</p>
-        {error&&<div style={{background:"#fef2f2",border:"1px solid #fca5a5",borderRadius:8,padding:"10px 14px",fontSize:13,color:ER,textAlign:"center",marginBottom:14}}>Usuario o contraseña incorrectos</div>}
-        <div style={{marginBottom:12}}><Lbl>Usuario</Lbl><Inp value={user} onChange={e=>setUser(e.target.value)} placeholder="admin · clara · fernando..."/></div>
-        <div style={{marginBottom:20}}><Lbl>Contraseña</Lbl><Inp type="password" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••"/></div>
+        {error&&<div style={{background:"#fef2f2",border:"1px solid #fca5a5",borderRadius:8,padding:"10px 14px",fontSize:13,color:ER,textAlign:"center",marginBottom:14}}>Usuari o contrasenya incorrectes</div>}
+        <div style={{marginBottom:12}}><Lbl>Usuari</Lbl><Inp value={user} onChange={e=>setUser(e.target.value)}/></div>
+        <div style={{marginBottom:20}}><Lbl>Contrasenya</Lbl><Inp type="password" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••"/></div>
         <Btn ok style={{width:"100%"}} onClick={handleLogin}>ENTRAR</Btn>
-        <button style={{width:"100%",background:"none",border:"none",color:TX2,cursor:"pointer",fontSize:12,marginTop:14}} onClick={()=>navigate("/")}>← Volver a la web</button>
+        <button style={{width:"100%",background:"none",border:"none",color:TX2,cursor:"pointer",fontSize:12,marginTop:14}} onClick={()=>navigate("/")}>← Tornar a la web</button>
       </div>
     </div>
   );
@@ -1102,7 +1102,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     }
     setPaso(5); scrollTop();
   };
-  const waMsgCliente=`Hola ${form.nombre} 👋%0AReserva confirmada en *${CONFIG.nombre}*%0A%0A✂️ ${selServicio?.nombre}%0A💈 ${selPeluquero?.nombre}%0A📅 ${selDia?fmtLarga(selDia):""}%0A🕐 ${selHora}%0A💶 €${selServicio?.precio}%0A%0ATe esperamos 😊`;
+  const waMsgCliente=`Hola ${form.nombre} 👋%0AReserva confirmada a *${CONFIG.nombre}*%0A%0A✂️ ${selServicio?.nombre}%0A💈 ${selPeluquero?.nombre}%0A📅 ${selDia?fmtLarga(selDia):""}%0A🕐 ${selHora}%0A💶 €${selServicio?.precio}%0A%0AT'esperem 😊`;
   const horarioResumido=()=>[];
 
   const cs={
@@ -1131,7 +1131,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
       color: WH
     },
     heroGlow:{position:"absolute",top:-60,left:"50%",transform:"translateX(-50%)",width:300,height:300,background:`radial-gradient(circle,${A}22 0%,transparent 70%)`,pointerEvents:"none"},
-    btnPpal:{background:`linear-gradient(135deg,${A},#133A6A)`,color:WH,border:"none",borderRadius:12,padding:"15px 40px",fontSize:15,fontWeight:700,cursor:"pointer",letterSpacing:1,boxShadow:`0 6px 24px ${A}55`},
+    btnPpal:{background:`linear-gradient(135deg,${A},#7A0A1D)`,color:WH,border:"none",borderRadius:12,padding:"15px 40px",fontSize:15,fontWeight:700,cursor:"pointer",letterSpacing:1,boxShadow:`0 6px 24px ${A}55`},
     section: { 
       padding: "100px 20px", // Espaciado masivo de 100px arriba y abajo
       maxWidth: "100%", 
@@ -1164,7 +1164,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     catLeft:{display:"flex",alignItems:"center",gap:10},
     catIcon:{width:38,height:38,background:CR2,borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18},
     svcRow: sel => ({ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2, padding: "12px 16px", cursor: "pointer", background: sel ? `${A}08` : CR, borderTop: `1px solid ${CR2}`, transition: "background .15s", width: "100%" }),
-    horaBtn:a=>({background:a?`linear-gradient(135deg,${A},#133A6A)`:WH,border:`1px solid ${a?A:CR3}`,borderRadius:8,padding:"10px 0",cursor:"pointer",textAlign:"center",fontSize:13,color:a?WH:TX,fontWeight:a?700:400}),
+    horaBtn:a=>({background:a?`linear-gradient(135deg,${A},#7A0A1D)`:WH,border:`1px solid ${a?A:CR3}`,borderRadius:8,padding:"10px 0",cursor:"pointer",textAlign:"center",fontSize:13,color:a?WH:TX,fontWeight:a?700:400}),
     card:sel=>({background:sel?`${A}0D`:WH,border:`1px solid ${sel?A:CR3}`,borderRadius:13,padding:"13px 16px",marginBottom:8,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",boxShadow:"0 1px 4px rgba(0,0,0,.04)"}),
     cardLeft:{display:"flex",alignItems:"center",gap:12},
     cardEmoji:{width:42,height:42,background:CR2,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18},
@@ -1175,7 +1175,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     progreso:{background:WH,borderBottom:`1px solid ${CR3}`,padding:"10px 18px",display:"flex",gap:4,alignItems:"center",justifyContent:"center"},
     prog:(d,a)=>({height:4,flex:1,maxWidth:55,borderRadius:2,background:d?A:a?A+"66":CR3}),
     successBox:{textAlign:"center",padding:"50px 20px"},
-    successIcon:{width:72,height:72,background:`linear-gradient(135deg,${A},#133A6A)`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30,margin:"0 auto 20px"},
+    successIcon:{width:72,height:72,background:`linear-gradient(135deg,${A},#7A0A1D)`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:30,margin:"0 auto 20px"},
     infoBar:{display:"flex",background:WH,borderBottom:`1px solid ${CR3}`},
     infoItem:{flex:1,textAlign:"center",padding:"13px 6px",borderRight:`1px solid ${CR3}`},
     sectionServicios: { 
@@ -1215,7 +1215,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     }
   };
   const esMovil = window.innerWidth <= 768;
-  const PASOS_RESERVA = ["Servicio", "Fecha y hora", "Confirmación"];
+  const PASOS_RESERVA = ["Servei", "Data i hora", "Confirmació"];
   const StepIndicator = ({ actual }) => (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
       {PASOS_RESERVA.map((label, i) => {
@@ -1279,7 +1279,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           <span style={{fontSize:17,fontWeight:700,color:TX}}>{CONFIG.nombre}</span>
         </div>
         <div className="hide-mobile" style={{position:"absolute",left:"50%",transform:"translateX(-50%)",display:"flex",gap:4}}>
-          {[["opiniones","Opiniones"],["ubicacion","Contacto"]].map(([id,label])=>(
+          {[["opiniones","Opinions"],["ubicacion","Contacte"]].map(([id,label])=>(
             <button key={id} style={{background:"transparent",border:"none",color:TX2,cursor:"pointer",fontSize:12,fontWeight:600,padding:"10px 20px",borderRadius:8,transition:"background .15s"}} onClick={()=>scrollTo(id)}
               onMouseEnter={e=>e.target.style.background=CR2}
               onMouseLeave={e=>e.target.style.background="transparent"}>
@@ -1288,7 +1288,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           ))}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+          <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#7A0A1D)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
           <button style={{background:"transparent",border:"none",color:CR3,cursor:"pointer",fontSize:13,padding:0}} onClick={()=>navigate("/login")}>⚙</button>
         </div>
       </div>
@@ -1316,17 +1316,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         </div>
         <h1 className="hero-title" style={{fontSize:32,fontWeight:700,color:WH,marginBottom:6,letterSpacing:1}}>{CONFIG.nombre}</h1>
         <p className="hero-dir" style={{fontSize:12,color:"#9ec3e8",marginBottom:20}}>📍 {CONFIG.direccion} · 📞 {CONFIG.telefono}</p>
-        <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
-      </div>
-      
-      <div style={{ padding: "0 4% 0px 4%", marginTop: 20, marginBottom: "0px" }}>
-        <div style={{background:WH,border:`1px solid ${CR3}`,borderRadius:14,padding:"16px"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <span style={{fontSize:14,fontWeight:700,color:TX,letterSpacing:1,textTransform:"uppercase"}}>Reservas</span>
-            <Bdg color={A}>Consulta disponibilidad</Bdg>
-          </div>
-          <div style={{fontSize:12,color:TX2,marginTop:8}}>El horario varía cada semana. Consulta los días y horas disponibles al reservar.</div>
-        </div>
+        <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#7A0A1D)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
       </div>
 
       <hr id="opiniones" style={{ 
@@ -1347,7 +1337,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           `}</style>
 
           <div style={{ marginTop: "0px", marginBottom: "40px", textAlign: "center" }}>
-            <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Opiniones</div>
+            <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Opinions</div>
           </div>
 
           <div style={{ 
@@ -1499,7 +1489,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <div style={{ display: "flex", gap: "15px", alignItems: "center", marginTop: "30px" }}>
                 
                 {/* BOTÓN PEDIR CITA (ESTILO RESERVAR) */}
-                <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#133A6A)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
+                <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#7A0A1D)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
 
                 {/* BOTÓN INSTAGRAM (SIN ERRORES VISUALES) */}
                 <a href={CONFIG.instagram} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "45px", height: "45px", background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", borderRadius: "8px", textDecoration: "none", flexShrink: 0, cursor: "pointer", transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility: "hidden", willChange: "transform", transform: "scale(1)", transformStyle: "preserve-3d" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
@@ -1552,14 +1542,14 @@ function ClientePage({ sharedProps, startPaso=0 }){
       <div style={{ maxWidth: "90%", margin: "0 auto", padding: "0 20px", paddingTop: esMovil ? "20px" : "100px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "20px" }}>
           <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
-          <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Servicio</div>
+          <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Servei</div>
         </div>
 
         <StepIndicator actual={1} />
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "center", paddingBottom: "60px" }}>
           {serviciosPaso1.length === 0 && (
-            <div style={{ fontSize: 13, color: TX2, fontStyle: "italic" }}>No hay servicios configurados todavía.</div>
+            <div style={{ fontSize: 13, color: TX2, fontStyle: "italic" }}>Encara no hi ha serveis configurats.</div>
           )}
           {serviciosPaso1.map(s => {
             return (
@@ -1635,7 +1625,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(1)}>←</button>
           )}
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>
-            {paso === 2 && "✦ Fecha y hora"}
+            {paso === 2 && "✦ Data i hora"}
           </div>
         </div>
 
@@ -1668,9 +1658,9 @@ function ClientePage({ sharedProps, startPaso=0 }){
 
             let textoDia = '';
             if (selDia) {
-              const nombreDia = selDia.toLocaleDateString('es-ES', { weekday: 'long' });
+              const nombreDia = selDia.toLocaleDateString('ca-ES', { weekday: 'long' });
               const diaNum = selDia.getDate();
-              const mes = selDia.toLocaleDateString('es-ES', { month: 'long' });
+              const mes = selDia.toLocaleDateString('ca-ES', { month: 'long' });
               textoDia = `${nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1)} ${diaNum} de ${mes}`;
             }
 
@@ -1787,11 +1777,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
             // HORAS
             const Horas = () => (
               <div>
-                <div style={{ ...sty.lbl, marginTop: "4px" }}>✦ Disponibilidad {selDia ? `${selDia.getDate()} ${selDia.toLocaleString('es-ES', { month: 'short' })}` : ""}</div>
+                <div style={{ ...sty.lbl, marginTop: "4px" }}>✦ Disponibilitat {selDia ? `${selDia.getDate()} ${selDia.toLocaleString('ca-ES', { month: 'short' })}` : ""}</div>
                 <div style={sty.card}>
                   {slots.length === 0 ? (
                     <div style={{ textAlign: "center", padding: "20px 0", fontSize: "13px", color: "#94A3B8", fontStyle: "italic" }}>
-                      No hay horas disponibles para este día
+                      No hi ha hores disponibles per a aquest dia
                     </div>
                   ) : (
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center" }}>
@@ -1812,7 +1802,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             // RESUMEN
             const Resumen = () => (
               <div style={sty.card}>
-                <div style={sty.lbl}>Resumen</div>
+                <div style={sty.lbl}>Resum</div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", paddingBottom: "12px", borderBottom: "1px solid #F1F5F9" }}>
                   <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D" }}>{selServicio?.nombre}</span>
                   <span style={{ fontSize: "12px", color: "#94A3B8", whiteSpace: "nowrap" }}>⏱ {selServicio?.duracionMin} min</span>
@@ -1834,12 +1824,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
                     <Resumen />
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
-                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nombre completo</label>
+                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
                           <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escribe tu nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
                         </div>
                         <div>
-                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Teléfono</label>
-                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Tu número de móvil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }}
+                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
+                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }}
                           maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />   
                         </div>
                       </div>
@@ -1856,12 +1846,12 @@ function ClientePage({ sharedProps, startPaso=0 }){
                       <Resumen />
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
-                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nombre completo</label>
+                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
                           <input style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Escribe tu nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} />
                         </div>
                         <div>
-                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Teléfono</label>
-                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="Tu número de móvil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />
+                          <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Telèfon</label>
+                          <input type="tel" inputMode="numeric" pattern="[0-9]*" style={{ width: "100%", padding: "11px 14px", borderRadius: "12px", border: "1px solid #E2E8F0", fontSize: "14px", fontWeight: 600, color: "#0A1F3D", outline: "none", background: "#FFF", boxSizing: "border-box" }} placeholder="El teu número de mòbil" value={form.telefono} onKeyDown={e => { if(!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault(); }} maxLength={9} onChange={e => setForm({ ...form, telefono: e.target.value.replace(/\D/g, '').slice(0,9) })} />
                         </div>
                       </div>
                     </div>
@@ -1902,9 +1892,9 @@ function ClientePage({ sharedProps, startPaso=0 }){
   // Formateo de la fecha (Ej: "Martes 21 de abril")
   let textoDia = '';
   if (selDia) {
-    const nombreDia = selDia.toLocaleDateString('es-ES', { weekday: 'long' });
+    const nombreDia = selDia.toLocaleDateString('ca-ES', { weekday: 'long' });
     const diaNum = selDia.getDate();
-    const mes = selDia.toLocaleDateString('es-ES', { month: 'long' });
+    const mes = selDia.toLocaleDateString('ca-ES', { month: 'long' });
     textoDia = `${nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1)} ${diaNum} de ${mes}`;
   }
 
@@ -1960,7 +1950,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           color: OK_ST.colorTexto, 
           letterSpacing: '-0.5px' 
         }}>
-          ¡Reserva confirmada!
+          Reserva confirmada!
         </h2>
 
         {/* --- MENSAJE DE SALUDO --- */}
@@ -1970,8 +1960,8 @@ function ClientePage({ sharedProps, startPaso=0 }){
           color: OK_ST.colorSecundario, 
           lineHeight: '1.5'
         }}>
-          ¡Genial, <strong style={{ color: OK_ST.colorTexto }}>{nombreCompleto}</strong>! <br/>
-          Hemos anotado tu cita en nuestra agenda.
+          Genial, <strong style={{ color: OK_ST.colorTexto }}>{nombreCompleto}</strong>! <br/>
+          Hem anotat la teva cita a la nostra agenda.
         </p>
 
         {/* --- CAJA DE RECORDATORIO --- */}
@@ -1988,7 +1978,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           gap: '10px'
         }}>
            <div style={{ fontSize: '11px', fontWeight: '800', color: OK_ST.colorSecundario, textTransform: 'uppercase', letterSpacing: '1px' }}>
-             TU CITA
+             LA TEVA CITA
            </div>
            
            {/* Día en negro (colorTexto) */}
@@ -1998,7 +1988,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
            
            {/* Hora en negro (colorTexto) en lugar de colorPrimario */}
            <div style={{ fontSize: '16px', fontWeight: '800', color: OK_ST.colorTexto, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-             a las {selHora}
+             a les {selHora}
            </div>
         </div>
 
@@ -2024,7 +2014,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             marginTop: 'auto' 
           }}
         >
-          Volver al inicio
+          Tornar a l'inici
         </button>
 
       </div>
@@ -2208,7 +2198,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         {/* Cabecera */}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
           <h3 style={{fontSize:15,fontWeight:700,color:"#0D1F35",margin:0}}>
-            {esEdicion ? "✏️ Editar cita" : "➕ Nueva cita"}
+            {esEdicion ? "✏️ Editar cita" : "➕ Nova cita"}
           </h3>
           <button style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#4A6080"}} onClick={onClose}>✕</button>
         </div>
@@ -2216,22 +2206,22 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         {/* Fila 1: Teléfono + Nombre */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}>
           <div>
-            <label style={lblS}>Teléfono</label>
+            <label style={lblS}>Telèfon</label>
             <input style={inputS} value={form.telefono}
               onChange={e=>{ setForm(f=>({...f,telefono:e.target.value})); if(!esEdicion) buscarCliente(e.target.value); }}
-              placeholder="666 111 222"/>
+              placeholder="XXX XXX XXX"/>
           </div>
           <div>
-            <label style={lblS}>Nombre</label>
+            <label style={lblS}>Nom</label>
             <input style={inputS} value={form.nombre}
               onChange={e=>setForm(f=>({...f,nombre:e.target.value}))}
-              placeholder="Nombre cliente"/>
+              placeholder="Nom del client"/>
           </div>
         </div>
 
         {/* Fila 2: Servicio */}
         <div style={{marginBottom:8}}>
-          <label style={lblS}>Servicio</label>
+          <label style={lblS}>Servei</label>
           <select style={selS} value={form.servicioId} onChange={e=>setForm(f=>({...f,servicioId:e.target.value,hora:""}))}>
             {listaServicios.map(s=>(
               <option key={s.id} value={s.id}>{s.nombre} · {s.duracionMin} min</option>
@@ -2242,17 +2232,17 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         {/* Cliente encontrado */}
         {!esEdicion && clienteRec && (
           <div style={{background:"#D1FAE5",border:"1px solid #6EE7B7",borderRadius:8,padding:"6px 10px",marginBottom:10,fontSize:11,color:"#065F46"}}>
-            ✓ Cliente existente: {clienteRec.nombre} · {clienteRec.visitas} visitas · {clienteRec.gasto}€
+            ✓ Client existent: {clienteRec.nombre} · {clienteRec.visitas} visites · {clienteRec.gasto}€
           </div>
         )}
 
         {/* Fila 3: Fecha */}
         <div style={{marginBottom:7}}>
-          <label style={lblS}>Fecha</label>
+          <label style={lblS}>Data</label>
           <div style={{position:"relative"}}>
             <button style={{...inputS,textAlign:"left",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}
               onClick={()=>{ setShowCal(v=>!v); setForm(f=>({...f, _showHoras:false})); }}>
-              <span style={{color:form.fecha?"#0D1F35":"#4A6080"}}>{form.fecha ? fmtFechaES(form.fecha) : "Seleccionar fecha..."}</span>
+              <span style={{color:form.fecha?"#0D1F35":"#4A6080"}}>{form.fecha ? fmtFechaES(form.fecha) : "Seleccionar data..."}</span>
               <span>📅</span>
             </button>
             {showCal && (
@@ -2288,7 +2278,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
             onClick={()=>{ if(slotsManuales.length > 0){ setForm(f=>({...f, _showHoras: !f._showHoras})); setShowCal(false); } }}
           >
             <span style={{color: form.hora ? "#0D1F35" : "#4A6080"}}>
-              {!form.fecha ? "Primero elige una fecha" : slotsManuales.length === 0 ? "Sin huecos disponibles" : form.hora || "Elige hora"}
+              {!form.fecha ? "Primer tria una data" : slotsManuales.length === 0 ? "Sense forats disponibles" : form.hora || "Tria una hora"}
             </span>
             <span style={{fontSize:10, color:"#4A6080"}}>▼</span>
           </div>
@@ -2315,12 +2305,12 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
           <button
             style={{background:"#E0E8F2",color:"#4A6080",border:"1px solid #CED9E8",borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:"pointer"}}
             onClick={onClose}>
-            Cancelar
+            Cancel·lar
           </button>
           <button
-            style={{flex:1,background:formValido?"linear-gradient(135deg,#1B4F8A,#133A6A)":"#E0E8F2",color:formValido?"#F8FBFF":"#4A6080",border:"none",borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:formValido?"pointer":"not-allowed"}}
+            style={{flex:1,background:formValido?"linear-gradient(135deg,#C8102E,#7A0A1D)":"#E0E8F2",color:formValido?"#F8FBFF":"#4A6080",border:"none",borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:formValido?"pointer":"not-allowed"}}
             onClick={formValido ? confirmar : undefined}>
-            {esEdicion ? "Guardar cambios" : "Confirmar cita →"}
+            {esEdicion ? "Desar canvis" : "Confirmar cita →"}
           </button>
         </div>
       </div>
@@ -2641,7 +2631,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     // --- SUBCOMPONENTES DE CELDAS PREMIUM ---
     const EstadoPremium=({estado})=>{
       const config = {
-        "pendiente":  { bg: "#FEF3C7", tx: "#D97706", lbl: "Pendiente" },
+        "pendiente":  { bg: "#FEF3C7", tx: "#D97706", lbl: "Pendent" },
         "completada": { bg: "#D1FAE5", tx: "#059669", lbl: "Completada" },
         "no-show":    { bg: "#FEE2E2", tx: "#DC2626", lbl: "No show" }
       };
@@ -2726,19 +2716,19 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
         {/* 1. KPIs VISIBLES SIEMPRE */}
         <div className="admin-kpi-grid" style={as.kpiGrid}>
-          {[[ingrHoy + " €","Ingresos hoy"],[citasHoy.length,"Citas hoy"],[pendHoy,"Pendientes"],[noShowHoy,"No shows"]].map(([v,l],i)=>(
+          {[[ingrHoy + " €","Ingressos avui"],[citasHoy.length,"Cites avui"],[pendHoy,"Pendents"],[noShowHoy,"No shows"]].map(([v,l],i)=>(
             <div key={i} style={as.kpi}><div style={as.kpiVal}>{v}</div><div style={as.kpiLbl}>{l}</div></div>
           ))}
         </div>
 
         {/* 2. PESTAÑAS PRINCIPALES DE VISTA */}
         <div style={{display:"flex",gap:8,marginBottom:14,flexWrap:"wrap",alignItems:"center"}}>
-          {[["hoy","📋 Tabla"],["peluquero","📅 Calendario"]].map(([v,l])=>(
+          {[["hoy","📋 Taula"],["peluquero","📅 Calendari"]].map(([v,l])=>(
             <button key={v} style={{background:vistaCitas===v?A:WH,color:vistaCitas===v?WH:TX,border:`2px solid ${vistaCitas===v?A:CR3}`,borderRadius:50,padding:"7px 20px",fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.2s ease"}} onClick={()=>{
               setVistaCitas(v);
             }}>{l}</button>
           ))}
-          <button style={{marginLeft:"auto",background:`linear-gradient(135deg,${A},#133A6A)`,color:WH,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={()=>setShowManual(true)}>+ Nueva cita</button>
+          <button style={{marginLeft:"auto",background:`linear-gradient(135deg,${A},#7A0A1D)`,color:WH,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={()=>setShowManual(true)}>+ Nova cita</button>
         </div>
 
         {/* Modal unificado: nueva cita */}
@@ -2781,11 +2771,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
             <div style={{background:WH,borderRadius:18,padding:"32px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.3)",textAlign:"center"}}>
               <div style={{fontSize:40,marginBottom:16}}>🗑</div>
-              <h3 style={{fontSize:17,fontWeight:700,color:TX,marginBottom:8}}>¿Eliminar esta cita?</h3>
+              <h3 style={{fontSize:17,fontWeight:700,color:TX,marginBottom:8}}>Vols eliminar aquesta cita?</h3>
               <p style={{fontSize:13,color:TX2,marginBottom:6}}>{citaBorrar.clienteNombre}</p>
               <p style={{fontSize:12,color:TX2,marginBottom:24}}>{citaBorrar.servicio} · {citaBorrar.fecha} · {citaBorrar.hora}</p>
               <div style={{display:"flex",gap:10}}>
-                <Btn ok={false} style={{flex:1}} onClick={()=>setCitaBorrar(null)}>Cancelar</Btn>
+                <Btn ok={false} style={{flex:1}} onClick={()=>setCitaBorrar(null)}>Cancel·lar</Btn>
                 <button style={{flex:1,background:`linear-gradient(135deg,${ER},#b91c1c)`,color:WH,border:"none",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={confirmarBorrado}>Eliminar</button>
               </div>
             </div>
@@ -2801,10 +2791,10 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   style={{flex:1,marginBottom:0,padding:"7px 12px",fontSize:12,width:"100%",background:CR,border:`1px solid ${CR3}`,borderRadius:9,color:TX,outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}
                   defaultValue={busqCitaRef?.current || ""}
                   onChange={e=>{busqCitaRef.current=e.target.value;localBusqRef.current=e.target.value;forceUpdate(n=>n+1);}}
-                  placeholder="🔍 Buscar por nombre o teléfono..."
+                  placeholder="🔍 Cercar per nom o telèfon..."
                 />
                 <button style={{background:mostrarBuscador?`${A}15`:WH,border:`1px solid ${mostrarBuscador?A:CR3}`,borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",color:mostrarBuscador?A:TX2,whiteSpace:"nowrap"}} onClick={()=>setMostrarBuscador(v=>!v)}>
-                  {mostrarBuscador?"▲ Ocultar Filtros":"▼ Ver Filtros"}{hayFiltros?" ●":""}
+                  {mostrarBuscador?"▲ Amagar Filtres":"▼ Veure Filtres"}{hayFiltros?" ●":""}
                 </button>
                 {hayFiltros&&<button style={{background:ER+"15",border:`1px solid ${ER}33`,borderRadius:8,padding:"7px 10px",fontSize:11,fontWeight:700,cursor:"pointer",color:ER}} onClick={()=>{busqCitaRef.current="";localBusqRef.current="";forceUpdate(n=>n+1);setFiltFecha("hoy");setFiltDesde("");setFiltHasta("");setFiltPel("todas");setFiltEstado("todos");setMostrarBuscador(false);}}>✕</button>}
               </div>
@@ -2812,13 +2802,13 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               {mostrarBuscador&&(
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,alignItems:"end",width:"100%", marginTop: "10px"}}>
                   <div>
-                    <Lbl>Filtrar por Fecha</Lbl>
+                    <Lbl>Filtrar per Data</Lbl>
                     <Sel style={{padding:"6px 9px",fontSize:11}} value={filtFecha} onChange={e=>{setFiltFecha(e.target.value);setFiltSemanaOffset(0);}}>
-                      <option value="hoy">Hoy</option>
-                      <option value="semana">Esta semana</option>
-                      <option value="fecha">Fecha concreta</option>
-                      <option value="rango">Rango de fechas</option>
-                      <option value="todas">Todas las citas</option>
+                      <option value="hoy">Avui</option>
+                      <option value="semana">Aquesta setmana</option>
+                      <option value="fecha">Data concreta</option>
+                      <option value="rango">Rang de dates</option>
+                      <option value="todas">Totes les cites</option>
                     </Sel>
                   </div>
 
@@ -2826,14 +2816,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     <div style={{display:"flex",alignItems:"center",gap:4, height: "28px"}}>
                       <button style={{background:WH,border:`1px solid ${CR3}`,borderRadius:6,padding:"0 8px",fontSize:11,height:"100%",cursor:"pointer"}} onClick={()=>setFiltSemanaOffset(o=>o-1)}>←</button>
                       <span style={{fontSize:10,fontWeight:700,color:TX,flex:1,textAlign:"center",whiteSpace:"nowrap"}}>{filtWeekDays[0].getDate()} {MESES_ES[filtWeekDays[0].getMonth()]} - {filtWeekDays[5].getDate()} {MESES_ES[filtWeekDays[5].getMonth()]}</span>
-                      {filtSemanaOffset!==0&&<button style={{background:CR2,border:`1px solid ${CR3}`,borderRadius:6,padding:"0 6px",fontSize:10,height:"100%",cursor:"pointer"}} onClick={()=>setFiltSemanaOffset(0)}>Hoy</button>}
+                      {filtSemanaOffset!==0&&<button style={{background:CR2,border:`1px solid ${CR3}`,borderRadius:6,padding:"0 6px",fontSize:10,height:"100%",cursor:"pointer"}} onClick={()=>setFiltSemanaOffset(0)}>Avui</button>}
                       <button style={{background:WH,border:`1px solid ${CR3}`,borderRadius:6,padding:"0 8px",fontSize:11,height:"100%",cursor:"pointer"}} onClick={()=>setFiltSemanaOffset(o=>o+1)}>→</button>
                     </div>
                   )}
 
                   {filtFecha==="fecha"&&(
                     <div style={{position:"relative"}}>
-                      <Lbl>Selecciona el día</Lbl>
+                      <Lbl>Selecciona el dia</Lbl>
                       <button style={{width:"100%",background:WH,border:`1px solid ${CR3}`,borderRadius:9,padding:"6px 9px",fontSize:11,color:filtDesde?TX:TX2,textAlign:"left",cursor:"pointer",display:"flex",justifyContent:"space-between"}} onClick={()=>setShowFiltDesdeCalPicker(v=>!v)}>
                         <span>{filtDesde||"Seleccionar..."}</span><span>📅</span>
                       </button>
@@ -2844,48 +2834,48 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   {filtFecha==="rango"&&(
                     <>
                       <div style={{position:"relative"}}>
-                        <Lbl>Desde el día</Lbl>
+                        <Lbl>Des del dia</Lbl>
                         <button style={{width:"100%",background:WH,border:`1px solid ${CR3}`,borderRadius:9,padding:"6px 9px",fontSize:11,color:filtDesde?TX:TX2,textAlign:"left",cursor:"pointer",display:"flex",justifyContent:"space-between"}} onClick={()=>setShowFiltDesdeCalPicker(v=>!v)}>
-                          <span>{filtDesde||"Inicio..."}</span><span>📅</span>
+                          <span>{filtDesde||"Inici..."}</span><span>📅</span>
                         </button>
                         {showFiltDesdeCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtDesde} onChange={iso=>{setFiltDesde(iso);setShowFiltDesdeCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]}/></div>}
                       </div>
                       <div style={{position:"relative"}}>
-                        <Lbl>Hasta el día</Lbl>
+                        <Lbl>Fins al dia</Lbl>
                         <button style={{width:"100%",background:WH,border:`1px solid ${CR3}`,borderRadius:9,padding:"6px 9px",fontSize:11,color:filtHasta?TX:TX2,textAlign:"left",cursor:"pointer",display:"flex",justifyContent:"space-between"}} onClick={()=>setShowFiltHastaCalPicker(v=>!v)}>
-                          <span>{filtHasta||"Fin..."}</span><span>📅</span>
+                          <span>{filtHasta||"Fi..."}</span><span>📅</span>
                         </button>
                         {showFiltHastaCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtHasta} onChange={iso=>{setFiltHasta(iso);setShowFiltHastaCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]}/></div>}
                       </div>
                     </>
                   )}
 
-                  <div><Lbl>Peluquero</Lbl><Sel style={{padding:"6px 9px",fontSize:11}} value={filtPel} onChange={e=>setFiltPel(e.target.value)}><option value="todas">Todos</option>{CONFIG.peluqueros.map(p=><option key={p.id} value={p.id}>{p.emoji} {p.nombre}</option>)}</Sel></div>
-                  <div><Lbl>Estado</Lbl><Sel style={{padding:"6px 9px",fontSize:11}} value={filtEstado} onChange={e=>setFiltEstado(e.target.value)}><option value="todos">Todos</option><option value="pendiente">Pendiente</option><option value="completada">Completada</option><option value="no-show">No show</option></Sel></div>
+                  <div><Lbl>Perruquer</Lbl><Sel style={{padding:"6px 9px",fontSize:11}} value={filtPel} onChange={e=>setFiltPel(e.target.value)}><option value="todas">Tots</option>{CONFIG.peluqueros.map(p=><option key={p.id} value={p.id}>{p.emoji} {p.nombre}</option>)}</Sel></div>
+                  <div><Lbl>Estat</Lbl><Sel style={{padding:"6px 9px",fontSize:11}} value={filtEstado} onChange={e=>setFiltEstado(e.target.value)}><option value="todos">Tots</option><option value="pendiente">Pendent</option><option value="completada">Completada</option><option value="no-show">No show</option></Sel></div>
                 </div>
               )}
             </div>
 
             {hayFiltros?(
               <>
-                <div style={{fontSize:11,fontWeight:700,color:A,marginBottom:10}}>{citasFiltradas.length} resultado{citasFiltradas.length!==1?"s":""}</div>
-                {citasFiltradas.length===0?<div style={{fontSize:13,color:TX2,fontStyle:"italic"}}>No se encontraron citas</div>:(
+                <div style={{fontSize:11,fontWeight:700,color:A,marginBottom:10}}>{citasFiltradas.length} resultat{citasFiltradas.length!==1?"s":""}</div>
+                {citasFiltradas.length===0?<div style={{fontSize:13,color:TX2,fontStyle:"italic"}}>No s'han trobat cites</div>:(
                   <div className="admin-table-wrap" style={{overflowX:"auto"}}>
                     <table className="tabla-premium">
                       <thead>
                         <tr>
-                          <th className="th-premium">Fecha</th>
+                          <th className="th-premium">Data</th>
                           <th className="th-premium">Hora</th>
-                          <th className="th-premium">Cliente</th>
-                          <th className="th-premium">Estado</th>
-                          <th className="th-premium">Precio</th>
-                          <th className="th-premium">Pago</th>
+                          <th className="th-premium">Client</th>
+                          <th className="th-premium">Estat</th>
+                          <th className="th-premium">Preu</th>
+                          <th className="th-premium">Pagament</th>
                           <th className="th-premium">Acc.</th>
                         </tr>
                       </thead>
                       <tbody>{citasFiltradas.map(c=>(
                         <tr key={c.id} className="fila-premium">
-                          <td className="td-premium" style={{fontSize:"10px",color:TX2}}>{c.fecha===HOY_ISO?"Hoy":fmtFechaES(c.fecha)}</td>
+                          <td className="td-premium" style={{fontSize:"10px",color:TX2}}>{c.fecha===HOY_ISO?"Avui":fmtFechaES(c.fecha)}</td>
                           <td className="td-premium" style={{fontWeight:700,color:A, fontSize:"12px"}}>{c.hora}</td>
                           <td className="td-premium">
                             <div style={{fontWeight:600, fontSize:"12px"}}>{c.clienteNombre}</div>
@@ -2930,17 +2920,17 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               </>
             ):(
               <>
-                <div style={{fontSize:11,fontWeight:700,color:TX2,textTransform:"uppercase",letterSpacing:1.5,marginBottom:12}}>Citas de hoy — {fmtLarga(HOY)}</div>
-                {citasHoy.length===0?<div style={{fontSize:13,color:TX2,fontStyle:"italic"}}>No hay citas para hoy</div>:(
+                <div style={{fontSize:11,fontWeight:700,color:TX2,textTransform:"uppercase",letterSpacing:1.5,marginBottom:12}}>Cites d'avui — {fmtLarga(HOY)}</div>
+                {citasHoy.length===0?<div style={{fontSize:13,color:TX2,fontStyle:"italic"}}>No hi ha cites per avui</div>:(
                   <div className="admin-table-wrap" style={{overflowX:"auto"}}>
                     <table className="tabla-premium">
                       <thead>
                         <tr>
                           <th className="th-premium">Hora</th>
-                          <th className="th-premium">Cliente</th>
-                          <th className="th-premium">Estado</th>
-                          <th className="th-premium">Precio</th>
-                          <th className="th-premium">Pago</th>
+                          <th className="th-premium">Client</th>
+                          <th className="th-premium">Estat</th>
+                          <th className="th-premium">Preu</th>
+                          <th className="th-premium">Pagament</th>
                           <th className="th-premium">Acc.</th>
                         </tr>
                       </thead>
@@ -3069,12 +3059,12 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               setBusq(e.target.value);
               window._busqCache = e.target.value; 
             }} 
-            placeholder="🔍 Buscar nombre o móvil..."
+            placeholder="🔍 Cercar nom o mòbil..."
           />
         </div>
 
         <div style={{ fontSize: 11, color: TX2, marginBottom: 10 }}>
-          {clientesFiltrados.length} cliente{clientesFiltrados.length !== 1 ? "s" : ""}
+          {clientesFiltrados.length} client{clientesFiltrados.length !== 1 ? "s" : ""}
         </div>
         
         {/* CONTENEDOR DE COLUMNAS (Responsive) */}
@@ -3105,14 +3095,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: A }}>{c.gasto} €</div>
-                    <div style={{ fontSize: 10, color: TX2 }}>{c.visitas} visitas</div>
+                    <div style={{ fontSize: 10, color: TX2 }}>{c.visitas} visites</div>
                   </div>
                 </div>
               </div>
             ))}
             {clientesFiltrados.length === 0 && (
               <div style={{ textAlign: "center", padding: "30px", color: TX2, fontSize: 13, background: WH, borderRadius: 12, border: `1px solid ${CR3}`, boxSizing: "border-box" }}>
-                No se encontraron clientes
+                No s'han trobat clients
               </div>
             )}
           </div>
@@ -3123,13 +3113,13 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <div style={{ ...as.card, boxSizing: "border-box", width: "100%", padding: isMobile ? "16px" : "20px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
                   <div style={{ fontSize: 16, fontWeight: 700, color: TX }}>{clienteSel.nombre}</div>
-                  <button style={{ background: ER + "15", border: `1px solid ${ER}33`, color: ER, borderRadius: 6, padding: "4px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }} onClick={() => setClienteBorrar(clienteSel)}>Eliminar cliente</button>
+                  <button style={{ background: ER + "15", border: `1px solid ${ER}33`, color: ER, borderRadius: 6, padding: "4px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }} onClick={() => setClienteBorrar(clienteSel)}>Eliminar client</button>
                 </div>
                 <div style={{ fontSize: 12, color: TX2, marginBottom: 14 }}>📞 {clienteSel.telefono}</div>
                 
                 {/* GRID DE ESTADÍSTICAS */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8, marginBottom: 14, boxSizing: "border-box" }}>
-                  {[[clienteSel.gasto + " €", "Gasto Total"], [clienteSel.visitas, "Visitas"], [Math.round(clienteSel.gasto / Math.max(clienteSel.visitas, 1)) + " €", "Ticket Medio"], [clienteSel.noShows || 0, "No shows"]].map(([v, l]) => (
+                  {[[clienteSel.gasto + " €", "Despesa Total"], [clienteSel.visitas, "Visites"], [Math.round(clienteSel.gasto / Math.max(clienteSel.visitas, 1)) + " €", "Tiquet Mitjà"], [clienteSel.noShows || 0, "No shows"]].map(([v, l]) => (
                     <div key={l} style={{ background: CR, borderRadius: 9, padding: "10px", textAlign: "center", boxSizing: "border-box" }}>
                       <div style={{ fontSize: 16, fontWeight: 700, color: A }}>{v}</div>
                       <div style={{ fontSize: 9, color: TX2, textTransform: "uppercase" }}>{l}</div>
@@ -3141,22 +3131,22 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <div style={{ fontSize: 11, fontWeight: 700, color: TX2, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Nota interna</div>
                 {editNota ? (
                   <div style={{ boxSizing: "border-box", width: "100%" }}>
-                    <Inp style={{ boxSizing: "border-box", width: "100%" }} value={notaVal} onChange={e => setNotaVal(e.target.value)} placeholder="Añade una nota..." />
+                    <Inp style={{ boxSizing: "border-box", width: "100%" }} value={notaVal} onChange={e => setNotaVal(e.target.value)} placeholder="Afegeix una nota..." />
                     <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
-                      <Btn ok={false} sm onClick={() => setEditNota(false)}>Cancelar</Btn>
-                      <Btn sm onClick={guardarNota}>Guardar</Btn>
+                      <Btn ok={false} sm onClick={() => setEditNota(false)}>Cancel·lar</Btn>
+                      <Btn sm onClick={guardarNota}>Desar</Btn>
                     </div>
                   </div>
                 ) : (
                   <div style={{ background: CR, borderRadius: 8, padding: "12px", fontSize: 13, color: clienteSel.nota ? TX : TX2, fontStyle: clienteSel.nota ? "normal" : "italic", cursor: "pointer", boxSizing: "border-box" }} onClick={() => { setEditNota(true); setNotaVal(clienteSel.nota || ""); }}>
-                    {clienteSel.nota || "Toca para añadir una nota sobre el cliente..."}
+                    {clienteSel.nota || "Toca per afegir una nota sobre el client..."}
                   </div>
                 )}
 
                 <Divider />
-                <div style={{ fontSize: 11, fontWeight: 700, color: TX2, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Historial de servicios</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: TX2, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Historial de serveis</div>
                 {(clienteSel.historial || []).filter(h => h.estado === "completada" || !h.estado).length === 0 ? (
-                  <div style={{ fontSize: 12, color: TX2, fontStyle: "italic" }}>Sin servicios registrados</div>
+                  <div style={{ fontSize: 12, color: TX2, fontStyle: "italic" }}>Sense serveis registrats</div>
                 ) : (
                   (clienteSel.historial || []).filter(h => h.estado === "completada" || !h.estado).map((h, i) => (
                     <div key={i} style={{ 
@@ -3183,7 +3173,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             ) : (
               <div style={{ background: CR, border: `2px dashed ${CR3}`, borderRadius: 12, height: "100%", minHeight: "150px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: TX2, padding: 20, textAlign: "center", boxSizing: "border-box" }}>
                 <span style={{ fontSize: 24, marginBottom: 8 }}>👤</span>
-                <span style={{ fontSize: 13, fontWeight: 600 }}>Selecciona un cliente para ver detalles</span>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>Selecciona un client per veure detalls</span>
               </div>
             )}
           </div>
@@ -3194,10 +3184,10 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
             <div style={{background:WH,borderRadius:18,padding:"32px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.3)",textAlign:"center"}}>
               <div style={{fontSize:40,marginBottom:16}}>🗑</div>
-              <h3 style={{fontSize:17,fontWeight:700,color:TX,marginBottom:8}}>¿Eliminar este cliente?</h3>
-              <p style={{fontSize:13,color:TX2,marginBottom:24}}>Se borrará el historial de <b>{clienteBorrar.nombre}</b>.</p>
+              <h3 style={{fontSize:17,fontWeight:700,color:TX,marginBottom:8}}>Vols eliminar aquest client?</h3>
+              <p style={{fontSize:13,color:TX2,marginBottom:24}}>S'esborrarà l'historial de <b>{clienteBorrar.nombre}</b>.</p>
               <div style={{display:"flex",gap:10}}>
-                <Btn ok={false} style={{flex:1}} onClick={() => setClienteBorrar(null)}>Cancelar</Btn>
+                <Btn ok={false} style={{flex:1}} onClick={() => setClienteBorrar(null)}>Cancel·lar</Btn>
                 <button style={{flex:1,background:`linear-gradient(135deg,${ER},#b91c1c)`,color:WH,border:"none",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={async () => {
                   const copia = {...clienteBorrar};
                   if(clienteSel?.id === clienteBorrar.id) setClienteSel(null);
@@ -3314,7 +3304,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               }}
               onClick={() => setFechaCaja(HOY_ISO)}
             >
-              HOY
+              AVUI
             </div>
           )}
 
@@ -3328,7 +3318,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               }} 
               onClick={() => setShowPicker(!showPicker)}
             >
-              <span style={{ fontSize: 12, color: TX2, fontWeight: 600 }}>Caja del:</span>
+              <span style={{ fontSize: 12, color: TX2, fontWeight: 600 }}>Caixa del:</span>
               <span style={{ fontSize: 14, fontWeight: 800, color: A }}>{fmtEs(fechaCaja)}</span>
               <span style={{ fontSize: 10, color: A }}>▼</span>
             </div>
@@ -3359,12 +3349,12 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <>
                 <div style={{ ...as.kpi, borderLeft: `4px solid ${A}`, marginBottom: 10 }}>
                   <div style={as.kpiVal}>{facturadoDia} €</div>
-                  <div style={as.kpiLbl}>Facturado Hoy</div>
+                  <div style={as.kpiLbl}>Facturat Avui</div>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   <div style={{ ...as.kpi, background: "#DEF7EC" }}>
                     <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
-                    <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
+                    <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectiu</div>
                   </div>
                   <div style={{ ...as.kpi, background: "#FCE8F3" }}>
                     <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
@@ -3376,11 +3366,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
                 <div style={{ ...as.kpi, borderLeft: `4px solid ${A}` }}>
                   <div style={as.kpiVal}>{facturadoDia} €</div>
-                  <div style={as.kpiLbl}>Facturado Hoy</div>
+                  <div style={as.kpiLbl}>Facturat Avui</div>
                 </div>
                 <div style={{ ...as.kpi, background: "#DEF7EC" }}>
                   <div style={{ ...as.kpiVal, color: "#059669" }}>{efec} €</div>
-                  <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectivo</div>
+                  <div style={{ ...as.kpiLbl, color: "#03543F" }}>💵 Efectiu</div>
                 </div>
                 <div style={{ ...as.kpi, background: "#FCE8F3" }}>
                   <div style={{ ...as.kpiVal, color: "#BE185D" }}>{biz} €</div>
@@ -3405,7 +3395,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     transition: "background 0.4s ease"
                   }}
                 >
-                  {guardando ? "GUARDANDO..." : (hayCambios ? "GUARDAR" : "GUARDADO")}
+                  {guardando ? "DESANT..." : (hayCambios ? "DESAR" : "DESAT")}
                 </button>
               </div>
               <textarea
@@ -3415,7 +3405,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   width: "100%", height: 120, borderRadius: 12, border: `1px solid ${CR3}`,
                   padding: 15, outline: "none", resize: "none", fontSize: 13, background: CR, color: TX, lineHeight: "1.5", display: "block"
                 }}
-                placeholder="Notas del día..."
+                placeholder="Notes del dia..."
               />
             </div>
           </div>
@@ -3552,15 +3542,15 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {/* BLOQUE 1: DÍAS BLOQUEADOS */}
         <div style={colStyle}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px", alignItems: "center" }}>
-            <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#1e293b" }}>🔒 Días bloqueados</h4>
-            <button onClick={() => setShowBloqForm(!showBloqForm)} style={btnBlue}>{showBloqForm ? "Cancelar" : "+ Añadir"}</button>
+            <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#1e293b" }}>🔒 Dies bloquejats</h4>
+            <button onClick={() => setShowBloqForm(!showBloqForm)} style={btnBlue}>{showBloqForm ? "Cancel·lar" : "+ Afegir"}</button>
           </div>
 
           {showBloqForm && (
             <div className="anim" style={{ background: "#fff", padding: "12px", borderRadius: "10px", marginBottom: "12px", border: "1px solid #cbd5e1" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                 <div style={{ position: "relative" }}>
-                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Desde</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Des de</label>
                   <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqDesdeCal(v => !v)}>{bloqForm.desde ? toDMY(bloqForm.desde) : "Seleccionar..."}</button>
                   {showBloqDesdeCal && (
                     <div style={{ position: "absolute", zIndex: 200, marginTop: "4px" }}>
@@ -3569,7 +3559,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
                 <div style={{ position: "relative" }}>
-                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Hasta (opcional)</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Fins a (opcional)</label>
                   <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqHastaCal(v => !v)}>{bloqForm.hasta ? toDMY(bloqForm.hasta) : "Seleccionar..."}</button>
                   {showBloqHastaCal && (
                     <div style={{ position: "absolute", zIndex: 200, marginTop: "4px", right: 0 }}>
@@ -3578,7 +3568,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
               </div>
-              <input style={{ ...inputS, marginBottom: "12px", cursor: "text" }} placeholder="Motivo (ej: Vacaciones)" value={bloqForm.motivo} onChange={e => setBloqForm({ ...bloqForm, motivo: e.target.value })} />
+              <input style={{ ...inputS, marginBottom: "12px", cursor: "text" }} placeholder="Motiu (ex: Vacances)" value={bloqForm.motivo} onChange={e => setBloqForm({ ...bloqForm, motivo: e.target.value })} />
               <button style={{ ...btnBlue, width: "100%", padding: "10px", background: "#10b981", fontSize: "12px" }} onClick={async () => {
                 if (!bloqForm.desde || !bloqForm.motivo) return;
                 const dias = obtenerDiasEntre(bloqForm.desde, bloqForm.hasta || bloqForm.desde);
@@ -3589,12 +3579,12 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 }
                 setBloqForm({ desde: "", hasta: "", motivo: "" });
                 setShowBloqForm(false);
-              }}>Guardar bloqueo</button>
+              }}>Desar bloqueig</button>
             </div>
           )}
 
           {bloqueosAgrupados.length === 0 && (
-            <div style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic", textAlign: "center", padding: "20px 0" }}>No hay días bloqueados</div>
+            <div style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic", textAlign: "center", padding: "20px 0" }}>No hi ha dies bloquejats</div>
           )}
 
           {bloqueosAgrupados.map((b, i) => (
@@ -3610,7 +3600,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
         {/* BLOQUE 2: HORARIO POR DÍA */}
         <div style={colStyle}>
-          <h4 style={{ margin: "0 0 16px 0", fontSize: "14px", fontWeight: "800", color: "#1e293b" }}>📅 Horario por día</h4>
+          <h4 style={{ margin: "0 0 16px 0", fontSize: "14px", fontWeight: "800", color: "#1e293b" }}>📅 Horari per dia</h4>
 
           {/* NAVEGACIÓN MES */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
@@ -3678,9 +3668,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {/* LEYENDA */}
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dcfce7" }} />Con horario</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloqueado</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sin horario (cerrado)</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dcfce7" }} />Amb horari</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloquejat</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sense horari (tancat)</div>
           </div>
 
           </div>
@@ -3693,7 +3683,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>
                   {diaSeleccionado.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
                 </span>
-                <button style={{ background: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#fee2e2" : "transparent", color: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#ef4444" : "transparent", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "pointer" : "default", pointerEvents: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "auto" : "none" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Borrar día</button>
+                <button style={{ background: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#fee2e2" : "transparent", color: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "#ef4444" : "transparent", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "11px", fontWeight: 700, cursor: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "pointer" : "default", pointerEvents: (horariosGenerales || []).find(h => h.fecha === isoDate(diaSeleccionado)) ? "auto" : "none" }} onClick={() => setHorarioBorrar(diaSeleccionado)}>Esborrar dia</button>
               </div>
 
               {tramos.map((t, idx) => (
@@ -3708,13 +3698,13 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               ))}
 
               <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
-                <button style={{ background: "#e0f2fe", color: "#0369a1", border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tramo</button>
-                <button style={{ flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: "6px", padding: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }} onClick={guardarHorarioDia}>Guardar</button>
+                <button style={{ background: "#e0f2fe", color: "#0369a1", border: "none", borderRadius: "6px", padding: "5px 10px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }} onClick={() => setTramos([...tramos, { entrada: "", salida: "" }])}>+ Tram</button>
+                <button style={{ flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: "6px", padding: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }} onClick={guardarHorarioDia}>Desar</button>
               </div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "150px", color: "#94a3b8", fontSize: "13px", fontStyle: "italic", textAlign: "center" }}>
-              Selecciona un día del calendario para configurar su horario
+              Selecciona un dia del calendari per configurar-ne l'horari
             </div>
           )}
         </div>
@@ -3724,11 +3714,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
             <div style={{ background: WH, borderRadius: 18, padding: "32px", width: "100%", maxWidth: 400, boxShadow: "0 20px 60px rgba(0,0,0,.3)", textAlign: "center" }}>
               <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>¿Eliminar este bloqueo?</h3>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>Vols eliminar aquest bloqueig?</h3>
               <p style={{ fontSize: 13, color: TX2, marginBottom: 6, fontWeight: 700 }}>{bloqBorrar.motivo}</p>
               <p style={{ fontSize: 12, color: TX2, marginBottom: 24 }}>{toDMY(bloqBorrar.inicio)}{bloqBorrar.inicio !== bloqBorrar.fin ? ` — ${toDMY(bloqBorrar.fin)}` : ""}</p>
               <div style={{ display: "flex", gap: 10 }}>
-                <Btn ok={false} style={{ flex: 1 }} onClick={() => setBloqBorrar(null)}>Cancelar</Btn>
+                <Btn ok={false} style={{ flex: 1 }} onClick={() => setBloqBorrar(null)}>Cancel·lar</Btn>
                 <button style={{ flex: 1, background: `linear-gradient(135deg,${ER},#b91c1c)`, color: WH, border: "none", borderRadius: 11, padding: "12px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }} onClick={confirmarBorradoBloq}>Eliminar</button>
               </div>
             </div>
@@ -3740,11 +3730,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
             <div style={{ background: WH, borderRadius: 18, padding: "32px", width: "100%", maxWidth: 400, boxShadow: "0 20px 60px rgba(0,0,0,.3)", textAlign: "center" }}>
               <div style={{ fontSize: 40, marginBottom: 16 }}>📅</div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>¿Borrar el horario de este día?</h3>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: TX, marginBottom: 8 }}>Vols esborrar l'horari d'aquest dia?</h3>
               <p style={{ fontSize: 13, color: TX2, marginBottom: 24 }}>{horarioBorrar.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</p>
               <div style={{ display: "flex", gap: 10 }}>
-                <Btn ok={false} style={{ flex: 1 }} onClick={() => setHorarioBorrar(null)}>Cancelar</Btn>
-                <button style={{ flex: 1, background: `linear-gradient(135deg,${ER},#b91c1c)`, color: WH, border: "none", borderRadius: 11, padding: "12px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }} onClick={confirmarBorradoHorario}>Borrar</button>
+                <Btn ok={false} style={{ flex: 1 }} onClick={() => setHorarioBorrar(null)}>Cancel·lar</Btn>
+                <button style={{ flex: 1, background: `linear-gradient(135deg,${ER},#b91c1c)`, color: WH, border: "none", borderRadius: 11, padding: "12px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }} onClick={confirmarBorradoHorario}>Esborrar</button>
               </div>
             </div>
           </div>
@@ -3753,7 +3743,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {/* TOAST DESHACER BLOQUEO */}
         {toastBloqVisible && (
           <div style={{ position: "fixed", bottom: 30, left: "50%", transform: "translateX(-50%)", background: "#1e293b", color: WH, borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, boxShadow: "0 8px 24px rgba(0,0,0,.3)", zIndex: 200, fontSize: 13, whiteSpace: "nowrap" }}>
-            <span>🔒 Bloqueo eliminado</span>
+            <span>🔒 Bloqueig eliminat</span>
             <button style={{ background: A, color: WH, border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }} onClick={async () => {
               if (!ultimoBloqEliminado) return;
               const dias = obtenerDiasEntre(ultimoBloqEliminado.inicio, ultimoBloqEliminado.fin);
@@ -3765,14 +3755,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               setToastBloqVisible(false);
               if (toastBloqTimer) clearTimeout(toastBloqTimer);
               setUltimoBloqEliminado(null);
-            }}>Deshacer</button>
+            }}>Desfer</button>
           </div>
         )}
 
         {/* TOAST DESHACER HORARIO */}
         {toastHorarioVisible && (
           <div style={{ position: "fixed", bottom: 30, left: "50%", transform: "translateX(-50%)", background: "#1e293b", color: WH, borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, boxShadow: "0 8px 24px rgba(0,0,0,.3)", zIndex: 200, fontSize: 13, whiteSpace: "nowrap" }}>
-            <span>📅 Horario eliminado</span>
+            <span>📅 Horari eliminat</span>
             <button style={{ background: A, color: WH, border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }} onClick={async () => {
               if (!ultimoHorarioEliminado) return;
               const docId = `general-${toDMY(ultimoHorarioEliminado.fecha).replace(/\//g, "-")}`;
@@ -3780,7 +3770,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               setToastHorarioVisible(false);
               if (toastHorarioTimer) clearTimeout(toastHorarioTimer);
               setUltimoHorarioEliminado(null);
-            }}>Deshacer</button>
+            }}>Desfer</button>
           </div>
         )}
       </div>
@@ -3844,7 +3834,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <XAxis dataKey="dia" tick={{ fontSize: 10, fill: TX2 }} />
               <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
               <Tooltip
-                formatter={(value) => [`${value} €`, "Ingresos"]}
+                formatter={(value) => [`${value} €`, "Ingressos"]}
                 labelStyle={{ color: TX, fontWeight: 700 }}
                 contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
                 cursor={{ fill: "transparent" }}
@@ -3870,7 +3860,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <XAxis dataKey="dia" tick={{ fontSize: 9, fill: TX2 }} interval={isMobile ? 1 : 2} />
                 <YAxis tick={{ fontSize: 10, fill: TX2 }} unit="€" />
                 <Tooltip
-                  formatter={(value) => [`${value} €`, "Ingresos"]}
+                  formatter={(value) => [`${value} €`, "Ingressos"]}
                   labelStyle={{ color: TX, fontWeight: 700 }}
                   contentStyle={{ borderRadius: 8, border: `1px solid ${CR3}`, fontSize: 12 }}
                 />
@@ -3919,7 +3909,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       <div style={{ paddingBottom: 40 }}>
         {/* SELECTOR DE PERIODO */}
         <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap", justifyContent: "center" }}>
-          {[["hoy", "Hoy"], ["semana", "Semana"], ["mes", "Mes"], ["todo", "Histórico"]].map(([v, l]) => (
+          {[["hoy", "Avui"], ["semana", "Setmana"], ["mes", "Mes"], ["todo", "Històric"]].map(([v, l]) => (
             <button 
               key={v} 
               style={{
@@ -3940,19 +3930,19 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         <div className="admin-kpi-grid" style={{ ...as.kpiGrid, marginBottom: 25 }}>
           <div style={{ ...as.kpi, borderLeft: `4px solid ${A}` }}>
             <div style={as.kpiVal}>{ingresosTotal} €</div>
-            <div style={as.kpiLbl}>Ingresos Totales</div>
+            <div style={as.kpiLbl}>Ingressos Totals</div>
           </div>
           <div style={{ ...as.kpi, borderLeft: `4px solid #10B981` }}>
             <div style={{ ...as.kpiVal, color: "#10B981" }}>{ticketMedio} €</div>
-            <div style={as.kpiLbl}>Ticket Medio</div>
+            <div style={as.kpiLbl}>Tiquet Mitjà</div>
           </div>
           <div style={{ ...as.kpi, borderLeft: `4px solid #6366F1` }}>
             <div style={{ ...as.kpiVal, color: "#6366F1" }}>{completadasTotal.length}</div>
-            <div style={as.kpiLbl}>Servicios Realizados</div>
+            <div style={as.kpiLbl}>Serveis Realitzats</div>
           </div>
           <div style={{ ...as.kpi, borderLeft: `4px solid ${ER}` }}>
             <div style={{ ...as.kpiVal, color: ER }}>{tasaNSTotal}%</div>
-            <div style={as.kpiLbl}>Tasa No-Show</div>
+            <div style={as.kpiLbl}>Taxa No-Show</div>
           </div>
         </div>
 
@@ -4079,7 +4069,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         
         {/* NAVEGACIÓN DE PESTAÑAS */}
         <div style={{ display: "flex", gap: "10px", marginBottom: "24px", flexWrap: "wrap" }}>
-          {[["valoraciones", "Opiniones"]].map(([v, l]) => (
+          {[["valoraciones", "Opinions"]].map(([v, l]) => (
             <button 
               key={v} 
               onClick={() => setConfigSubTab(v)}
@@ -4101,23 +4091,23 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {configSubTab === "valoraciones" && (
           <div>
             <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginBottom: "16px" }}>
-              <button style={{...btnBlue, whiteSpace: "nowrap", flexShrink: 0}} onClick={() => setShowNewVal(v => !v)}>{showNewVal ? "Cancelar" : "+ Nueva opinión"}</button>
+              <button style={{...btnBlue, whiteSpace: "nowrap", flexShrink: 0}} onClick={() => setShowNewVal(v => !v)}>{showNewVal ? "Cancel·lar" : "+ Nova opinió"}</button>
             </div>
 
             {showNewVal && (
               <div style={{ ...cardS, border: "1px solid #93c5fd", background: "#f8fafc" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "12px" }}>
-                  <div><label style={labelS}>Nombre del cliente</label><input style={inputS} value={newVal.nombre} onChange={e => setNewVal(f => ({ ...f, nombre: e.target.value }))} placeholder="Ej: Laura M." /></div>
+                  <div><label style={labelS}>Nom del client</label><input style={inputS} value={newVal.nombre} onChange={e => setNewVal(f => ({ ...f, nombre: e.target.value }))} placeholder="Ex: Laura M." /></div>
                   <div>
-                    <label style={labelS}>Servicio realizado</label>
+                    <label style={labelS}>Servei realitzat</label>
                     <select style={inputS} value={newVal.servicio} onChange={e => setNewVal(f => ({ ...f, servicio: e.target.value }))}>
-                      <option value="">Seleccionar servicio...</option>
+                      <option value="">Seleccionar servei...</option>
                       {servicios.map(s => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
                     </select>
                   </div>
                 </div>
                 <div style={{ marginBottom: "16px" }}>
-                  <label style={labelS}>Valoración</label>
+                  <label style={labelS}>Valoració</label>
                   <div style={{ display: "flex", gap: "4px", justifyContent: "center" }}>
                     {[1, 2, 3, 4, 5].map(i => (
                       <span key={i} style={{ fontSize: "30px", cursor: "pointer", color: i <= newVal.estrellas ? "#F59E0B" : "#D1D5DB", transition: "0.2s" }} onClick={() => setNewVal(f => ({ ...f, estrellas: i }))}>★</span>
@@ -4125,12 +4115,12 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   </div>
                 </div>
                 <div style={{ marginBottom: "16px" }}>
-                  <label style={labelS}>Comentario</label>
-                  <textarea value={newVal.comentario} onChange={e => setNewVal(f => ({ ...f, comentario: e.target.value }))} placeholder="Escribe aquí la opinión del cliente..." style={{ ...inputS, minHeight: "90px", resize: "vertical", fontFamily: "inherit" }} />
+                  <label style={labelS}>Comentari</label>
+                  <textarea value={newVal.comentario} onChange={e => setNewVal(f => ({ ...f, comentario: e.target.value }))} placeholder="Escriu aquí l'opinió del client..." style={{ ...inputS, minHeight: "90px", resize: "vertical", fontFamily: "inherit" }} />
                 </div>
                 <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                  <button style={btnCancel} onClick={() => setShowNewVal(false)}>Cancelar</button>
-                  <button style={{...btnGreen, opacity: (!newVal.nombre || !newVal.servicio || !newVal.comentario) ? 0.5 : 1, cursor: (!newVal.nombre || !newVal.servicio || !newVal.comentario) ? "not-allowed" : "pointer"}} onClick={addVal}>Guardar Opinión</button>
+                  <button style={btnCancel} onClick={() => setShowNewVal(false)}>Cancel·lar</button>
+                  <button style={{...btnGreen, opacity: (!newVal.nombre || !newVal.servicio || !newVal.comentario) ? 0.5 : 1, cursor: (!newVal.nombre || !newVal.servicio || !newVal.comentario) ? "not-allowed" : "pointer"}} onClick={addVal}>Desar Opinió</button>
                 </div>
               </div>
             )}
@@ -4161,9 +4151,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   {editVal?.id === v.id ? (
                     <div style={{ ...cardS, border: "1px solid #93c5fd", background: "#f8fafc", margin: 0 }}>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-                        <div><label style={labelS}>Nombre</label><input style={inputS} value={editVal.nombre} onChange={e => setEditVal(f => ({ ...f, nombre: e.target.value }))} /></div>
+                        <div><label style={labelS}>Nom</label><input style={inputS} value={editVal.nombre} onChange={e => setEditVal(f => ({ ...f, nombre: e.target.value }))} /></div>
                         <div>
-                          <label style={labelS}>Servicio</label>
+                          <label style={labelS}>Servei</label>
                           <select style={inputS} value={editVal.servicio} onChange={e => setEditVal(f => ({ ...f, servicio: e.target.value }))}>
                             <option value="">Seleccionar...</option>
                             {servicios.map(s => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
@@ -4171,15 +4161,15 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                         </div>
                       </div>
                       <div style={{ marginBottom: "12px" }}>
-                        <label style={labelS}>Valoración</label>
+                        <label style={labelS}>Valoració</label>
                         <div style={{ display: "flex", gap: "4px", justifyContent: "center" }}>
                           {[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: "30px", cursor: "pointer", color: i <= editVal.estrellas ? "#F59E0B" : "#D1D5DB" }} onClick={() => setEditVal(f => ({ ...f, estrellas: i }))}>★</span>)}
                         </div>
                       </div>
-                      <div style={{ marginBottom: "16px" }}><label style={labelS}>Comentario</label><textarea value={editVal.comentario} onChange={e => setEditVal(f => ({ ...f, comentario: e.target.value }))} style={{ ...inputS, minHeight: "80px", resize: "vertical", fontFamily: "inherit" }} /></div>
+                      <div style={{ marginBottom: "16px" }}><label style={labelS}>Comentari</label><textarea value={editVal.comentario} onChange={e => setEditVal(f => ({ ...f, comentario: e.target.value }))} style={{ ...inputS, minHeight: "80px", resize: "vertical", fontFamily: "inherit" }} /></div>
                       <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
-                        <button style={btnCancel} onClick={() => setEditVal(null)}>Cancelar</button>
-                        <button style={btnGreen} onClick={saveEdit}>Guardar</button>
+                        <button style={btnCancel} onClick={() => setEditVal(null)}>Cancel·lar</button>
+                        <button style={btnGreen} onClick={saveEdit}>Desar</button>
                       </div>
                     </div>
                   ) : (
@@ -4225,7 +4215,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
               ))}
-              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8", fontSize: "14px", background: "#fff", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>No hay opiniones registradas.</div>}
+              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8", fontSize: "14px", background: "#fff", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>No hi ha opinions registrades.</div>}
             </div>
           </div>
         )}
@@ -4248,10 +4238,10 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <table style={{ width: "100%", minWidth: "360px", borderCollapse: "collapse" }}>
                   <thead>
                     <tr>
-                      <th style={{ ...thS, textAlign: "left", padding: "8px 6px 8px 10px" }}>Día</th>
+                      <th style={{ ...thS, textAlign: "left", padding: "8px 6px 8px 10px" }}>Dia</th>
                       <th style={{ ...thS, textAlign: "center", padding: "8px 6px" }}>Entrada</th>
-                      <th style={{ ...thS, textAlign: "center", padding: "8px 6px" }}>Salida</th>
-                      <th style={{ ...thS, textAlign: "center", padding: "8px 6px" }}>Descanso</th>
+                      <th style={{ ...thS, textAlign: "center", padding: "8px 6px" }}>Sortida</th>
+                      <th style={{ ...thS, textAlign: "center", padding: "8px 6px" }}>Descans</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -4277,11 +4267,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
             <div style={{background:"#fff",borderRadius:18,padding:"32px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.3)",textAlign:"center"}}>
               <div style={{fontSize:40,marginBottom:16}}>🗑</div>
-              <h3 style={{fontSize:17,fontWeight:700,color:"#0D1F35",marginBottom:8}}>¿Eliminar este servicio?</h3>
+              <h3 style={{fontSize:17,fontWeight:700,color:"#0D1F35",marginBottom:8}}>Vols eliminar aquest servei?</h3>
               <p style={{fontSize:13,color:"#4A6080",marginBottom:6,fontWeight:700}}>{svcBorrar.nombre}</p>
               <p style={{fontSize:12,color:"#4A6080",marginBottom:24}}>{svcBorrar.duracionMin} min · {svcBorrar.precio} €</p>
               <div style={{display:"flex",gap:10}}>
-                <button style={{flex:1,background:"#E0E8F2",border:"1px solid #CED9E8",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={() => setSvcBorrar(null)}>Cancelar</button>
+                <button style={{flex:1,background:"#E0E8F2",border:"1px solid #CED9E8",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={() => setSvcBorrar(null)}>Cancel·lar</button>
                 <button style={{flex:1,background:"linear-gradient(135deg,#dc2626,#b91c1c)",color:"#fff",border:"none",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={confirmarBorradoSvc}>Eliminar</button>
               </div>
             </div>
@@ -4291,10 +4281,10 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
             <div style={{background:"#fff",borderRadius:18,padding:"32px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.3)",textAlign:"center"}}>
               <div style={{fontSize:40,marginBottom:16}}>🗑</div>
-              <h3 style={{fontSize:17,fontWeight:700,color:"#0D1F35",marginBottom:8}}>¿Eliminar esta categoría?</h3>
-              <p style={{fontSize:13,color:"#4A6080",marginBottom:24}}>Se eliminará <b>{catBorrar.nombre}</b> de la web y del flujo de reserva.</p>
+              <h3 style={{fontSize:17,fontWeight:700,color:"#0D1F35",marginBottom:8}}>Vols eliminar aquesta categoria?</h3>
+              <p style={{fontSize:13,color:"#4A6080",marginBottom:24}}>S'eliminarà <b>{catBorrar.nombre}</b> de la web i del flux de reserva.</p>
               <div style={{display:"flex",gap:10}}>
-                <button style={{flex:1,background:"#E0E8F2",border:"1px solid #CED9E8",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={() => setCatBorrar(null)}>Cancelar</button>
+                <button style={{flex:1,background:"#E0E8F2",border:"1px solid #CED9E8",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={() => setCatBorrar(null)}>Cancel·lar</button>
                 <button style={{flex:1,background:"linear-gradient(135deg,#dc2626,#b91c1c)",color:"#fff",border:"none",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={confirmarBorradoCat}>Eliminar</button>
               </div>
             </div>
@@ -4304,10 +4294,10 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
             <div style={{background:"#fff",borderRadius:18,padding:"32px",width:"100%",maxWidth:400,boxShadow:"0 20px 60px rgba(0,0,0,.3)",textAlign:"center"}}>
               <div style={{fontSize:40,marginBottom:16}}>🗑</div>
-              <h3 style={{fontSize:17,fontWeight:700,color:"#0D1F35",marginBottom:8}}>¿Eliminar esta opinión?</h3>
+              <h3 style={{fontSize:17,fontWeight:700,color:"#0D1F35",marginBottom:8}}>Vols eliminar aquesta opinió?</h3>
               <p style={{fontSize:13,color:"#4A6080",marginBottom:24}}>{valBorrar.nombre} — "{valBorrar.comentario}"</p>
               <div style={{display:"flex",gap:10}}>
-                <button style={{flex:1,background:"#E0E8F2",border:"1px solid #CED9E8",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={() => setValBorrar(null)}>Cancelar</button>
+                <button style={{flex:1,background:"#E0E8F2",border:"1px solid #CED9E8",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={() => setValBorrar(null)}>Cancel·lar</button>
                 <button style={{flex:1,background:"linear-gradient(135deg,#dc2626,#b91c1c)",color:"#fff",border:"none",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={async () => {
                   const copia = {...valBorrar};
                   setValoraciones(p => p.filter(x => x.id !== valBorrar.id));
@@ -4339,20 +4329,20 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     return (
       <div style={{ width: "100%", margin: "0 auto", textAlign: "center", padding: "60px 20px" }}>
         <div style={{ fontSize: "40px", marginBottom: "16px" }}>🚧</div>
-        <div style={{ fontSize: "16px", fontWeight: "700", color: TX, marginBottom: "8px" }}>Próximamente</div>
-        <div style={{ fontSize: "13px", color: TX2 }}>Esta sección está en desarrollo.</div>
+        <div style={{ fontSize: "16px", fontWeight: "700", color: TX, marginBottom: "8px" }}>Properament</div>
+        <div style={{ fontSize: "13px", color: TX2 }}>Aquesta secció està en desenvolupament.</div>
       </div>
     );
   };
 
 // 1. EL ARRAY DE PESTAÑAS
   const tabs = [
-    ["citas", iconCitas, "Citas"],
-    ["clientes", iconClientes, "Clientes"],
-    ["caja", iconCaja, "Caja"],
-    ["stats", iconStats, "Estadísticas"],
-    ["disponibilidad", iconDisponibilidad, "Disponibilidad"],
-    ["config", iconConfig, "Configuración"],
+    ["citas", iconCitas, "Cites"],
+    ["clientes", iconClientes, "Clients"],
+    ["caja", iconCaja, "Caixa"],
+    ["stats", iconStats, "Estadístiques"],
+    ["disponibilidad", iconDisponibilidad, "Disponibilitat"],
+    ["config", iconConfig, "Configuració"],
   ];
 
   // --- PANEL DE CONTROL DE ESPACIOS DEL MENÚ ---
@@ -4408,7 +4398,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "3px" }}>
               <span style={{fontSize: 17, fontWeight: 700, color: TX, lineHeight: 1, margin: 0}}>{CONFIG.nombre}</span>
-              <span style={{fontSize: 10, fontWeight: 800, color: A, letterSpacing: "0.5px", lineHeight: 1, margin: 0}}>PANEL DE ADMINISTRADOR</span>
+              <span style={{fontSize: 10, fontWeight: 800, color: A, letterSpacing: "0.5px", lineHeight: 1, margin: 0}}>PANELL D'ADMINISTRADOR</span>
             </div>
             
             <span className="hide-mobile" style={{ fontSize: 13, fontWeight: 500, color: TX2, borderLeft: `1px solid ${CR3}`, paddingLeft: 15, height: "24px", display: "flex", alignItems: "center" }}>
@@ -4432,7 +4422,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             }} 
             onClick={handleLogout}
           >
-            Cerrar sesión →
+            Tancar sessió →
           </button>
         </div>
       </div>
@@ -4510,7 +4500,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       {toastVisible&&(
         <div style={{position:"fixed",bottom:30,left:"50%",transform:"translateX(-50%)",background:"#1e293b",color:WH,borderRadius:12,padding:"14px 20px",display:"flex",alignItems:"center",gap:16,boxShadow:"0 8px 24px rgba(0,0,0,.3)",zIndex:200,fontSize:13,whiteSpace:"nowrap"}}>
           <span>🗑 Cita eliminada</span>
-          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ 
+          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{
             if(!_citaEliminadaTemp)return; 
             const{id,...resto}=_citaEliminadaTemp; 
             await crearCita(resto);
@@ -4531,31 +4521,31 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             _citaEliminadaTemp=null; 
             setToastVisible(false); 
             if(toastTimer)clearTimeout(toastTimer); 
-          }}>Deshacer</button>
+          }}>Desfer</button>
         </div>
       )}
       {toastClienteVisible&&(
         <div style={{position:"fixed",bottom:30,left:"50%",transform:"translateX(-50%)",background:"#1e293b",color:WH,borderRadius:12,padding:"14px 20px",display:"flex",alignItems:"center",gap:16,boxShadow:"0 8px 24px rgba(0,0,0,.3)",zIndex:200,fontSize:13,whiteSpace:"nowrap"}}>
-          <span>🗑 Cliente eliminado</span>
-          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_clienteEliminadoTemp)return; const{id,...resto}=_clienteEliminadoTemp; const docId=resto.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/gi,"_")+"_"+resto.telefono; await setDoc(doc(db,"clientes",docId),resto); _clienteEliminadoTemp=null; setToastClienteVisible(false); if(toastClienteTimer)clearTimeout(toastClienteTimer); }}>Deshacer</button>
+          <span>🗑 Client eliminat</span>
+          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_clienteEliminadoTemp)return; const{id,...resto}=_clienteEliminadoTemp; const docId=resto.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/gi,"_")+"_"+resto.telefono; await setDoc(doc(db,"clientes",docId),resto); _clienteEliminadoTemp=null; setToastClienteVisible(false); if(toastClienteTimer)clearTimeout(toastClienteTimer); }}>Desfer</button>
         </div>
       )}
       {toastValVisible&&(
         <div style={{position:"fixed",bottom:30,left:"50%",transform:"translateX(-50%)",background:"#1e293b",color:WH,borderRadius:12,padding:"14px 20px",display:"flex",alignItems:"center",gap:16,boxShadow:"0 8px 24px rgba(0,0,0,.3)",zIndex:200,fontSize:13,whiteSpace:"nowrap"}}>
-          <span>🗑 Opinión eliminada</span>
-          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_valEliminadaTemp)return; await guardarValoracionFB(_valEliminadaTemp); _valEliminadaTemp=null; setToastValVisible(false); if(toastValTimer)clearTimeout(toastValTimer); }}>Deshacer</button>
+          <span>🗑 Opinió eliminada</span>
+          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_valEliminadaTemp)return; await guardarValoracionFB(_valEliminadaTemp); _valEliminadaTemp=null; setToastValVisible(false); if(toastValTimer)clearTimeout(toastValTimer); }}>Desfer</button>
         </div>
       )}
       {toastSvcVisible&&(
         <div style={{position:"fixed",bottom:30,left:"50%",transform:"translateX(-50%)",background:"#1e293b",color:WH,borderRadius:12,padding:"14px 20px",display:"flex",alignItems:"center",gap:16,boxShadow:"0 8px 24px rgba(0,0,0,.3)",zIndex:200,fontSize:13,whiteSpace:"nowrap"}}>
-          <span>🗑 Servicio eliminado</span>
-          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_svcEliminadoTemp)return; await guardarServicioFB(_svcEliminadoTemp); setServicios(prev=>[...prev,_svcEliminadoTemp].filter(Boolean).sort((a,b)=>a.id-b.id)); _svcEliminadoTemp=null; setToastSvcVisible(false); if(toastSvcTimer)clearTimeout(toastSvcTimer); }}>Deshacer</button>
+          <span>🗑 Servei eliminat</span>
+          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_svcEliminadoTemp)return; await guardarServicioFB(_svcEliminadoTemp); setServicios(prev=>[...prev,_svcEliminadoTemp].filter(Boolean).sort((a,b)=>a.id-b.id)); _svcEliminadoTemp=null; setToastSvcVisible(false); if(toastSvcTimer)clearTimeout(toastSvcTimer); }}>Desfer</button>
         </div>
       )}
       {toastCatVisible&&(
         <div style={{position:"fixed",bottom:30,left:"50%",transform:"translateX(-50%)",background:"#1e293b",color:WH,borderRadius:12,padding:"14px 20px",display:"flex",alignItems:"center",gap:16,boxShadow:"0 8px 24px rgba(0,0,0,.3)",zIndex:200,fontSize:13,whiteSpace:"nowrap"}}>
-          <span>🗑 Categoría eliminada</span>
-          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_catEliminadaTemp)return; await guardarCategoriaFB(_catEliminadaTemp); setCategorias(prev=>[...prev,_catEliminadaTemp].filter(Boolean).sort((a,b)=>a.id-b.id)); _catEliminadaTemp=null; setToastCatVisible(false); if(toastCatTimer)clearTimeout(toastCatTimer); }}>Deshacer</button>
+          <span>🗑 Categoria eliminada</span>
+          <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{ if(!_catEliminadaTemp)return; await guardarCategoriaFB(_catEliminadaTemp); setCategorias(prev=>[...prev,_catEliminadaTemp].filter(Boolean).sort((a,b)=>a.id-b.id)); _catEliminadaTemp=null; setToastCatVisible(false); if(toastCatTimer)clearTimeout(toastCatTimer); }}>Desfer</button>
         </div>
       )}
     </div>
