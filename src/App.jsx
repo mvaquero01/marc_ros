@@ -34,6 +34,12 @@ STYLE.textContent = `
   @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
   .anim  { animation: fadeUp 0.5s ease both; }
+  .anim  { animation: fadeUp 0.5s ease both; }
+  select:focus, input:focus, textarea:focus {
+    outline: none !important;
+    border-color: #C8102E !important;
+    box-shadow: 0 0 0 2px rgba(200,16,46,0.15) !important;
+  }
   .anim-fade { animation: fadeIn 0.4s ease both; }
   * { box-sizing:border-box; margin:0; padding:0; }
   
@@ -860,8 +866,8 @@ function LoginPage(){
     setError(true); setTimeout(()=>setError(false),2500);
   };
   return(
-    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,#3D0A0F 0%,#7A0A1D 60%,#3D0A0F 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
-      <div style={{background:WH,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:360,boxShadow:"0 20px 60px rgba(0,0,0,.4)"}}>
+    <div className="cliente-wrap" style={{minHeight:"100vh",background:`linear-gradient(160deg,${CR} 0%,${CR3} 60%,${CR} 100%)`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:FONT}}>
+      <div style={{background:WH,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:360,border:`1px solid ${CR3}`,boxShadow:"0 20px 60px rgba(0,0,0,.15)"}}>
         <div style={{width:56,height:56,background:`linear-gradient(135deg,${A},#7A0A1D)`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,margin:"0 auto 20px"}}>🔐</div>
         <h2 style={{textAlign:"center",fontSize:22,fontWeight:700,color:TX,marginBottom:4}}>Accés privat</h2>
         <p style={{textAlign:"center",fontSize:13,color:TX2,marginBottom:24}}>{CONFIG.nombre}</p>
@@ -1459,7 +1465,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         height: "1px", 
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
-        maxWidth: "1400px"
+        maxWidth: "100%"
       }} />
 
       {/* --- SECCIÓN 4: UBICACIÓN Y CONTACTO --- */}
@@ -1664,8 +1670,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             }
 
             const sty = {
-              card: { background: "#FFF", borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", padding: "14px" },
-              lbl: { fontSize: "10px", fontWeight: 800, color: "#1C1C1C", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
+              card: { background: WH, borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", padding: "14px" },              lbl: { fontSize: "10px", fontWeight: 800, color: "#1C1C1C", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" },
             };
 
             const SelectorPeluquero = () => null;
@@ -1750,7 +1755,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                             fontWeight: isSel || isHoy ? 800 : 500,
                             background: isSel ? A : "transparent",
                             color: isSel ? "#fff" : d < HOY ? "#CBD5E0" : !disp && !isSel ? "#CBD5E0" : "#0A1F3D",
-                            outline: isHoy && !isSel ? "1.5px solid #1B4F8A" : "none",
+                            outline: isHoy && !isSel ? `1.5px solid ${A}` : "none",
                             outlineOffset: "0px",
                             textDecoration: d < HOY ? "line-through" : "none",
                             textDecorationColor: "#CBD5E0",
@@ -3387,7 +3392,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <button
                   onClick={handleGuardarCierre}
                   style={{
-                    background: guardando ? "#1C1C1C" : (hayCambios ? "#16a34a" : "#1C1C1C"),
+                    background: guardando ? "#C9A227" : (hayCambios ? "#16a34a" : "#C9A227"),
                     color: WH, border: "none", borderRadius: 8,
                     padding: "8px 18px", fontSize: 11, fontWeight: 700,
                     cursor: hayCambios ? "pointer" : "default",
@@ -3653,8 +3658,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     fontSize: "12px",
                     fontWeight: tieneHorario || isSeleccionado || isHoy || isBloqueado ? 800 : 500,
                     color: isSeleccionado ? "#fff" : isPast && isBloqueado ? "#fca5a5" : isPast && tieneHorario ? "#86efac" : isPast ? "#CBD5E0" : isBloqueado ? "#ef4444" : tieneHorario ? "#16a34a" : "#0A1F3D",
-                    background: isSeleccionado ? "#1B4F8A" : isPast ? "transparent" : isBloqueado ? "#fee2e2" : tieneHorario ? "#dcfce7" : "transparent",
-                    outline: isHoy && !isSeleccionado ? "1.5px solid #1B4F8A" : "none",
+                    background: isSeleccionado ? A : isPast ? "transparent" : isBloqueado ? "#fee2e2" : tieneHorario ? "#dcfce7" : "transparent",
+                    outline: isHoy && !isSeleccionado ? `1.5px solid ${A}` : "none",
                     outlineOffset: "0px",
                     textDecoration: isPast ? "line-through" : "none",
                   }}>
@@ -4214,7 +4219,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
               ))}
-              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#1C1C1C", fontSize: "14px", background: CR, borderRadius: "12px", border: `1px dashed ${CR3}` }}>No hi ha opinions registrades.</div>}
+              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#1C1C1C", fontSize: "14px", background: WH, borderRadius: "12px", border: `1px dashed ${CR3}` }}>No hi ha opinions registrades.</div>}
             </div>
           </div>
         )}
