@@ -573,8 +573,8 @@ function asignarPeluqueroAleatorio(servicioId, fecha, hora, citas, bloqueos, fes
 }
 
 const FONT="'Plus Jakarta Sans',sans-serif";
-const A="#C8102E",CR="#F5F1EC",CR2="#EFE6DA",CR3="#E3D5C0";
-const WH="#F8FBFF",TX="#0D1F35",TX2="#4A6080";
+const A="#C8102E",CR="#F1EAD9",CR2="#EFE6DA",CR3="#E3D5C0";
+const WH="#F8F4EC",TX="#0D1F35",TX2="#1C1C1C";
 const OK="#16a34a",ER="#dc2626";
 
 // ─────────────────────────────────────────────
@@ -1280,7 +1280,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         </div>
         <div className="hide-mobile" style={{position:"absolute",left:"50%",transform:"translateX(-50%)",display:"flex",gap:4}}>
           {[["opiniones","Opinions"],["ubicacion","Contacte"]].map(([id,label])=>(
-            <button key={id} style={{background:"transparent",border:"none",color:TX2,cursor:"pointer",fontSize:12,fontWeight:600,padding:"10px 20px",borderRadius:8,transition:"background .15s"}} onClick={()=>scrollTo(id)}
+            <button key={id} style={{background:"transparent",border:"none",color:A,cursor:"pointer",fontSize:12,fontWeight:600,padding:"10px 20px",borderRadius:8,transition:"background .15s"}} onClick={()=>scrollTo(id)}
               onMouseEnter={e=>e.target.style.background=CR2}
               onMouseLeave={e=>e.target.style.background="transparent"}>
               {label}
@@ -1315,7 +1315,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
           />
         </div>
         <h1 className="hero-title" style={{fontSize:32,fontWeight:700,color:WH,marginBottom:6,letterSpacing:1}}>{CONFIG.nombre}</h1>
-        <p className="hero-dir" style={{fontSize:12,color:"#9ec3e8",marginBottom:20}}>📍 {CONFIG.direccion} · 📞 {CONFIG.telefono}</p>
+        <p className="hero-dir" style={{fontSize:12,color:"#FFFFFF",marginBottom:20}}>📍 {CONFIG.direccion} · 📞 {CONFIG.telefono}</p>
         <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#7A0A1D)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
       </div>
 
@@ -1780,7 +1780,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                 <div style={{ ...sty.lbl, marginTop: "4px" }}>✦ Disponibilitat {selDia ? `${selDia.getDate()} ${selDia.toLocaleString('ca-ES', { month: 'short' })}` : ""}</div>
                 <div style={sty.card}>
                   {slots.length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "20px 0", fontSize: "13px", color: "#94A3B8", fontStyle: "italic" }}>
+                    <div style={{ textAlign: "center", padding: "20px 0", fontSize: "13px", color: "#1C1C1C", fontStyle: "italic" }}>
                       No hi ha hores disponibles per a aquest dia
                     </div>
                   ) : (
@@ -1805,7 +1805,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                 <div style={sty.lbl}>Resum</div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "16px", paddingBottom: "12px", borderBottom: "1px solid #F1F5F9" }}>
                   <span style={{ fontSize: "14px", fontWeight: 800, color: "#0A1F3D" }}>{selServicio?.nombre}</span>
-                  <span style={{ fontSize: "12px", color: "#94A3B8", whiteSpace: "nowrap" }}>⏱ {selServicio?.duracionMin} min</span>
+                  <span style={{ fontSize: "12px", color: "#1C1C1C", whiteSpace: "nowrap" }}>⏱ {selServicio?.duracionMin} min</span>
                 </div>
                 <div style={{ textAlign: "center", padding: "14px 8px 0 8px" }}>
                   <span style={{ fontSize: "15px", fontWeight: 700, color: "#0A1F3D" }}>
@@ -1873,7 +1873,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     // 2. COLORES
     colorPrimario: "#1B4F8A",
     colorTexto: "#0A1F3D",           
-    colorSecundario: "#64748B",      
+    colorSecundario: "#1C1C1C",      
     colorFondo: "#FFF",
     colorBorde: "#E2E8F0",
     
@@ -2039,7 +2039,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                     ? "#10B981" // Verde esmeralda sólido
                     : A),       // Azul sólido de tu marca
               
-              color: !btnOk ? "#94A3B8" : WH,
+              color: !btnOk ? "#1C1C1C" : WH,
               
               // Ajustamos la sombra para que coincida con el color activo
               boxShadow: !btnOk 
@@ -2697,7 +2697,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <button type="button" title="Confirmar" style={{width:"28px", height:"28px", borderRadius:"8px", background:"#D1FAE5", color:"#059669", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"14px", fontWeight:"900"}} onClick={e=>{e.preventDefault();e.stopPropagation();cambiarEstado(c.id,"completada");}}>✓</button>
             <button type="button" title="No Show" style={{width:"28px", height:"28px", borderRadius:"8px", background:"#FEE2E2", color:"#DC2626", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px", fontWeight:"900"}} onClick={e=>{e.preventDefault();e.stopPropagation();cambiarEstado(c.id,"no-show");}}>✕</button>
           </>}
-          {c.estado!=="pendiente"&&<button type="button" title="Revertir" style={{width:"28px", height:"28px", borderRadius:"8px", background:"#F1F5F9", color:"#64748B", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"15px"}} onClick={e=>{e.preventDefault();e.stopPropagation();cambiarEstado(c.id,"pendiente",c.estado);}}>↩</button>}
+          {c.estado!=="pendiente"&&<button type="button" title="Revertir" style={{width:"28px", height:"28px", borderRadius:"8px", background:"#F1F5F9", color:"#1C1C1C", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"15px"}} onClick={e=>{e.preventDefault();e.stopPropagation();cambiarEstado(c.id,"pendiente",c.estado);}}>↩</button>}
           <button type="button" title="Editar" style={{width:"28px", height:"28px", borderRadius:"8px", background:"#E0E7FF", color:"#4F46E5", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px"}} onClick={e=>{e.preventDefault();e.stopPropagation();setCitaEditando({...c});}}>✏️</button>
           <button type="button" title="Eliminar" style={{width:"28px", height:"28px", borderRadius:"8px", background:"#FEE2E2", color:"#DC2626", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"13px"}} onClick={e=>{e.preventDefault();e.stopPropagation();setCitaBorrar({...c});}}>🗑</button>
         </div>
@@ -2710,7 +2710,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           .fila-premium { transition: background-color 0.2s ease; border-bottom: 1px solid #F1F5F9; }
           .fila-premium:hover { background-color: #F8FAFC; }
           .tabla-premium { width: 100%; border-collapse: collapse; }
-          .th-premium { padding: 5px 10px; color: #64748B; font-size: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #F1F5F9; text-align: center; }
+          .th-premium { padding: 5px 10px; color: #1C1C1C; font-size: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #F1F5F9; text-align: center; }
           .td-premium { padding: 5px 10px; vertical-align: middle; text-align: center; }
         `}</style>
 
@@ -3388,7 +3388,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <button
                   onClick={handleGuardarCierre}
                   style={{
-                    background: guardando ? "#94a3b8" : (hayCambios ? "#16a34a" : "#94a3b8"),
+                    background: guardando ? "#1C1C1C" : (hayCambios ? "#16a34a" : "#1C1C1C"),
                     color: WH, border: "none", borderRadius: 8,
                     padding: "8px 18px", fontSize: 11, fontWeight: 700,
                     cursor: hayCambios ? "pointer" : "default",
@@ -3550,7 +3550,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
             <div className="anim" style={{ background: "#fff", padding: "12px", borderRadius: "10px", marginBottom: "12px", border: "1px solid #cbd5e1" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                 <div style={{ position: "relative" }}>
-                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Des de</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: "#1C1C1C", display: "block", marginBottom: 4 }}>Des de</label>
                   <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqDesdeCal(v => !v)}>{bloqForm.desde ? toDMY(bloqForm.desde) : "Seleccionar..."}</button>
                   {showBloqDesdeCal && (
                     <div style={{ position: "absolute", zIndex: 200, marginTop: "4px" }}>
@@ -3559,7 +3559,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
                 <div style={{ position: "relative" }}>
-                  <label style={{ fontSize: 10, fontWeight: 700, color: "#64748b", display: "block", marginBottom: 4 }}>Fins a (opcional)</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: "#1C1C1C", display: "block", marginBottom: 4 }}>Fins a (opcional)</label>
                   <button style={{ ...inputS, textAlign: "left", cursor: "pointer" }} onClick={() => setShowBloqHastaCal(v => !v)}>{bloqForm.hasta ? toDMY(bloqForm.hasta) : "Seleccionar..."}</button>
                   {showBloqHastaCal && (
                     <div style={{ position: "absolute", zIndex: 200, marginTop: "4px", right: 0 }}>
@@ -3584,14 +3584,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           )}
 
           {bloqueosAgrupados.length === 0 && (
-            <div style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic", textAlign: "center", padding: "20px 0" }}>No hi ha dies bloquejats</div>
+            <div style={{ fontSize: 12, color: "#1C1C1C", fontStyle: "italic", textAlign: "center", padding: "20px 0" }}>No hi ha dies bloquejats</div>
           )}
 
           {bloqueosAgrupados.map((b, i) => (
             <div key={i} style={{ background: "#fff", padding: "10px 14px", borderRadius: "8px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid #fee2e2" }}>
               <div style={{ textAlign: "left" }}>
                 <div style={{ fontSize: "13px", fontWeight: "700", color: "#1e293b" }}>{b.motivo}</div>
-                <div style={{ fontSize: "11px", color: "#64748b" }}>{toDMY(b.inicio)}{b.inicio !== b.fin ? ` — ${toDMY(b.fin)}` : ""}</div>
+                <div style={{ fontSize: "11px", color: "#1C1C1C" }}>{toDMY(b.inicio)}{b.inicio !== b.fin ? ` — ${toDMY(b.fin)}` : ""}</div>
               </div>
               <button style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", fontSize: "18px" }} onClick={() => setBloqBorrar(b)}>✕</button>
             </div>
@@ -3604,15 +3604,15 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {/* NAVEGACIÓN MES */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-            <button onClick={() => navegar(-1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#64748b" }}>‹</button>
+            <button onClick={() => navegar(-1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#1C1C1C" }}>‹</button>
             <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>{mesRef.toLocaleString("es-ES", { month: "long", year: "numeric" })}</span>
-            <button onClick={() => navegar(1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#64748b" }}>›</button>
+            <button onClick={() => navegar(1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#1C1C1C" }}>›</button>
           </div>
 
           {/* CABECERA DÍAS */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "4px", marginBottom: "6px" }}>
             {["L", "M", "X", "J", "V", "S", "D"].map(d => (
-              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#94a3b8" }}>{d}</div>
+              <div key={d} style={{ textAlign: "center", fontSize: "10px", fontWeight: 800, color: "#1C1C1C" }}>{d}</div>
             ))}
           </div>
 
@@ -3668,9 +3668,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
           {/* LEYENDA */}
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dcfce7" }} />Amb horari</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloquejat</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#64748b" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sense horari (tancat)</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#1C1C1C" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#dcfce7" }} />Amb horari</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#1C1C1C" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#fee2e2" }} />Bloquejat</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "10px", color: "#1C1C1C" }}><div style={{ width: 10, height: 10, borderRadius: 3, background: "#f8fafc", border: "1px solid #cbd5e1" }} />Sense horari (tancat)</div>
           </div>
 
           </div>
@@ -3689,7 +3689,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               {tramos.map((t, idx) => (
                 <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "6px" }}>
                   <input type="time" style={{ flex: 1, padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" }} value={t.entrada} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], entrada: e.target.value }; setTramos(n); }} />
-                  <span style={{ fontSize: 11, color: "#64748b" }}>—</span>
+                  <span style={{ fontSize: 11, color: "#1C1C1C" }}>—</span>
                   <input type="time" style={{ flex: 1, padding: "8px 10px", background: "#fff", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", boxSizing: "border-box" }} value={t.salida} onChange={e => { const n = [...tramos]; n[idx] = { ...n[idx], salida: e.target.value }; setTramos(n); }} />
                   {tramos.length > 1 && (
                     <button style={{ background: "#fee2e2", color: "#dc2626", border: "none", borderRadius: "6px", width: "24px", height: "24px", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }} onClick={() => setTramos(tramos.filter((_, i) => i !== idx))}>✕</button>
@@ -3703,7 +3703,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               </div>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "150px", color: "#94a3b8", fontSize: "13px", fontStyle: "italic", textAlign: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", minHeight: "150px", color: "#1C1C1C", fontSize: "13px", fontStyle: "italic", textAlign: "center" }}>
               Selecciona un dia del calendari per configurar-ne l'horari
             </div>
           )}
@@ -4051,7 +4051,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     // --- ESTILOS REUTILIZABLES ---
     const cardS = { background: "#fff", borderRadius: "12px", padding: "20px", marginBottom: "16px", border: "1px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" };
     const inputS = { width: "100%", padding: "10px 12px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "13px", color: "#1e293b", outline: "none", boxSizing: "border-box" };
-    const labelS = { fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "6px", display: "block", textTransform: "uppercase", letterSpacing: "0.5px" };
+    const labelS = { fontSize: "11px", fontWeight: "800", color: "#1C1C1C", marginBottom: "6px", display: "block", textTransform: "uppercase", letterSpacing: "0.5px" };
     
     const btnBlue = { background: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "12px", fontWeight: "700", cursor: "pointer", transition: "0.2s" };
     const btnGreen = { ...btnBlue, background: "#10b981" };
@@ -4061,7 +4061,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const btnSquareEdit = { background: "#e0e7ff", color: "#4f46e5", border: "none", borderRadius: "6px", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "15px", cursor: "pointer", padding: 0 };
     const btnSquareDel = { background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: "6px", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "15px", cursor: "pointer", padding: 0 };
 
-    const thS = { padding: "10px 16px", borderBottom: "2px solid #e2e8f0", fontSize: "12px", color: "#64748b", fontWeight: "800", textTransform: "uppercase", textAlign: "left" };
+    const thS = { padding: "10px 16px", borderBottom: "2px solid #e2e8f0", fontSize: "12px", color: "#1C1C1C", fontWeight: "800", textTransform: "uppercase", textAlign: "left" };
     const tdS = { padding: "8px 16px", borderBottom: "1px solid #f1f5f9", fontSize: "13px", color: "#334155" };
 
     return (
@@ -4075,7 +4075,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               onClick={() => setConfigSubTab(v)}
               style={{
                 background: configSubTab === v ? "#1e3a8a" : "#fff",
-                color: configSubTab === v ? "#fff" : "#64748b",
+                color: configSubTab === v ? "#fff" : "#1C1C1C",
                 border: `1px solid ${configSubTab === v ? "#1e3a8a" : "#cbd5e1"}`,
                 borderRadius: "8px", padding: "8px 18px", fontSize: "13px", fontWeight: "700", cursor: "pointer", transition: "0.2s"
               }}
@@ -4182,7 +4182,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                               <div style={{ display: "flex", gap: "2px" }}>
                                 {Array.from({ length: 5 }).map((_, i) => <span key={i} style={{ fontSize: "12px", color: i < v.estrellas ? "#F59E0B" : "#D1D5DB" }}>★</span>)}
                               </div>
-                              <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "600" }}>{v.servicio}</span>
+                              <span style={{ fontSize: "11px", color: "#1C1C1C", fontWeight: "600" }}>{v.servicio}</span>
                             </div>
                             <div style={{ display: "flex", gap: "6px" }}>
                               <button style={btnSquareEdit} onClick={() => setEditVal({ ...v })}>✏️</button>
@@ -4199,7 +4199,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{ display: "flex", gap: "2px" }}>
                               {Array.from({ length: 5 }).map((_, i) => <span key={i} style={{ fontSize: "12px", color: i < v.estrellas ? "#F59E0B" : "#D1D5DB" }}>★</span>)}
                             </div>
-                            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "600" }}>{v.servicio}</span>
+                            <span style={{ fontSize: "11px", color: "#1C1C1C", fontWeight: "600" }}>{v.servicio}</span>
                           </div>
                           <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: "50%", textAlign: "center", pointerEvents: "none" }}>
                             <p style={{ fontSize: "13px", color: "#475569", margin: 0, fontStyle: "italic", lineHeight: "1.4" }}>"{v.comentario}"</p>
@@ -4215,7 +4215,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   )}
                 </div>
               ))}
-              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8", fontSize: "14px", background: "#fff", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>No hi ha opinions registrades.</div>}
+              {valoraciones.length === 0 && <div style={{ textAlign: "center", padding: "40px", color: "#1C1C1C", fontSize: "14px", background: "#fff", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>No hi ha opinions registrades.</div>}
             </div>
           </div>
         )}
@@ -4250,9 +4250,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                       return (
                         <tr key={d} style={{ transition: "0.2s" }}>
                           <td style={{ ...tdS, fontWeight: "700", color: "#334155", textAlign: "left", padding: "6px 6px 6px 10px", fontSize: "12px" }}>{DIAS_FULL[d]}</td>
-                          <td style={{ ...tdS, textAlign: "center", fontWeight: h ? "600" : "400", color: h ? "#1e293b" : "#94a3b8", padding: "6px", fontSize: "12px" }}>{h ? h.entrada : "—"}</td>
-                          <td style={{ ...tdS, textAlign: "center", fontWeight: h ? "600" : "400", color: h ? "#1e293b" : "#94a3b8", padding: "6px", fontSize: "12px" }}>{h ? h.salida : "—"}</td>
-                          <td style={{ ...tdS, textAlign: "center", color: h?.descanso ? "#64748b" : "#94a3b8", padding: "6px", fontSize: "12px" }}>{h?.descanso ? `${h.descanso.inicio} - ${h.descanso.fin}` : "—"}</td>
+                          <td style={{ ...tdS, textAlign: "center", fontWeight: h ? "600" : "400", color: h ? "#1e293b" : "#1C1C1C", padding: "6px", fontSize: "12px" }}>{h ? h.entrada : "—"}</td>
+                          <td style={{ ...tdS, textAlign: "center", fontWeight: h ? "600" : "400", color: h ? "#1e293b" : "#1C1C1C", padding: "6px", fontSize: "12px" }}>{h ? h.salida : "—"}</td>
+                          <td style={{ ...tdS, textAlign: "center", color: h?.descanso ? "#1C1C1C" : "#1C1C1C", padding: "6px", fontSize: "12px" }}>{h?.descanso ? `${h.descanso.inicio} - ${h.descanso.fin}` : "—"}</td>
                         </tr>
                       );
                     })}
