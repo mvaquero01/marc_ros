@@ -1879,9 +1879,9 @@ function ClientePage({ sharedProps, startPaso=0 }){
     colorBorde: CR3,
     
     // 3. COLORES DEL CHECK
-    colorCheck: "#059669",           
-    bgCheck: "#D1FAE5",              
-    bgHalo: "rgba(16, 185, 129, 0.12)", 
+    colorCheck: "#C9A227",           
+    bgCheck: CR,              
+    bgHalo: "rgba(201, 162, 39, 0.12)",
 
     // 4. DISTANCIAS (Control de posición en pantalla)
     margenSuperior: esMovil ? "0px" : "-70px",
