@@ -1366,13 +1366,14 @@ function ClientePage({ sharedProps, startPaso=0 }){
       </div>
 
       <div id="opiniones" style={{ 
-        height: "1px", 
+        height: "2px", 
         width: "100%",
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
         maxWidth: "100%",
         boxSizing: "border-box",
-        transform: "translateZ(0)"
+        transform: "scaleY(0.5)",
+        transformOrigin: "center"
       }} />
 
       {/* --- SECCIÓN 3: OPINIONES (Exactamente 3 en PC, 1 en Móvil + Asomo) --- */}
@@ -1504,13 +1505,14 @@ function ClientePage({ sharedProps, startPaso=0 }){
       )}
 
       <div id="ubicacion" style={{ 
-        height: "1px", 
+        height: "2px", 
         width: "100%",
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
         maxWidth: "100%",
         boxSizing: "border-box",
-        transform: "translateZ(0)"
+        transform: "scaleY(0.5)",
+        transformOrigin: "center"
       }} />
 
       {/* --- SECCIÓN 4: UBICACIÓN Y CONTACTO --- */}
