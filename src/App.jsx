@@ -1061,7 +1061,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const handleLogoSecreto=()=>{
     clicksLogoRef.current+=1;
     if(clicksLogoTimerRef.current) clearTimeout(clicksLogoTimerRef.current);
-    clicksLogoTimerRef.current=setTimeout(()=>{clicksLogoRef.current=0;},1500);
+    clicksLogoTimerRef.current=setTimeout(()=>{clicksLogoRef.current=0;},1000);
     if(clicksLogoRef.current>=5){
       clicksLogoRef.current=0;
       navigate("/login");
@@ -1365,14 +1365,14 @@ function ClientePage({ sharedProps, startPaso=0 }){
         <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#7A0A1D)`, color:WH, border:"none", borderRadius:"8px", height:"60px", padding:"0 50px", fontSize:"18px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
       </div>
 
-      <hr id="opiniones" style={{ 
-        border: "none", 
+      <div id="opiniones" style={{ 
         height: "1px", 
         width: "100%",
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
         maxWidth: "100%",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        transform: "translateZ(0)"
       }} />
 
       {/* --- SECCIÓN 3: OPINIONES (Exactamente 3 en PC, 1 en Móvil + Asomo) --- */}
@@ -1503,14 +1503,14 @@ function ClientePage({ sharedProps, startPaso=0 }){
         </div>
       )}
 
-      <hr id="ubicacion" style={{ 
-        border: "none", 
+      <div id="ubicacion" style={{ 
         height: "1px", 
         width: "100%",
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
         maxWidth: "100%",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        transform: "translateZ(0)"
       }} />
 
       {/* --- SECCIÓN 4: UBICACIÓN Y CONTACTO --- */}
