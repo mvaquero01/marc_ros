@@ -489,6 +489,7 @@ async function seedServicios(){
   }
 }
 async function borrarCita(id){
+  let notaCliente="";
   const citaSnap=await getDoc(doc(db,"citas",id));
   if(citaSnap.exists()){
     const cita=citaSnap.data();
@@ -514,12 +515,38 @@ async function borrarCita(id){
         }
         const clAct = (await getDoc(clienteRef)).data();
         if((clAct.visitas||0)===0&&(clAct.gasto||0)===0&&(clAct.noShows||0)===0){
+          notaCliente = clAct.nota || "";
           await deleteDoc(clienteRef);
         }
       }
     }
   }
   await deleteDoc(doc(db,"citas",id));
+  return notaCliente;
+}
+async function recalcularCliente(clienteTel, clienteNombre, notaPrevia=""){
+  if(!clienteTel) return;
+  const docId = clienteTel.replace(/\D/g,'');
+  const ref = doc(db,"clientes",docId);
+  const snapCitas = await getDocs(query(collection(db,"citas"), where("clienteTel","==",clienteTel)));
+  const citasCli = snapCitas.docs.map(d=>({id:d.id,...d.data()}));
+  const historial = citasCli
+    .filter(c=>c.estado==="completada")
+    .sort((a,b)=>a.fecha.localeCompare(b.fecha))
+    .map(c=>({citaId:c.id,fecha:c.fecha,precio:c.precio||0}));
+  const datos = {
+    visitas: historial.length,
+    gasto: historial.reduce((s,h)=>s+h.precio,0),
+    historial,
+    ultimaVisita: historial.length>0 ? historial[historial.length-1].fecha : "",
+    noShows: citasCli.filter(c=>c.estado==="no-show").length
+  };
+  const snap = await getDoc(ref);
+  if(snap.exists()){
+    await updateDoc(ref, datos);
+  } else {
+    await setDoc(ref, {nombre:clienteNombre, telefono:docId, nota:notaPrevia, ...datos});
+  }
 }
 async function crearOActualizarCliente(datos){
   const docId = datos.telefono.replace(/\D/g, '');
@@ -1726,7 +1753,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               <div>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "16px", marginBottom: "8px" }}>
                   <button onClick={() => navegar(-1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "11px", color: "#A0AEC0", transform: "rotate(90deg)" }}>▼</button>
-                  <span style={{ fontSize: "13px", fontWeight: 900, color: "#0A1F3D", textTransform: "uppercase", minWidth: "160px", textAlign: "center" }}>{mesRef.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</span>
+                  <span style={{ fontSize: "13px", fontWeight: 900, color: "#0A1F3D", textTransform: "uppercase", minWidth: "160px", textAlign: "center" }}>{mesRef.toLocaleString('ca-ES', { month: 'long', year: 'numeric' })}</span>
                   <button onClick={() => navegar(1)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "11px", color: "#A0AEC0", transform: "rotate(-90deg)" }}>▼</button>
                 </div>
                 <div style={sty.card}>
@@ -1886,7 +1913,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     
     // 2. COLORES
     colorPrimario: A,
-    colorTexto: "#0A1F3D",           
+    colorTexto: "#000000",          
     colorSecundario: "#1C1C1C",      
     colorFondo: WH,
     colorBorde: CR3,
@@ -2323,7 +2350,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
             Cancel·lar
           </button>
           <button
-            style={{flex:1,background:formValido?"linear-gradient(135deg,#C8102E,#7A0A1D)":"#E0E8F2",color:formValido?"#F8FBFF":"#4A6080",border:"none",borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:formValido?"pointer":"not-allowed"}}
+            style={{flex:1,background:formValido?"linear-gradient(135deg,#C8102E,#7A0A1D)":"#FBDADA",color:formValido?"#F8FBFF":"#7A0A1D",border:"none",borderRadius:11,padding:"9px 16px",fontSize:13,fontWeight:700,cursor:formValido?"pointer":"not-allowed"}}
             onClick={formValido ? confirmar : undefined}>
             {esEdicion ? "Desar canvis" : "Confirmar cita →"}
           </button>
@@ -2620,7 +2647,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
     const mostrarToast=cita=>{ _citaEliminadaTemp=cita; setToastVisible(true); if(toastTimer)clearTimeout(toastTimer); const t=setTimeout(()=>{setToastVisible(false);_citaEliminadaTemp=null;},6000); setToastTimer(t); };
     const confirmarBorrado=async()=>{ 
       const cita={...citaBorrar}; 
-      await borrarCita(cita.id); 
+      cita._notaCliente = await borrarCita(cita.id); 
       setCitaBorrar(null); 
       mostrarToast(cita); 
     };
@@ -4519,22 +4546,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           <span>🗑 Cita eliminada</span>
           <button style={{background:A,color:WH,border:"none",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}} onClick={async()=>{
             if(!_citaEliminadaTemp)return; 
-            const{id,...resto}=_citaEliminadaTemp; 
+            const{id,_notaCliente,...resto}=_citaEliminadaTemp; 
             await crearCita(resto);
-            if(resto.clienteTel && resto.estado==="completada"){
-              const docId=resto.clienteNombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/gi,"_")+"_"+resto.clienteTel;
-              const ref=doc(db,"clientes",docId);
-              const snap=await getDoc(ref);
-              if(snap.exists()){
-                const cl=snap.data();
-                await updateDoc(ref,{
-                  visitas:(cl.visitas||0)+1,
-                  gasto:(cl.gasto||0)+resto.precio,
-                  ultimaVisita:resto.fecha,
-                  historial:[...(cl.historial||[]),{fecha:resto.fecha,servicio:resto.servicio,peluquero:resto.peluquero,precio:resto.precio}]
-                });
-              }
-            }
+            await recalcularCliente(resto.clienteTel, resto.clienteNombre, _notaCliente);
             _citaEliminadaTemp=null; 
             setToastVisible(false); 
             if(toastTimer)clearTimeout(toastTimer); 
