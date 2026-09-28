@@ -1899,7 +1899,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                     </div>
                     {/* Columna derecha */}
                     <div style={{ flex: "0.9", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <div style={{ marginTop: "37px" }}><Resumen /></div>
+                      <div style={{ marginTop: "34px" }}><Resumen /></div>
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
