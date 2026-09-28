@@ -638,7 +638,7 @@ const WhatsAppIcon=()=>(
 // ─────────────────────────────────────────────
 // MINI CAL PICKER
 // ─────────────────────────────────────────────
-function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horariosEspeciales}){
+function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horariosEspeciales,permitirPasado}){
   const today=new Date(); today.setHours(0,0,0,0);
   const [nav,setNav]=useState(()=>{
     if(value){const d=new Date(value+"T12:00:00");return{y:d.getFullYear(),m:d.getMonth()};}
@@ -666,7 +666,7 @@ function MiniCalPicker({value,onChange,festivosSet,bloqueosPelId,bloqueos,horari
           const iso=isoDate(d);
           const isPast=d<today, isFest=festivosSet.has(iso);
           const noBloq=bloqueosPelId?peluqueroEstaBloqueado(bloqueosPelId,iso,bloqueos):false;
-          const disabled = isPast||isFest||noBloq;
+          const disabled = (isPast&&!permitirPasado)||isFest||noBloq;
           const sel=value===iso, isToday=iso===HOY_ISO;
           let cls="mini-cal-cell";
           if(sel) cls+=" selected";
@@ -1056,6 +1056,17 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const [mesRef, setMesRef] = useState(new Date());
   const [form,setForm]=useState({nombre:"",telefono:""});
   const [reservando,setReservando]=useState(false);
+  const clicksLogoRef=useRef(0);
+  const clicksLogoTimerRef=useRef(null);
+  const handleLogoSecreto=()=>{
+    clicksLogoRef.current+=1;
+    if(clicksLogoTimerRef.current) clearTimeout(clicksLogoTimerRef.current);
+    clicksLogoTimerRef.current=setTimeout(()=>{clicksLogoRef.current=0;},1500);
+    if(clicksLogoRef.current>=5){
+      clicksLogoRef.current=0;
+      navigate("/login");
+    }
+  };
   const festivosSet=useMemo(()=>new Set(festivos.map(f=>f.fecha)),[festivos]);
 
   // Servicios que se pueden elegir en el paso 1
@@ -1301,9 +1312,9 @@ function ClientePage({ sharedProps, startPaso=0 }){
         boxShadow: "0 2px 10px rgba(0, 0, 0, 0.05)"
       }}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center"}}>
+          <div style={{width:40, height:40, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer"}} onClick={handleLogoSecreto}>
             <img 
-              src={logo}
+              src={logo} 
               alt="Logo Peluquería" 
               style={{
                 width: "100%", 
@@ -1325,7 +1336,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <button onClick={()=>irAPaso(1)} style={{ background:`linear-gradient(135deg,${A},#7A0A1D)`, color:WH, border:"none", borderRadius:"8px", height:"45px", padding:"0 30px", fontSize:"14px", fontWeight:700, cursor:"pointer", display:"inline-flex", alignItems:"center", justifyContent:"center", letterSpacing:"0.5px", textTransform:"uppercase", transition:"transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)", backfaceVisibility:"hidden", willChange:"transform", transform:"scale(1)" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.1)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>RESERVAR</button>
-          <button style={{background:"transparent",border:"none",color:CR3,cursor:"pointer",fontSize:13,padding:0}} onClick={()=>navigate("/login")}>⚙</button>
         </div>
       </div>
       <a href={`https://wa.me/${CONFIG.whatsapp}?text=Hola Marc, com ho tens de disponible avui?`} target="_blank" rel="noreferrer" className="wa-fab"><WhatsAppIcon/></a>
@@ -1358,9 +1368,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
       <hr id="opiniones" style={{ 
         border: "none", 
         height: "1px", 
+        width: "100%",
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
-        maxWidth: "100%"
+        maxWidth: "100%",
+        boxSizing: "border-box"
       }} />
 
       {/* --- SECCIÓN 3: OPINIONES (Exactamente 3 en PC, 1 en Móvil + Asomo) --- */}
@@ -1494,9 +1506,11 @@ function ClientePage({ sharedProps, startPaso=0 }){
       <hr id="ubicacion" style={{ 
         border: "none", 
         height: "1px", 
+        width: "100%",
         background: `linear-gradient(to right, transparent, ${CR3}, transparent)`, 
         margin: "40px auto 40px auto",
-        maxWidth: "100%"
+        maxWidth: "100%",
+        boxSizing: "border-box"
       }} />
 
       {/* --- SECCIÓN 4: UBICACIÓN Y CONTACTO --- */}
@@ -1575,7 +1589,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
         </div>
       )}
 
-      <div style={{ maxWidth: "90%", margin: "0 auto", padding: "0 20px", paddingTop: esMovil ? "20px" : "100px" }}>
+      <div style={{ maxWidth: "90%", margin: "0 auto", padding: "0 20px", paddingTop: esMovil ? "50px" : "100px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "20px" }}>
           <button style={{ position: "absolute", left: 0, background: "transparent", border: "none", color: TX2, cursor: "pointer", fontSize: "20px", padding: 0, lineHeight: 1 }} onClick={() => irAPaso(0)}>←</button>
           <div style={{ ...cs.sTitle, marginBottom: 0 }}>✦ Servei</div>
@@ -1662,7 +1676,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
       )}
 
       {/* 2. CONTENEDOR MAESTRO (Controla el ancho) */}
-      <div style={{ maxWidth: CONFIG_RESERVA.anchoContenedor, margin: "0 auto", padding: `0 20px`, paddingTop: esMovil ? "20px" : CONFIG_RESERVA.separacionSuperior }}>
+      <div style={{ maxWidth: CONFIG_RESERVA.anchoContenedor, margin: "0 auto", padding: `0 20px`, paddingTop: esMovil ? "50px" : CONFIG_RESERVA.separacionSuperior }}>
         
         {/* 3. BOTONES VOLVER ATRÁS (Fácil de modificar) */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: "20px" }}>
@@ -1860,7 +1874,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
             );
 
             return (
-              <div style={{ width: "100%", animation: "fadeIn 0.5s ease", paddingBottom: "120px" }}>
+              <div style={{ width: "100%", animation: "fadeIn 0.5s ease" }}>
                 {esMovil ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                     <Calendario />
@@ -1885,7 +1899,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
                     </div>
                     {/* Columna derecha */}
                     <div style={{ flex: "0.9", display: "flex", flexDirection: "column", gap: "16px" }}>
-                      <Resumen />
+                      <div style={{ marginTop: "32px" }}><Resumen /></div>
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                         <div>
                           <label style={{ ...sty.lbl, marginBottom: "5px", display: "block" }}>Nom complet</label>
@@ -2869,7 +2883,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                       <button style={{width:"100%",background:WH,border:`1px solid ${CR3}`,borderRadius:9,padding:"6px 9px",fontSize:11,color:filtDesde?TX:TX2,textAlign:"left",cursor:"pointer",display:"flex",justifyContent:"space-between"}} onClick={()=>setShowFiltDesdeCalPicker(v=>!v)}>
                         <span>{filtDesde||"Seleccionar..."}</span><span>📅</span>
                       </button>
-                      {showFiltDesdeCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtDesde} onChange={iso=>{setFiltDesde(iso);setShowFiltDesdeCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]}/></div>}
+                      {showFiltDesdeCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtDesde} onChange={iso=>{setFiltDesde(iso);setShowFiltDesdeCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} permitirPasado={true}/></div>}
                     </div>
                   )}
 
@@ -2880,14 +2894,14 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                         <button style={{width:"100%",background:WH,border:`1px solid ${CR3}`,borderRadius:9,padding:"6px 9px",fontSize:11,color:filtDesde?TX:TX2,textAlign:"left",cursor:"pointer",display:"flex",justifyContent:"space-between"}} onClick={()=>setShowFiltDesdeCalPicker(v=>!v)}>
                           <span>{filtDesde||"Inici..."}</span><span>📅</span>
                         </button>
-                        {showFiltDesdeCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtDesde} onChange={iso=>{setFiltDesde(iso);setShowFiltDesdeCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]}/></div>}
+                        {showFiltDesdeCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtDesde} onChange={iso=>{setFiltDesde(iso);setShowFiltDesdeCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} permitirPasado={true}/></div>}
                       </div>
                       <div style={{position:"relative"}}>
                         <Lbl>Fins al dia</Lbl>
                         <button style={{width:"100%",background:WH,border:`1px solid ${CR3}`,borderRadius:9,padding:"6px 9px",fontSize:11,color:filtHasta?TX:TX2,textAlign:"left",cursor:"pointer",display:"flex",justifyContent:"space-between"}} onClick={()=>setShowFiltHastaCalPicker(v=>!v)}>
                           <span>{filtHasta||"Fi..."}</span><span>📅</span>
                         </button>
-                        {showFiltHastaCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtHasta} onChange={iso=>{setFiltHasta(iso);setShowFiltHastaCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]}/></div>}
+                        {showFiltHastaCalPicker&&<div style={{position:"absolute",top:"100%",left:0,zIndex:200}}><MiniCalPicker value={filtHasta} onChange={iso=>{setFiltHasta(iso);setShowFiltHastaCalPicker(false);}} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} permitirPasado={true}/></div>}
                       </div>
                     </>
                   )}
