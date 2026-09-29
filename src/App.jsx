@@ -2393,6 +2393,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
   // ★ subTab para Config elevado aquí para no perder el subtab al guardar
   const [configSubTab,setConfigSubTab]=useState("valoraciones");
+  const [mesDisponibilidad,setMesDisponibilidad]=useState(new Date());
 
   const handleLogout=()=>{ sessionStorage.removeItem("authRole"); navigate("/"); };
 
@@ -3391,7 +3392,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                   position: "absolute", top: "120%", left: "50%", transform: "translateX(-50%)",
                   zIndex: 10001, boxShadow: "0 10px 30px rgba(0,0,0,0.2)", borderRadius: 12, overflow: "hidden"
                 }}>
-                  <MiniCalPicker value={fechaCaja} onChange={(iso) => { setFechaCaja(iso); setShowPicker(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} />
+                  <MiniCalPicker value={fechaCaja} onChange={(iso) => { setFechaCaja(iso); setShowPicker(false); }} festivosSet={festivosSet} bloqueosPelId={null} bloqueos={[]} permitirPasado={true} />
                 </div>
               </>
             )}
@@ -3446,7 +3447,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <button
                   onClick={handleGuardarCierre}
                   style={{
-                    background: guardando ? "#C9A227" : (hayCambios ? "#16a34a" : "#C9A227"),
+                    background: guardando ? "#8A8060" : (hayCambios ? "#16a34a" : "#8A8060"),
                     color: WH, border: "none", borderRadius: 8,
                     padding: "8px 18px", fontSize: 11, fontWeight: 700,
                     cursor: hayCambios ? "pointer" : "default",
@@ -3475,8 +3476,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   // ──────────────────────
   // TAB DISPONIBILIDAD (CIERRES Y AUSENCIAS)
   // ──────────────────────
-  const TabDisponibilidad = ({ isMobile, horariosEspeciales, horariosGenerales }) => {
-    const [mesRef, setMesRef] = useState(new Date());
+  const TabDisponibilidad = ({ isMobile, horariosEspeciales, horariosGenerales, mesRef, setMesRef }) => {
     const [diaSeleccionado, setDiaSeleccionado] = useState(null);
     const [tramos, setTramos] = useState([{ entrada: "", salida: "" }]);
     const [showBloqForm, setShowBloqForm] = useState(false);
@@ -3871,7 +3871,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       const año = refMes.getFullYear();
       const mes = refMes.getMonth();
       const diasEnMes = new Date(año, mes + 1, 0).getDate();
-      titulo = `${["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][mes]} ${año}`;
+      titulo = `${["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"][mes]} ${año}`;
       datos = Array.from({length: diasEnMes}, (_,i) => {
         const d = new Date(año, mes, i+1);
         const iso = isoDate(d);
@@ -4552,7 +4552,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         {tab==="clientes"&&<TabClientes isMobile={isMobile} onClienteEliminado={(cliente)=>{ _clienteEliminadoTemp=cliente; setToastClienteVisible(true); if(toastClienteTimer)clearTimeout(toastClienteTimer); const t=setTimeout(()=>{setToastClienteVisible(false);_clienteEliminadoTemp=null;},6000); setToastClienteTimer(t); }}/>}
         {tab==="caja"&&<TabCaja/>}
         {tab==="stats"&&<TabStats/>}
-        {tab==="disponibilidad"&&<TabDisponibilidad isMobile={isMobile} horariosEspeciales={horariosEspeciales} horariosGenerales={horariosGenerales}/>}
+      {tab==="disponibilidad"&&<TabDisponibilidad isMobile={isMobile} horariosEspeciales={horariosEspeciales} horariosGenerales={horariosGenerales} mesRef={mesDisponibilidad} setMesRef={setMesDisponibilidad}/>}
         {tab==="config"&&<TabConfig valoraciones={valoraciones} setValoraciones={setValoraciones} servicios={servicios} setServicios={setServicios} categorias={categorias} setCategorias={setCategorias} isMobile={isMobile} onValEliminada={(val)=>{ _valEliminadaTemp=val; setToastValVisible(true); if(toastValTimer)clearTimeout(toastValTimer); const t=setTimeout(()=>{setToastValVisible(false);_valEliminadaTemp=null;},6000); setToastValTimer(t); }} onSvcEliminado={(svc)=>{ _svcEliminadoTemp=svc; setToastSvcVisible(true); if(toastSvcTimer)clearTimeout(toastSvcTimer); const t=setTimeout(()=>{setToastSvcVisible(false);_svcEliminadoTemp=null;},6000); setToastSvcTimer(t); }} onCatEliminada={(cat)=>{ _catEliminadaTemp=cat; setToastCatVisible(true); if(toastCatTimer)clearTimeout(toastCatTimer); const t=setTimeout(()=>{setToastCatVisible(false);_catEliminadaTemp=null;},6000); setToastCatTimer(t); }}/>}
       </div>
 
