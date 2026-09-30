@@ -2937,6 +2937,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                           <th className="th-premium">Data</th>
                           <th className="th-premium">Hora</th>
                           <th className="th-premium">Client</th>
+                          <th className="th-premium">Servei</th>
                           <th className="th-premium">Estat</th>
                           <th className="th-premium">Preu</th>
                           <th className="th-premium">Pagament</th>
@@ -2951,6 +2952,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{fontWeight:600, fontSize:"12px"}}>{c.clienteNombre}</div>
                             <div style={{fontSize:"9px",color:TX2}}>{c.clienteTel}</div>
                           </td>
+                          <td className="td-premium" style={{fontSize:"12px",color:TX}}>{c.servicio||"—"}</td>
                           <td className="td-premium"><EstadoPremium estado={c.estado}/></td>
                           <td className="td-premium">
                             <input
