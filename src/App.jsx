@@ -326,7 +326,7 @@ function generarSlots(hp,durMin){
   while(cur<=fin){
     const finSlot=cur+durMin;
     if(hp.descanso){ const dI=toMin(hp.descanso.inicio),dF=toMin(hp.descanso.fin); if(cur<dF&&finSlot>dI){cur=dF;continue;} }
-    slots.push(toStr(cur)); cur+=30;
+    slots.push(toStr(cur)); cur+=15;
   }
   return slots;
 }
@@ -346,12 +346,18 @@ function generarSlotsTramos(tramos, durMin){
   }
   return slots;
 }
+function duracionCita(c){
+  if(c.duracionMin) return Number(c.duracionMin);
+  const porNombre=CONFIG.serviciosDefault.find(s=>normalize(s.nombre)===normalize(c.servicio||""));
+  if(porNombre) return porNombre.duracionMin;
+  const porId=CONFIG.serviciosDefault.find(s=>s.id===c.servicioId);
+  return porId?porId.duracionMin:30;
+}
 function filtrarSlotsOcupados(slots,durMin,citasDelDia){
   return slots.filter(slot=>{
     const sI=toMin(slot),sF=sI+durMin;
     return !citasDelDia.some(c=>{
-      const svc=CONFIG.serviciosDefault.find(s=>s.id===c.servicioId)||{duracionMin:30};
-      const cI=toMin(c.hora),cF=cI+svc.duracionMin;
+      const cI=toMin(c.hora),cF=cI+duracionCita(c);
       return sI<cF&&sF>cI;
     });
   });
@@ -596,8 +602,7 @@ function asignarPeluqueroAleatorio(servicioId, fecha, hora, citas, bloqueos, fes
     // Comprobar que no choca con otras citas
     const citasDelDia = citas.filter(c => c.fecha === fecha && c.peluqueroId === p.id && c.estado !== "no-show");
     const libre = !citasDelDia.some(c => {
-      const sv = servicios.find(s => s.id === c.servicioId) || {duracionMin:30};
-      const cI = toMin(c.hora), cF = cI + sv.duracionMin;
+      const cI = toMin(c.hora), cF = cI + duracionCita(c);
       return sI < cF && sF > cI;
     });
     return libre;
@@ -799,11 +804,10 @@ function CalendarioGrid({ dias, citas, peluqueroFiltroId, horariosGenerales, nav
                       ));
                     })()}
                     {citasDia.map((c) => {
-                      const svc = CONFIG.serviciosDefault.find((s) => s.id === c.servicioId) || { duracionMin: 30 };
                       const pel = CONFIG.peluqueros.find((p) => p.id === c.peluqueroId);
                       const col = pel?.color || "#1B4F8A";
                       const top = (toMin(c.hora) - HORA_APE) * PX_MIN;
-                      const height = Math.max(svc.duracionMin * PX_MIN - 2, 18);
+                      const height = Math.max(duracionCita(c) * PX_MIN - 2, 18);
                       return (
                         <div key={c.id} style={{ position: "absolute", top, left: "1px", right: "2px", height, background: `${col}22`, border: `1.5px solid ${col}99`, borderLeft: `3px solid ${col}`, borderRadius: 4, padding: "2px 4px", overflow: "hidden", zIndex: 2, boxSizing: "border-box" }}>
                           <div style={{ fontSize: 9, fontWeight: 700, color: col, lineHeight: 1.3 }}>{c.hora}</div>
@@ -1118,33 +1122,35 @@ function ClientePage({ sharedProps, startPaso=0 }){
 
   const scrollTop=()=>window.scrollTo({top:0,behavior:"smooth"});
   const reset=()=>{ scrollTop(); navigate("/"); };
-  const confirmarReserva=async()=>{
+    const confirmarReserva=async()=>{
     if(!form.nombre||!form.telefono) return;
     setReservando(true);
-    let pelFinal = selPeluquero;
-    if(selPeluquero.id === CUALQUIERA_ID){
-      const asignado = asignarPeluqueroAleatorio(selServicio.id, isoDate(selDia), selHora, citas, bloqueos, festivosSet, servicios, horariosEspeciales, horariosGenerales);
-      if(!asignado){ setReservando(false); return; } // no hay nadie disponible (no debería pasar)
-      pelFinal = asignado;
-    }
-    await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
-    const docId = form.telefono.replace(/\D/g, '');
-    const ref = doc(db,"clientes",docId);
-    const snap = await getDoc(ref);
-    if(!snap.exists()){
-      // Buscar ficha antigua con formato nombre_telefono
-      const q = query(collection(db,"clientes"), where("telefono","==",docId));
-      const viejas = await getDocs(q);
-      if(!viejas.empty){
-        // Migrar la ficha antigua al nuevo formato
-        const viejaData = viejas.docs[0].data();
-        await setDoc(ref, {...viejaData, telefono: docId, nombre: form.nombre});
-        await deleteDoc(doc(db,"clientes", viejas.docs[0].id));
-      } else {
-        await setDoc(ref,{nombre:form.nombre,telefono:docId,visitas:0,gasto:0,ultimaVisita:"",nota:"",historial:[]});
+    try{
+      let pelFinal = selPeluquero;
+      if(selPeluquero.id === CUALQUIERA_ID){
+        const asignado = asignarPeluqueroAleatorio(selServicio.id, isoDate(selDia), selHora, citas, bloqueos, festivosSet, servicios, horariosEspeciales, horariosGenerales);
+        if(!asignado){ setReservando(false); return; }
+        pelFinal = asignado;
       }
-    } else {
-      await updateDoc(ref,{nombre:form.nombre});
+      await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,duracionMin:selServicio.duracionMin,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
+    }catch(e){
+      console.error("Error creando cita:",e);
+      setReservando(false);
+      alert("No s'ha pogut confirmar la cita. Torna-ho a provar.");
+      return;
+    }
+    // La ficha del cliente es secundaria: si falla, no bloquea la confirmación
+    try{
+      const docId = form.telefono.replace(/\D/g, '');
+      const ref = doc(db,"clientes",docId);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref,{nombre:form.nombre,telefono:docId,visitas:0,gasto:0,ultimaVisita:"",nota:"",historial:[]});
+      } else {
+        await updateDoc(ref,{nombre:form.nombre});
+      }
+    }catch(e){
+      console.error("Error ficha cliente (se creará desde el admin):",e);
     }
     setPaso(5); scrollTop();
     setReservando(false);
@@ -2200,6 +2206,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
         clienteTel:    form.telefono,
         servicio:      svc.nombre,
         servicioId:    svc.id,
+        duracionMin:   svc.duracionMin,
         peluqueroId:   pel.id,
         peluquero:     pel.nombre,
         fecha:         form.fecha,
@@ -2214,7 +2221,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
     } else {
       await crearCita({
         clienteNombre: form.nombre, clienteTel: form.telefono,
-        servicio: svc.nombre, servicioId: svc.id,
+        servicio: svc.nombre, servicioId: svc.id, duracionMin: svc.duracionMin,
         peluqueroId: pel.id, peluquero: pel.nombre,
         fecha: form.fecha, hora: form.hora,
         precio: svc.precio, estado: "pendiente", nota: form.nota,
@@ -2437,53 +2444,13 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       if(tw2)tw2.scrollLeft=sl;
       if(focoActivo&&focoActivo.focus)focoActivo.focus();
     });
-    try{
+        try{
       await actualizarCita(id,{estado});
       const citaSnap=await getDoc(doc(db,"citas",id));
       if(!citaSnap.exists()) return;
       const cita=citaSnap.data();
       if(!cita.clienteTel) return;
-      const nuevoDocId = cita.clienteTel.replace(/\D/g,'');
-      const clienteRef = doc(db,"clientes",nuevoDocId);
-      const clienteSnap = await getDoc(clienteRef);
-      if(!clienteSnap.exists()) return;
-      const cl = clienteSnap.data();
-
-      // Reconstruir historial completo desde todas las citas completadas del cliente
-      const todasLasCitas = await getDocs(query(collection(db,"citas"), where("clienteTel","==",nuevoDocId)));
-      const citasCompletadas = todasLasCitas.docs
-        .map(d => ({id: d.id, ...d.data()}))
-        .filter(c => c.estado === "completada" || (c.id === id && estado === "completada"));
-      
-      // Construir historial limpio sin duplicados
-      const historialMap = new Map();
-      citasCompletadas.forEach(c => {
-        if(c.id === id && estado !== "completada") return; // si estamos revirtiendo esta cita, no la incluimos
-        historialMap.set(c.id, {
-          citaId: c.id,
-          fecha: c.fecha,
-          precio: c.precio || 0
-        });
-      });
-      
-      const nuevoHistorial = [...historialMap.values()].sort((a,b) => a.fecha.localeCompare(b.fecha));
-      const nuevoGasto = nuevoHistorial.reduce((s,h) => s + (h.precio||0), 0);
-      const nuevasVisitas = nuevoHistorial.length;
-      const noShows = estado === "no-show" 
-        ? (cl.noShows||0) + 1 
-        : estadoAnterior === "no-show" 
-          ? Math.max((cl.noShows||0) - 1, 0) 
-          : (cl.noShows||0);
-      const ultimaVisita = nuevoHistorial.length > 0 ? nuevoHistorial[nuevoHistorial.length-1].fecha : "";
-
-      await updateDoc(clienteRef, {
-        visitas: nuevasVisitas,
-        gasto: nuevoGasto,
-        historial: nuevoHistorial,
-        ultimaVisita: ultimaVisita,
-        noShows: noShows
-      });
-
+      await recalcularCliente(cita.clienteTel, cita.clienteNombre);
     }catch(e){console.error(e);}
   },[]);
 
