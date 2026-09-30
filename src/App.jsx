@@ -1111,7 +1111,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
     const tramos=getTramosDia(selPeluquero.id,isoDate(selDia),horariosEspeciales||[],horariosGenerales||[]);
     if(tramos.length===0) return [];
     const todos=generarSlotsTramos(tramos,selServicio.duracionMin);
-    const citasDelDia=citas.filter(c=>c.fecha===isoDate(selDia)&&c.peluqueroId===selPeluquero.id&&c.estado!=="no-show");
+    const citasDelDia=citas.filter(c=>c.fecha===isoDate(selDia)&&c.estado!=="no-show");
     const disponibles=filtrarSlotsOcupados(todos,selServicio.duracionMin,citasDelDia);
     if(isoDate(selDia)===HOY_ISO){
       const ahora=new Date(); const minAhora=ahora.getHours()*60+ahora.getMinutes()+15;
