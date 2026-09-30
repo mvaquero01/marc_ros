@@ -398,7 +398,13 @@ async function crearFestivo(nombreDocumento, data){
 async function borrarFestivo(id){
   await deleteDoc(doc(db,"cierres",id));
 }
-
+function suscribirOcupados(cb){
+  return onSnapshot(
+    collection(db,"ocupados"),
+    snap=>cb(snap.docs.map(d=>({...d.data(),id:d.id}))),
+    err=>console.error("ocupados:",err)
+  );
+}
 function suscribirBloqueos(cb){
   return onSnapshot(collection(db,"bloqueos"),snap=>{
     cb(snap.docs.map(d=>({...d.data(),id:d.id})));
@@ -1132,7 +1138,18 @@ function ClientePage({ sharedProps, startPaso=0 }){
         if(!asignado){ setReservando(false); return; }
         pelFinal = asignado;
       }
-      await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,duracionMin:selServicio.duracionMin,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
+      const citaId=await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,duracionMin:selServicio.duracionMin,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
+      try{
+        await setDoc(doc(db,"ocupados",citaId),{
+          fecha:isoDate(selDia),
+          hora:selHora,
+          duracionMin:selServicio.duracionMin,
+          peluqueroId:pelFinal.id,
+          estado:"pendiente"
+        });
+      }catch(e){
+        console.error("Error registrando hueco (el admin lo repara):",e);
+      }
     }catch(e){
       console.error("Error creando cita:",e);
       setReservando(false);
@@ -2433,6 +2450,33 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
 
   useEffect(()=>{ window.history.scrollRestoration='manual'; },[]);
   useEffect(()=>{ const u1=suscribirCitas(setCitas); const u2=suscribirClientes(setClientes); return()=>{u1();u2();}; },[]);
+    const syncRef = useRef(null);
+  useEffect(()=>{
+    if(citas.length===0 && syncRef.current===null) return;
+    (async()=>{
+      try{
+        const firma=c=>[c.fecha,c.hora,duracionCita(c),c.peluqueroId,c.estado].join("|");
+        const prev = syncRef.current || new Map();
+        if(syncRef.current===null){
+          const snap = await getDocs(collection(db,"ocupados"));
+          snap.docs.forEach(d=>prev.set(d.id,"?"));
+        }
+        const actual = new Map(citas.map(c=>[c.id,firma(c)]));
+        syncRef.current = actual;
+        for(const c of citas){
+          if(prev.get(c.id)!==actual.get(c.id)){
+            await setDoc(doc(db,"ocupados",c.id),{
+              fecha:c.fecha, hora:c.hora, duracionMin:duracionCita(c),
+              peluqueroId:c.peluqueroId, estado:c.estado
+            });
+          }
+        }
+        for(const id of prev.keys()){
+          if(!actual.has(id)) await deleteDoc(doc(db,"ocupados",id));
+        }
+      }catch(e){ console.error("sync ocupados:",e); }
+    })();
+  },[citas]);
 
   const cambiarEstado=useCallback(async(id,estado,estadoAnterior="pendiente")=>{
     const tw=document.querySelector('.admin-table-wrap');
@@ -2985,6 +3029,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                                   const snap = await getDoc(ref);
                                   if(snap.exists()){
                                     const cl = snap.data();
+                                    const historialActualizado = (cl.historial||[]).map(h => 
+                                      h.citaId === c.id ? {...h, precio: val} : h
+                                    );
                                     const gastoTotal = historialActualizado.reduce((s,h) => s + (h.precio||0), 0);
                                     await updateDoc(ref, {historial: historialActualizado, gasto: gastoTotal});
                                   }
@@ -4606,7 +4653,7 @@ function AppData(){
 
   // 2. SUSCRIPCIONES FIREBASE
   useEffect(()=>{
-    const u1=suscribirCitas(data=>{setCitas(data);});
+    const u1=suscribirOcupados(data=>{setCitas(data);});
     const u2=suscribirValoracionesFB(setValoraciones);
     const u3=suscribirFestivos(setFestivos);
     const u4=suscribirBloqueos(setBloqueos);
