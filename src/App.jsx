@@ -2779,9 +2779,9 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
         <style>{`
           .fila-premium { transition: background-color 0.2s ease; border-bottom: 1px solid #F1F5F9; }
           .fila-premium:hover { background-color: #F8FAFC; }
-          .tabla-premium { width: 100%; border-collapse: collapse; }
+          .tabla-premium { width: 100%; min-width: 1150px; table-layout: fixed; border-collapse: collapse; }
           .th-premium { padding: 5px 10px; color: #1C1C1C; font-size: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #F1F5F9; text-align: center; }
-          .td-premium { padding: 5px 10px; vertical-align: middle; text-align: center; }
+          .td-premium { padding: 5px 10px; vertical-align: middle; text-align: center; overflow-wrap: anywhere; }
         `}</style>
 
         {/* 1. KPIs VISIBLES SIEMPRE */}
@@ -3000,6 +3000,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                         <tr>
                           <th className="th-premium">Hora</th>
                           <th className="th-premium">Client</th>
+                          <th className="th-premium">Servei</th>
                           <th className="th-premium">Estat</th>
                           <th className="th-premium">Preu</th>
                           <th className="th-premium">Pagament</th>
@@ -3013,6 +3014,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                             <div style={{fontWeight:600, fontSize:"13px"}}>{c.clienteNombre}</div>
                             <div style={{fontSize:"9px",color:TX2}}>{c.clienteTel}</div>
                           </td>
+                          <td className="td-premium" style={{fontSize:"12px",color:TX}}>{c.servicio||"—"}</td>
                           <td className="td-premium"><EstadoPremium estado={c.estado}/></td>
                           <td className="td-premium">
                             <input
