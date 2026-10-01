@@ -15,13 +15,40 @@ export const suscribirCitas = (callback) => {
 export const crearCita = async (cita) => {
   const docId = `${(cita.clienteTel||"").replace(/\D/g,'')}--${cita.fecha}--${cita.hora.replace(":","")}`;
   await setDoc(doc(db, "citas", docId), cita);
+  try{
+    await setDoc(doc(db, "ocupados", docId), {
+      fecha: cita.fecha,
+      hora: cita.hora,
+      duracionMin: Number(cita.duracionMin) || 30,
+      peluqueroId: cita.peluqueroId,
+      estado: cita.estado || "pendiente"
+    });
+  }catch(e){
+    console.error("Error registrando hueco en ocupados:", e);
+  }
   return docId;
 };
 
-export const actualizarCita = (id, datos) =>
-  updateDoc(doc(db, "citas", id), datos);
+export const actualizarCita = async (id, datos) => {
+  await updateDoc(doc(db, "citas", id), datos);
+  const campos = {};
+  if (datos.fecha !== undefined) campos.fecha = datos.fecha;
+  if (datos.hora !== undefined) campos.hora = datos.hora;
+  if (datos.duracionMin !== undefined) campos.duracionMin = Number(datos.duracionMin) || 30;
+  if (datos.peluqueroId !== undefined) campos.peluqueroId = datos.peluqueroId;
+  if (datos.estado !== undefined) campos.estado = datos.estado;
+  if (Object.keys(campos).length === 0) return;
+  try {
+    await setDoc(doc(db, "ocupados", id), campos, { merge: true });
+  } catch (e) {
+    console.error("Error actualizando ocupados:", e);
+  }
+};
 
-export const borrarCita = (id) => deleteDoc(doc(db, "citas", id));
+export const borrarCita = async (id) => {
+  await deleteDoc(doc(db, "citas", id));
+  try { await deleteDoc(doc(db, "ocupados", id)); } catch (e) { console.error(e); }
+};
 
 // ── CLIENTES ───────────────────────────────────
 export const suscribirClientes = (callback) => {

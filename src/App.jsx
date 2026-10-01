@@ -534,6 +534,7 @@ async function borrarCita(id){
     }
   }
   await deleteDoc(doc(db,"citas",id));
+  try{ await deleteDoc(doc(db,"ocupados",id)); }catch(e){ console.error("Error borrando ocupados:",e); }
   return notaCliente;
 }
 async function recalcularCliente(clienteTel, clienteNombre, notaPrevia=""){
@@ -1139,17 +1140,6 @@ function ClientePage({ sharedProps, startPaso=0 }){
         pelFinal = asignado;
       }
       const citaId=await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,duracionMin:selServicio.duracionMin,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
-      try{
-        await setDoc(doc(db,"ocupados",citaId),{
-          fecha:isoDate(selDia),
-          hora:selHora,
-          duracionMin:selServicio.duracionMin,
-          peluqueroId:pelFinal.id,
-          estado:"pendiente"
-        });
-      }catch(e){
-        console.error("Error registrando hueco (el admin lo repara):",e);
-      }
     }catch(e){
       console.error("Error creando cita:",e);
       setReservando(false);
@@ -2782,6 +2772,11 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
           .tabla-premium { width: 100%; min-width: 1150px; table-layout: fixed; border-collapse: collapse; }
           .th-premium { padding: 5px 10px; color: #1C1C1C; font-size: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #F1F5F9; text-align: center; }
           .td-premium { padding: 5px 10px; vertical-align: middle; text-align: center; overflow-wrap: anywhere; }
+          @media(max-width:640px){
+            .tabla-premium { min-width: 860px; }
+            .th-premium, .td-premium { padding: 5px 4px; }
+            .th-premium:last-child { width: 140px; }
+          }
         `}</style>
 
         {/* 1. KPIs VISIBLES SIEMPRE */}
