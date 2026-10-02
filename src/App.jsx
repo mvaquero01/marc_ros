@@ -2615,13 +2615,8 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       else if(filtFecha==="fecha"&&filtDesde) res=res.filter(c=>c.fecha===filtDesde);
       else if(filtFecha==="rango"&&filtDesde) res=res.filter(c=>c.fecha>=filtDesde&&(!filtHasta||c.fecha<=filtHasta));
       if(localClienteRef.current){
-        const q=localClienteRef.current;
-        res=res.filter(c=>{
-          const nombre=c.clienteNombre||"";
-          return c.clienteTel?.includes(q)
-            || similitud(q,nombre)>=60
-            || nombre.split(" ").some(w=>similitud(q,w)>=60);
-        });
+        const qc=normalize(localClienteRef.current);
+        res=res.filter(c=>normalize(c.clienteNombre).includes(qc)||c.clienteTel?.includes(localClienteRef.current)||similitud(localClienteRef.current,c.clienteNombre)>60);
       }
       if(filtEstado!=="todos") res=res.filter(c=>c.estado===filtEstado);
       if(localBusqRef.current){ const q=normalize(localBusqRef.current); res=res.filter(c=>normalize(c.clienteNombre).includes(q)||c.clienteTel?.includes(localBusqRef.current)||similitud(localBusqRef.current,c.clienteNombre)>60); }
