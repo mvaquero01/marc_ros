@@ -2437,6 +2437,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   const [mostrarBuscador,setMostrarBuscador]=useState(false);
   const [filtSemanaOffset,setFiltSemanaOffset]=useState(0);
   const busqCitaRef=useRef("");
+  const filtClienteRef=useRef("");
 
   useEffect(()=>{ window.history.scrollRestoration='manual'; },[]);
   useEffect(()=>{ const u1=suscribirCitas(setCitas); const u2=suscribirClientes(setClientes); return()=>{u1();u2();}; },[]);
@@ -2572,6 +2573,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
   const TabCitas=()=>{
     const [,forceUpdate]=useState(0);
     const localBusqRef=useRef(busqCitaRef?.current || "");
+    const localClienteRef=useRef(filtClienteRef.current || "");
     const [showManual,setShowManual]=useState(false);
     const [editNota,setEditNota]=useState(null);
     const [notaVal,setNotaVal]=useState("");
@@ -2612,13 +2614,21 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
       else if(filtFecha==="semana") res=res.filter(c=>filtWeekDays.some(d=>isoDate(d)===c.fecha));
       else if(filtFecha==="fecha"&&filtDesde) res=res.filter(c=>c.fecha===filtDesde);
       else if(filtFecha==="rango"&&filtDesde) res=res.filter(c=>c.fecha>=filtDesde&&(!filtHasta||c.fecha<=filtHasta));
-      if(filtPel!=="todas") res=res.filter(c=>c.peluqueroId===Number(filtPel));
+      if(localClienteRef.current){
+        const q=localClienteRef.current;
+        res=res.filter(c=>{
+          const nombre=c.clienteNombre||"";
+          return c.clienteTel?.includes(q)
+            || similitud(q,nombre)>=60
+            || nombre.split(" ").some(w=>similitud(q,w)>=60);
+        });
+      }
       if(filtEstado!=="todos") res=res.filter(c=>c.estado===filtEstado);
       if(localBusqRef.current){ const q=normalize(localBusqRef.current); res=res.filter(c=>normalize(c.clienteNombre).includes(q)||c.clienteTel?.includes(localBusqRef.current)||similitud(localBusqRef.current,c.clienteNombre)>60); }
       return res.sort((a,b)=>a.fecha===b.fecha?a.hora.localeCompare(b.hora):a.fecha.localeCompare(b.fecha));
     },[citas,filtFecha,filtDesde,filtHasta,filtPel,filtEstado,weekDays]);
 
-    const hayFiltros=localBusqRef.current||filtFecha!=="hoy"||filtPel!=="todas"||filtEstado!=="todos";
+    const hayFiltros=localBusqRef.current||localClienteRef.current||filtFecha!=="hoy"||filtEstado!=="todos";
     const ingrHoy=citasHoy.filter(c=>c.estado==="completada").reduce((s,c)=>s+c.precio,0);
     const pendHoy=citasHoy.filter(c=>c.estado==="pendiente").length;
     const noShowHoy=citasHoy.filter(c=>c.estado==="no-show").length;
@@ -2861,7 +2871,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                 <button style={{background:mostrarBuscador?`${A}15`:WH,border:`1px solid ${mostrarBuscador?A:CR3}`,borderRadius:8,padding:"7px 12px",fontSize:11,fontWeight:700,cursor:"pointer",color:mostrarBuscador?A:TX2,whiteSpace:"nowrap"}} onClick={()=>setMostrarBuscador(v=>!v)}>
                   {mostrarBuscador?"▲ Amagar Filtres":"▼ Veure Filtres"}{hayFiltros?" ●":""}
                 </button>
-                {hayFiltros&&<button style={{background:ER+"15",border:`1px solid ${ER}33`,borderRadius:8,padding:"7px 10px",fontSize:11,fontWeight:700,cursor:"pointer",color:ER}} onClick={()=>{busqCitaRef.current="";localBusqRef.current="";forceUpdate(n=>n+1);setFiltFecha("hoy");setFiltDesde("");setFiltHasta("");setFiltPel("todas");setFiltEstado("todos");setMostrarBuscador(false);}}>✕</button>}
+                {hayFiltros&&<button style={{background:ER+"15",border:`1px solid ${ER}33`,borderRadius:8,padding:"7px 10px",fontSize:11,fontWeight:700,cursor:"pointer",color:ER}} onClick={()=>{busqCitaRef.current="";localBusqRef.current="";forceUpdate(n=>n+1);setFiltFecha("hoy");setFiltDesde("");setFiltHasta("");filtClienteRef.current="";localClienteRef.current="";setFiltEstado("todos");setMostrarBuscador(false);}}>✕</button>}
               </div>
 
               {mostrarBuscador&&(
@@ -2915,7 +2925,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
                     </>
                   )}
 
-                  <div><Lbl>Perruquer</Lbl><Sel style={{padding:"6px 9px",fontSize:11}} value={filtPel} onChange={e=>setFiltPel(e.target.value)}><option value="todas">Tots</option>{CONFIG.peluqueros.map(p=><option key={p.id} value={p.id}>{p.emoji} {p.nombre}</option>)}</Sel></div>
+                  <div><Lbl>Client</Lbl><Inp style={{padding:"6px 9px",fontSize:11}} defaultValue={filtClienteRef.current||""} onChange={e=>{filtClienteRef.current=e.target.value;localClienteRef.current=e.target.value;forceUpdate(n=>n+1);}} placeholder="Nom o telèfon..."/></div>
                   <div><Lbl>Estat</Lbl><Sel style={{padding:"6px 9px",fontSize:11}} value={filtEstado} onChange={e=>setFiltEstado(e.target.value)}><option value="todos">Tots</option><option value="pendiente">Pendent</option><option value="completada">Completada</option><option value="no-show">No show</option></Sel></div>
                 </div>
               )}
