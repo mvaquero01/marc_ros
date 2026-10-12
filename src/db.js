@@ -29,6 +29,16 @@ export const crearCita = async (cita) => {
   return docId;
 };
 
+// Aviso por email (flujo de n8n). Secundario: si falla, la reserva sigue confirmada
+export const avisarNuevaCita = (id, cita) => {
+  fetch("/api/nueva-cita", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, ...cita }),
+    keepalive: true,
+  }).catch(e => console.error("Error avisando a n8n:", e));
+};
+
 export const actualizarCita = async (id, datos) => {
   await updateDoc(doc(db, "citas", id), datos);
   const campos = {};

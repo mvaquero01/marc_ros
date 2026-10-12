@@ -1,0 +1,62 @@
+{
+  "name": "Peluquería - Aviso nueva cita (Gmail)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "peluqueria-nueva-cita",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "b1f3c2a0-0001-4a00-9000-000000000001",
+      "name": "Nueva cita (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "b1f3c2a0-0001-4a00-9000-0000000000aa"
+    },
+    {
+      "parameters": {
+        "fromEmail": "CORREO_QUE_ENVIA@gmail.com",
+        "toEmail": "CORREO_DE_TU_AMIGO@gmail.com",
+        "subject": "=Nueva cita: {{ $json.body.clienteNombre }} · {{ $json.body.fecha }} {{ $json.body.hora }}",
+        "emailFormat": "text",
+        "text": "=Nueva cita reservada desde la web\n\nCliente: {{ $json.body.clienteNombre }}\nTeléfono: {{ $json.body.clienteTel }}\nServicio: {{ $json.body.servicio }} ({{ $json.body.duracionMin }} min, {{ $json.body.precio }} €)\nPeluquero: {{ $json.body.peluquero }}\nFecha: {{ $json.body.fecha }}\nHora: {{ $json.body.hora }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b1f3c2a0-0002-4a00-9000-000000000002",
+      "name": "Enviar email (Gmail SMTP)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Nueva cita (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Enviar email (Gmail SMTP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": []
+}

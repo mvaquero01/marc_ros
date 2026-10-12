@@ -7,7 +7,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContai
 import { db } from "./firebase.js";
 import {
   suscribirCitas, suscribirClientes, suscribirValoraciones,
-  crearCita, actualizarCita, crearCliente, actualizarCliente,
+  crearCita, avisarNuevaCita, actualizarCita, crearCliente, actualizarCliente,
   crearValoracion, actualizarValoracion, borrarValoracion
 } from "./db.js";
 import {
@@ -1139,7 +1139,9 @@ function ClientePage({ sharedProps, startPaso=0 }){
         if(!asignado){ setReservando(false); return; }
         pelFinal = asignado;
       }
-      const citaId=await crearCita({clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,duracionMin:selServicio.duracionMin,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""});
+      const nuevaCita={clienteNombre:form.nombre,clienteTel:form.telefono,servicio:selServicio.nombre,servicioId:selServicio.id,duracionMin:selServicio.duracionMin,peluqueroId:pelFinal.id,peluquero:pelFinal.nombre,fecha:isoDate(selDia),hora:selHora,precio:selServicio.precio,estado:"pendiente",nota:""};
+      const citaId=await crearCita(nuevaCita);
+      avisarNuevaCita(citaId,nuevaCita);
     }catch(e){
       console.error("Error creando cita:",e);
       setReservando(false);
