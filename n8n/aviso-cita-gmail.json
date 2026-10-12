@@ -23,9 +23,9 @@
       "parameters": {
         "fromEmail": "CORREO_QUE_ENVIA@gmail.com",
         "toEmail": "CORREO_DE_TU_AMIGO@gmail.com",
-        "subject": "=Nueva cita: {{ $json.body.clienteNombre }} · {{ $json.body.fecha }} {{ $json.body.hora }}",
+        "subject": "=Nova cita: {{ $json.body.clienteNombre }} · {{ $json.body.fecha.split('-').reverse().join('/') }} {{ $json.body.hora }}",
         "emailFormat": "text",
-        "text": "=Nueva cita reservada desde la web\n\nCliente: {{ $json.body.clienteNombre }}\nTeléfono: {{ $json.body.clienteTel }}\nServicio: {{ $json.body.servicio }} ({{ $json.body.duracionMin }} min, {{ $json.body.precio }} €)\nPeluquero: {{ $json.body.peluquero }}\nFecha: {{ $json.body.fecha }}\nHora: {{ $json.body.hora }}",
+        "text": "=S'ha confirmat una nova cita.\n\nClient: {{ $json.body.clienteNombre }}\nTelèfon: {{ $json.body.clienteTel }}\nData: {{ $json.body.fecha.split('-').reverse().join('/') }} ({{ DateTime.fromISO($json.body.fecha).setLocale('ca').toFormat('cccc') }})\nHora: {{ $json.body.hora }}\nServei: {{ $json.body.servicio }} ({{ $json.body.duracionMin }} min)",
         "options": {
           "appendAttribution": false
         }

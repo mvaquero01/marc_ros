@@ -2228,13 +2228,14 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
       await actualizarCita(citaInicial.id, datos);
       onGuardada({ id: citaInicial.id, ...datos });
     } else {
-      await crearCita({
+      const nuevaCita = {
         clienteNombre: form.nombre, clienteTel: form.telefono,
         servicio: svc.nombre, servicioId: svc.id, duracionMin: svc.duracionMin,
         peluqueroId: pel.id, peluquero: pel.nombre,
         fecha: form.fecha, hora: form.hora,
         precio: svc.precio, estado: "pendiente", nota: form.nota,
-      });
+      };
+      avisarNuevaCita(await crearCita(nuevaCita), nuevaCita);
       if (form.telefono) {
         const docId = form.telefono.replace(/\D/g, '');
         const ref = doc(db, "clientes", docId);
