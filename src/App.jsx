@@ -451,9 +451,10 @@ async function borrarHorarioGeneral(id){
 // ── Servicios en Firebase ──
 function suscribirServicios(cb){
   return onSnapshot(collection(db,"servicios"),snap=>{
-    if(snap.empty){cb([]);return;}
+    const desdeServidor=!snap.metadata.fromCache;
+    if(snap.empty){cb([],desdeServidor);return;}
     const data=snap.docs.map(d=>({...d.data()})).filter(Boolean).sort((a,b)=>(a.orden??a.id)-(b.orden??b.id));
-    cb(data);
+    cb(data,desdeServidor);
   });
 }
 async function guardarServicioFB(svc){
@@ -4643,6 +4644,7 @@ function AppData(){
   const [horariosEspeciales,setHorariosEspeciales]=useState([]);
   const [horariosGenerales,setHorariosGenerales]=useState([]);
   const [cargando,setCargando]=useState(true);
+  const [sinConexion,setSinConexion]=useState(typeof navigator!=="undefined" && navigator.onLine===false);
   const [iniciado,setIniciado]=useState(false);
 
   // 1. NUEVOS HOOKS PARA EL CARRUSEL (Puestos aquí para evitar el error)
@@ -4674,12 +4676,14 @@ function AppData(){
     const u2=suscribirValoracionesFB(setValoraciones);
     const u3=suscribirFestivos(setFestivos);
     const u4=suscribirBloqueos(setBloqueos);
-    const u5=suscribirServicios(data=>{ setServicios(data.length ? conPromociones(data) : data); setCargando(false); });
+    // Solo salimos de la pantalla de carga con datos reales del servidor (sin conexión se queda cargando)
+    const u5=suscribirServicios((data,desdeServidor)=>{ setServicios(data.length ? conPromociones(data) : data); if(desdeServidor) setCargando(false); });
     const u6=suscribirCategorias(data=>{ setCategorias(data); });
     const u7=suscribirHorariosEspeciales(setHorariosEspeciales);
     const u8=suscribirHorariosGenerales(setHorariosGenerales);
-      const t=setTimeout(()=>setCargando(false),5000);
-      return()=>{ u1();u2();u3();u4();u5();u6();u7();u8();clearTimeout(t); };
+      const onOnline=()=>setSinConexion(false), onOffline=()=>setSinConexion(true);
+      window.addEventListener("online",onOnline); window.addEventListener("offline",onOffline);
+      return()=>{ u1();u2();u3();u4();u5();u6();u7();u8(); window.removeEventListener("online",onOnline); window.removeEventListener("offline",onOffline); };
   },[]);
 
   // 3. PANTALLA DE CARGA (El if debe ir DESPUÉS de todos los hooks)
@@ -4688,7 +4692,7 @@ function AppData(){
       <div style={{textAlign:"center"}}>
         <img src={uesaLogo} alt="Carregant" style={{width:60,height:"auto",marginBottom:16,display:"block",margin:"0 auto 16px auto"}} />
         <div style={{fontSize:16,fontWeight:700,color:"#0D1F35"}}>Carregant...</div>
-        <div style={{fontSize:12,color:"#1C1C1C",marginTop:8}}>Connectant amb Firebase</div>
+        <div style={{fontSize:12,color:"#1C1C1C",marginTop:8}}>{sinConexion ? "Sense connexió a internet. Esperant connexió..." : "Connectant amb Firebase"}</div>
       </div>
     </div>
   );
