@@ -2856,7 +2856,7 @@ function AdminPage({valoraciones,setValoraciones,festivos,setFestivos,bloqueos,s
               <div style={{fontSize:40,marginBottom:16}}>🗑</div>
               <h3 style={{fontSize:17,fontWeight:700,color:TX,marginBottom:8}}>Vols eliminar aquesta cita?</h3>
               <p style={{fontSize:13,color:TX2,marginBottom:6}}>{citaBorrar.clienteNombre}</p>
-              <p style={{fontSize:12,color:TX2,marginBottom:24}}>{citaBorrar.servicio} · {citaBorrar.fecha} · {citaBorrar.hora}</p>
+              <p style={{fontSize:12,color:TX2,marginBottom:24}}>{citaBorrar.servicio} · {fmtFechaES(citaBorrar.fecha)} · {citaBorrar.hora}</p>
               <div style={{display:"flex",gap:10}}>
                 <Btn ok={false} style={{flex:1}} onClick={()=>setCitaBorrar(null)}>Cancel·lar</Btn>
                 <button style={{flex:1,background:`linear-gradient(135deg,${ER},#b91c1c)`,color:WH,border:"none",borderRadius:11,padding:"12px 20px",fontSize:13,fontWeight:700,cursor:"pointer"}} onClick={confirmarBorrado}>Eliminar</button>
