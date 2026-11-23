@@ -25,7 +25,7 @@ export const CONFIG = {
 
   // Promociones temporales: se muestran solo entre "desde" y "hasta" (ambos incluidos)
   promociones: [
-    { id: 900001, nombre: "Promoció FM - Degradado 5€", desc: "Promoció Festa Major", duracionMin: 15, precio: 5, promo: true, desde: "2026-11-23", hasta: "2026-12-08" }
+    { id: 900001, nombre: "Promoció FM - Degradat 5€", desc: "Promoció Festa Major", duracionMin: 15, precio: 5, promo: true, desde: "2026-11-23", hasta: "2026-12-08" }
   ],
 
   peluqueros: [
