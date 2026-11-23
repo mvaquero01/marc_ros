@@ -303,6 +303,13 @@ const fmtLarga  = d=>`${DIAS_FULL[d.getDay()]} ${d.getDate()} de ${MESES_ES[d.ge
 const haceNSemanas = n=>{ const d=new Date(); d.setDate(d.getDate()-n*7); return isoDate(d); };
 const HOY = new Date(); HOY.setHours(0,0,0,0);
 const HOY_ISO = isoDate(HOY);
+// Añade a la lista las promociones de CONFIG vigentes hoy (si no existen ya con el mismo nombre)
+const conPromociones = lista => {
+  const hoy = isoDate(new Date());
+  const activas = (CONFIG.promociones || []).filter(p => (!p.desde || hoy >= p.desde) && (!p.hasta || hoy <= p.hasta));
+  const nuevas = activas.filter(p => !lista.some(s => normalize(s.nombre) === normalize(p.nombre)));
+  return [...lista, ...nuevas.map((p, i) => ({ ...p, orden: lista.length + i }))];
+};
 let _citaEliminadaTemp=null, _clienteEliminadoTemp=null, _valEliminadaTemp=null, _svcEliminadoTemp=null, _catEliminadaTemp=null;
 let _festivoEliminadoTemp=null, _bloqueoEliminadoTemp=null, _horarioEspEliminadoTemp=null;
 
@@ -1089,13 +1096,15 @@ function ClientePage({ sharedProps, startPaso=0 }){
     const corte       = encontrarServicio(fuente, ["Corte"]);
     const corteBarba  = encontrarServicio(fuente, ["Corte + Barba", "Corte y Barba", "Corte+Barba"]);
     const barba       = encontrarServicio(fuente, ["Barba"]);
-    return [corte, corteBarba, barba].filter(Boolean);
+    const promos      = conPromociones(fuente).filter(s => s.promo);
+    return [corte, corteBarba, barba, ...promos].filter(Boolean);
   }, [servicios]);
 
   const CUALQUIERA_ID = "cualquiera";
   const slots=useMemo(()=>{
     if(!selPeluquero||!selDia||!selServicio) return [];
     if(festivosSet.has(isoDate(selDia))) return [];
+    if(selServicio.hasta && isoDate(selDia) > selServicio.hasta) return [];
     if(selPeluquero.id===CUALQUIERA_ID){
       // Unión de todos los slots disponibles de todos los peluqueros
       const slotsSet = new Set();
@@ -1753,6 +1762,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
               if(!selServicio) return null;
               const iso = isoDate(fecha);
               if(festivosSet.has(iso)) return null;
+              if(selServicio.hasta && iso > selServicio.hasta) return null;
               if(fecha.getDay() === 0) return null;
               let count = 0;
               if(selPeluquero?.id === CUALQUIERA_ID){
@@ -4664,7 +4674,7 @@ function AppData(){
     const u2=suscribirValoracionesFB(setValoraciones);
     const u3=suscribirFestivos(setFestivos);
     const u4=suscribirBloqueos(setBloqueos);
-    const u5=suscribirServicios(data=>{ setServicios(data); setCargando(false); });
+    const u5=suscribirServicios(data=>{ setServicios(data.length ? conPromociones(data) : data); setCargando(false); });
     const u6=suscribirCategorias(data=>{ setCategorias(data); });
     const u7=suscribirHorariosEspeciales(setHorariosEspeciales);
     const u8=suscribirHorariosGenerales(setHorariosGenerales);
