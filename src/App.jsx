@@ -310,6 +310,16 @@ const conPromociones = lista => {
   const nuevas = activas.filter(p => !lista.some(s => normalize(s.nombre) === normalize(p.nombre)));
   return [...lista, ...nuevas.map((p, i) => ({ ...p, orden: lista.length + i }))];
 };
+// Servicios que se ofrecen al reservar (web y cita manual): Corte, Corte + Barba, Barba y promociones activas
+const serviciosReservables = servicios => {
+  const fuente = (servicios && servicios.length > 0) ? servicios : CONFIG.serviciosDefault;
+  const buscar = patrones => fuente.find(s => patrones.some(p => normalize(s.nombre) === normalize(p)));
+  const corte      = buscar(["Corte"]);
+  const corteBarba = buscar(["Corte + Barba", "Corte y Barba", "Corte+Barba"]);
+  const barba      = buscar(["Barba"]);
+  const promos     = conPromociones(fuente).filter(s => s.promo);
+  return [corte, corteBarba, barba, ...promos].filter(Boolean);
+};
 let _citaEliminadaTemp=null, _clienteEliminadoTemp=null, _valEliminadaTemp=null, _svcEliminadoTemp=null, _catEliminadaTemp=null;
 let _festivoEliminadoTemp=null, _bloqueoEliminadoTemp=null, _horarioEspEliminadoTemp=null;
 
@@ -1089,17 +1099,7 @@ function ClientePage({ sharedProps, startPaso=0 }){
   const festivosSet=useMemo(()=>new Set(festivos.map(f=>f.fecha)),[festivos]);
 
   // Servicios que se pueden elegir en el paso 1
-  const encontrarServicio = (lista, patrones) =>
-    lista.find(s => patrones.some(p => normalize(s.nombre) === normalize(p)));
-
-  const serviciosPaso1 = useMemo(() => {
-    const fuente = (servicios && servicios.length > 0) ? servicios : CONFIG.serviciosDefault;
-    const corte       = encontrarServicio(fuente, ["Corte"]);
-    const corteBarba  = encontrarServicio(fuente, ["Corte + Barba", "Corte y Barba", "Corte+Barba"]);
-    const barba       = encontrarServicio(fuente, ["Barba"]);
-    const promos      = conPromociones(fuente).filter(s => s.promo);
-    return [corte, corteBarba, barba, ...promos].filter(Boolean);
-  }, [servicios]);
+  const serviciosPaso1 = useMemo(() => serviciosReservables(servicios), [servicios]);
 
   const CUALQUIERA_ID = "cualquiera";
   const slots=useMemo(()=>{
@@ -2155,7 +2155,16 @@ function ClientePage({ sharedProps, startPaso=0 }){
 // ─────────────────────────────────────────────
 function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festivosSet, citaInicial, onGuardada, horariosEspeciales, horariosGenerales }) {
   const esEdicion = !!citaInicial;
-  const listaServicios = (servicios && servicios.length > 0) ? servicios : CONFIG.serviciosDefault;
+  const listaServicios = useMemo(() => {
+    const lista = serviciosReservables(servicios);
+    // Al editar una cita con un servicio que ya no se ofrece, se mantiene en la lista
+    if (esEdicion && citaInicial.servicioId && !lista.some(s => String(s.id) === String(citaInicial.servicioId))) {
+      const todos = (servicios && servicios.length > 0) ? servicios : CONFIG.serviciosDefault;
+      const actual = todos.find(s => String(s.id) === String(citaInicial.servicioId));
+      if (actual) return [...lista, actual];
+    }
+    return lista;
+  }, [servicios, esEdicion, citaInicial]);
 
   const [form, setForm] = useState({
     nombre: "", telefono: "", servicioId: "", peluqueroId: "",
@@ -2332,7 +2341,7 @@ function CitaModal({ show, onClose, citas, clientes, servicios, bloqueos, festiv
               <span>📅</span>
             </button>
             {showCal && (
-              <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,zIndex:9999}}>
+              <div style={{position:"absolute",bottom:"calc(100% + 6px)",left:0,zIndex:9999,boxShadow:"0 8px 24px rgba(0,0,0,.15)",borderRadius:12}}>
                 <MiniCalPicker
                   value={form.fecha}
                   onChange={iso=>{ setForm(f=>({...f,fecha:iso,hora:""})); setShowCal(false); }}
